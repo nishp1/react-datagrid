@@ -41,9 +41,15 @@
     "webpack-dev-server": "^1.6.6"
   },
   "dependencies": {
+    "clone": "^0.1.18",
     "copy-utils": "^1.0.0",
+    "css-utils": "^0.4.2",
+    "drag-helper": "^1.2.0",
     "normalize.css": "^3.0.2",
-    "react": "^0.12.1"
+    "object-assign": "^2.0.0",
+    "react": "^0.12.1",
+    "react-load-mask": "^0.1.0",
+    "ustring": "^1.4.1"
   },
   "author": "Radu Brehar",
   "license": "MIT",

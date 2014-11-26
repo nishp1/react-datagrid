@@ -4,12 +4,71 @@ require('./index.styl')
 
 var React = require('react')
 var DataGrid = require('./src')
+var faker = require('faker');
+
+function gen(len){
+    var arr = []
+
+    for (var i = 0; i < len; i++){
+        arr.push({
+            id       : i + 1,
+            email    : faker.internet.email(),
+            firstName: faker.name.firstName(),
+            lastName : faker.name.lastName(),
+            birthDate: faker.date.past()
+        })
+    }
+
+    return arr
+}
+// console.log(data)
+
+var columns = [
+    {
+        name: 'id'
+    },
+    {
+        name: 'birthDate'
+    },
+    {
+        name: 'firstName',
+        width: 200
+    },
+    {
+        name: 'lastName',
+        width: 400
+    }
+]
+
+var ROW_HEIGHT = 31
+var LEN = 100
+var data
 
 var App = React.createClass({
 
+    handleChange: function(event){
+        ROW_HEIGHT = event.target.value
+        this.setState({})
+    },
+
+    handleDataLenChange: function(event){
+        LEN = event.target.value
+        this.setState({})
+    },
+
     render: function(){
 
-        return <DataGrid />
+        console.time('gen')
+        data = window.data = gen(LEN)
+        console.timeEnd('gen')
+
+        return <div >
+            <input value={ROW_HEIGHT} onChange={this.handleChange} />
+            <input value={LEN} onChange={this.handleDataLenChange} />
+
+            <DataGrid scrollBy={5} virtualRendering={true} idProperty='id' style={{border: '1px solid gray', height: 800}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
+        </div>
+
     }
 })
 

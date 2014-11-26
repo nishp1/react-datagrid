@@ -1,0 +1,14 @@
+.react-datagrid
+    &.z-cell-borders-horizontal
+        .z-cell
+            border-bottom $datagrid-cell-border-width $datagrid-cell-border-style $datagrid-cell-border-color
+
+    &.z-cell-borders-vertical
+
+        .z-group-row .z-cell
+        .z-cell.z-last
+            border-right $datagrid-cell-border-width $datagrid-cell-border-style $datagrid-cell-border-color
+
+        .z-cell
+            &:not(.z-first)
+                border-left $datagrid-cell-border-width $datagrid-cell-border-style $datagrid-cell-border-color

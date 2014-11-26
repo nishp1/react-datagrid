@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"prop",
+				"propTypes"
+			],
+			[
+				"cell",
+				"cellClassName"
+			],
+			[
+				"get",
+				"getDefaultProps"
+			],
+			[
 				"Reat",
 				"ReactWindow"
 			],
@@ -502,23 +514,115 @@
 			[
 				"fa",
 				"factory"
-			],
-			[
-				"sing",
-				"singleSelect"
-			],
-			[
-				"selected",
-				"selectedCount"
-			],
-			[
-				"pos",
-				"position"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "src/getDefaultProps.js",
+			"settings":
+			{
+				"buffer_size": 272,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "style/index.styl",
+			"settings":
+			{
+				"buffer_size": 791,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dist.config.js",
+			"settings":
+			{
+				"buffer_size": 462,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dist.min.config.js",
+			"settings":
+			{
+				"buffer_size": 466,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "loaders.config.js",
+			"settings":
+			{
+				"buffer_size": 362,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 1682,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/index.jsx",
+			"settings":
+			{
+				"buffer_size": 1637,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Row/index.jsx",
+			"settings":
+			{
+				"buffer_size": 1592,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 669,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.jsx",
+			"settings":
+			{
+				"buffer_size": 2258,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Gulpfile.js",
+			"settings":
+			{
+				"buffer_size": 230,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Column/index.jsx",
+			"settings":
+			{
+				"buffer_size": 85,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Header/index.jsx",
+			"settings":
+			{
+				"buffer_size": 1660,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -719,7 +823,7 @@
 				"Set Syntax: LiveScript"
 			]
 		],
-		"width": 524.0
+		"width": 593.0
 	},
 	"console":
 	{
@@ -740,6 +844,18 @@
 	},
 	"file_history":
 	[
+		"/home/radu/code/react-datagrid/index.styl",
+		"/home/radu/code/react-datagrid/webpack.config.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/getEventTarget.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/getEventKey.js",
+		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/minimist/test/default_bool.js",
+		"/home/radu/code/react-datagrid/node_modules/webpack/lib/DefinePlugin.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/DefaultEventPluginOrder.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactOwner.js",
+		"/home/radu/code/react-datagrid/README.md",
+		"/home/radu/code/react-datagrid/lib/index.js",
+		"/home/radu/code/react-datagrid/index.jsx",
+		"/home/radu/code/react-datagrid/index.html",
 		"/home/radu/code/entity-designer/src/resources/css/widgets/SplitContainer.styl",
 		"/home/radu/code/entity-designer/src/js/render/render.js",
 		"/home/radu/code/entity-designer/README.md",
@@ -855,23 +971,11 @@
 		"/home/radu/code/entity-designer/src/js/model/ItemFactory.js",
 		"/home/radu/code/entity-designer/lib/widget/Manager/generateId.js",
 		"/home/radu/code/entity-designer/src/js/render/getNodeInnerRegion.js",
-		"/home/radu/code/entity-designer/src/js/views/items/Tree.jsx",
-		"/home/radu/code/entity-designer/src/js/widgets/props/style/border.js",
-		"/home/radu/code/entity-designer/src/js/widgets/props/style/width.js",
-		"/home/radu/code/entity-designer/src/js/widgets/props/style/size.js",
-		"/home/radu/code/entity-designer/src/js/widgets/props/theLabel.js",
-		"/home/radu/code/entity-designer/lib/property-grid/src/getLabel.js",
-		"/home/radu/code/entity-designer/lib/property-grid/lib/getLabel.js",
-		"/home/radu/code/entity-designer/src/js/model/factories/Label.js",
-		"/home/radu/code/entity-designer/dev.html",
-		"/home/radu/code/entity-designer/src/js/widgets/props/style/position.js",
-		"/home/radu/code/entity-designer/src/resources/css/PositionTip.styl",
-		"/home/radu/code/entity-designer/lib/ui/tree/index.jsx",
-		"/home/radu/code/entity-designer/src/js/widgets/props/style/borderRadius.js"
+		"/home/radu/code/entity-designer/src/js/views/items/Tree.jsx"
 	],
 	"find":
 	{
-		"height": 26.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -933,6 +1037,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Row",
 			"10",
 			"config-me",
 			"this.props",
@@ -1059,8 +1164,7 @@
 			"ItemsManager.move([item]).to(info.parent)",
 			"DRAG_TARGET",
 			"isDragging",
-			"numeric",
-			"console"
+			"numeric"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1078,8 +1182,524 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/getDefaultProps.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 272,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								252,
+								252
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "style/index.styl",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 791,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								236,
+								236
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/Sass/Syntaxes/Sass.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "dist.config.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								304,
+								304
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "dist.min.config.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 466,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								215,
+								215
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "loaders.config.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 362,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								182,
+								182
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1682,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								274,
+								274
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1637,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1606,
+								1606
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Row/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1592,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								846,
+								846
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 669,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								581,
+								581
+							]
+						],
+						"settings":
+						{
+							"history_list_is_closing": true,
+							"open_with_edit": true,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2258,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2151,
+								2151
+							]
+						],
+						"settings":
+						{
+							"history_list_is_closing": true,
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1319.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 0,
+					"file": "src/getDefaultProps.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 272,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								58,
+								58
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Gulpfile.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 230,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								230,
+								230
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 6,
+					"file": "src/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1637,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								324,
+								325
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1682,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1296,
+								1296
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/Column/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 85,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								85,
+								85
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "src/Header/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1660,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								446,
+								446
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Row/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1592,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1592,
+								1592
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1100,11 +1720,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.414701803051,
 			1.0
 		],
 		"rows":
@@ -1142,12 +1769,20 @@
 		"selected_items":
 		[
 			[
-				"index",
-				"index.html"
+				"getde",
+				"src/getDefaultProps.js"
+			],
+			[
+				"rowindex",
+				"src/Row/index.jsx"
 			],
 			[
 				"pac",
 				"package.json"
+			],
+			[
+				"index",
+				"src/index.jsx"
 			],
 			[
 				"setu",
@@ -1643,14 +2278,6 @@
 			],
 			[
 				"getuni",
-				"src/js/render/getUnionRegion.js"
-			],
-			[
-				"setupdra",
-				"src/js/render/setupDrag.js"
-			],
-			[
-				"getunion",
 				"src/js/render/getUnionRegion.js"
 			]
 		],
