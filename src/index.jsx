@@ -5,6 +5,7 @@ var assign   = require('object-assign')
 var LoadMask = require('react-load-mask')
 var clone    = require('clone')
 
+var PropTypes = require('./PropTypes')
 var Wrapper   = require('./Wrapper')
 var Header   = require('./Header')
 var WrapperFactory = React.createFactory(Wrapper)
@@ -15,11 +16,20 @@ module.exports = React.createClass({
     displayName: 'ReactDataGrid',
 
     propTypes: {
-        virtualRendering: React.PropTypes.bool,
         loading         : React.PropTypes.bool,
-        scrollBy        : React.PropTypes.number,
-        cellEllipsis    : React.PropTypes.bool,
-        idProperty      : React.PropTypes.string.isRequired
+        virtualRendering: React.PropTypes.bool,
+
+        //specify false if you don't any column to be resizable
+        resizableColumns : React.PropTypes.bool,
+        filterableColumns: React.PropTypes.bool,
+        withColumnMenu   : React.PropTypes.bool,
+        cellEllipsis     : React.PropTypes.bool,
+        sortable         : React.PropTypes.bool,
+        idProperty       : React.PropTypes.string.isRequired,
+
+        scrollBy        : PropTypes.numeric,
+        rowHeight       : PropTypes.numeric,
+        sortInfo        : PropTypes.sortInfo
     },
 
     getDefaultProps: require('./getDefaultProps'),
@@ -78,10 +88,16 @@ module.exports = React.createClass({
         var props = this.prepareProps(this.props)
 
         var header = (props.headerFactory || HeaderFactory)({
-            scrollLeft: this.state.scrollLeft,
-            columns: props.columns,
-            cellPadding: props.cellPadding,
-            scrollbarSize: props.scrollbarSize
+            scrollLeft      : this.state.scrollLeft,
+            columns         : props.columns,
+            cellPadding     : props.cellPadding,
+            scrollbarSize   : props.scrollbarSize,
+            sortInfo        : props.sortInfo,
+            resizableColumns: props.resizableColumns,
+            filterableColumns: props.filterableColumns,
+            withColumnMenu  : props.withColumnMenu,
+            sortable  : props.sortable,
+            onSortChange: props.onSortChange
         })
 
         var wrapper = this.prepareWrapper(props)
@@ -233,6 +249,10 @@ module.exports = React.createClass({
 
             props.className += ' ' + cellBordersCls
 
+        }
+
+        if (props.withColumnMenu){
+            props.className += ' ' + props.withColumnMenuCls
         }
     }
 })

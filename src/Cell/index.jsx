@@ -2,6 +2,16 @@
 
 var React = require('react')
 
+function copyProps(target, source, list){
+
+    list.forEach(function(name){
+        if (name in source){
+            target[name] = source[name]
+        }
+    })
+
+}
+
 module.exports = React.createClass({
 
     displayName: 'ReactDataGrid.cell',
@@ -45,11 +55,19 @@ module.exports = React.createClass({
             className += ' z-last'
         }
 
+        var cellProps = {
+            className: className,
+            style    : column.style
+        }
+
+        copyProps(cellProps, props, ['onMouseOver', 'onMouseOut', 'onClick', 'onMouseDown'])
+
         return (
-            <div className={className} style={column.style}>
+            <div {...cellProps}>
                 <div className='z-inner'>
                     {textCell}
                 </div>
+                {props.children}
             </div>
         )
     }

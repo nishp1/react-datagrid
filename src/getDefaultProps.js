@@ -10,8 +10,12 @@ module.exports = function(){
         virtualRendering: true,
 
         styleAlternateRowsCls: 'z-style-alternate',
+        withColumnMenuCls: 'z-with-column-menu',
         cellEllipsisCls: 'z-cell-ellipsis',
         defaultClassName: 'react-datagrid',
+
+        withColumnMenu: true,
+        sortable: true,
 
         showCellBordersCls: 'z-cell-borders',
         showCellBorders: false,

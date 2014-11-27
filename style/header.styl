@@ -17,12 +17,15 @@
 
                 &::after
                     content ' '
-                    display inline-block
-                    margin auto
-                    top 0px
-                    left 0px
-                    right 0px
-                    bottom 0px
+                    display block
+                    position absolute
+                    // margin auto
+                    top 50%
+                    margin-top - $datagrid-column-sort-icon-width
+                    margin-left - $datagrid-column-sort-icon-width
+                    left 50%
+                    // right 0px
+                    // bottom 0px
                     width 0px
                     height 0px
                     border-left $datagrid-column-sort-icon-width solid transparent
@@ -31,14 +34,17 @@
 
             .z-show-filter
                 right $datagrid-column-menu-icon-width
+                background $datagrid-column-menu-icon-hover-background
 
                 &::before
                     content ' '
                     height 8px
-                    position relative
-                    top 10px
-                    left 6px
-                    display inline-block
+                    position absolute
+                    top 50%
+                    margin-left -1px
+                    left 50%
+                    margin-top -$datagrid-column-menu-icon-width
+                    display block
                     border-left 2px solid $datagrid-column-sort-icon-color
 
             &.z-filterable .z-show-filter.z-active
@@ -80,7 +86,10 @@
 
             .z-text
                 @extend .u-ellipsis
-                padding $datagrid-column-header-padding
+
+        &.z-sortable
+            .z-inner
+                cursor pointer
 
         &.z-over
             background $datagrid-header-over-background
