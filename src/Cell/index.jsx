@@ -1,6 +1,7 @@
 'use strict';
 
-var React = require('react')
+var React  = require('react')
+var assign = require('object-assign')
 
 function copyProps(target, source, list){
 
@@ -57,7 +58,7 @@ module.exports = React.createClass({
 
         var cellProps = {
             className: className,
-            style    : column.style
+            style    : assign({}, props.style, column.style)
         }
 
         copyProps(cellProps, props, ['onMouseOver', 'onMouseOut', 'onClick', 'onMouseDown'])

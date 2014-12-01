@@ -7,6 +7,7 @@ var assign  = require('object-assign')
 var clone   = require('clone')
 var asArray = require('../utils/asArray')
 var Cell    = require('../Cell')
+var setupColumnDrag    = require('./setupColumnDrag')
 
 function emptyFn(){}
 
@@ -22,6 +23,12 @@ function findIndexBy(arr, fn){
     }
 
     return -1
+}
+
+function findIndexByName(arr, name){
+    return findIndexBy(arr, function(info){
+        return info.name === name
+    })
 }
 
 function getColumnSortInfo(column, sortInfo){
@@ -49,6 +56,19 @@ function removeColumnSort(column, sortInfo){
     return sortInfo
 }
 
+function getDropState(){
+    return {
+        dragLeft  : null,
+        dragColumn: null,
+        dragColumnIndex: null,
+        dragging  : false,
+        dropIndex : null,
+
+        shiftIndexes: null,
+        shiftSize: null
+    }
+}
+
 module.exports = React.createClass({
 
     displayName: 'ReactDataGrid.Header',
@@ -57,10 +77,33 @@ module.exports = React.createClass({
         columns: React.PropTypes.array
     },
 
+    onDrop: function(){
+        var dragIndex = this.state.dragColumnIndex
+        var dropIndex = this.state.dropIndex
+
+        if (dropIndex != null){
+
+            //since we need the indexes in the array of all columns
+            //not only in the array of the visible columns
+            //we need to search them and make this transform
+            var dragColumn = this.props.columns[dragIndex]
+            var dropColumn = this.props.columns[dropIndex]
+
+            dragIndex = findIndexByName(this.props.allColumns, dragColumn.name)
+            dropIndex = findIndexByName(this.props.allColumns, dropColumn.name)
+
+            this.props.onDropColumn(dragIndex, dropIndex)
+        }
+
+
+        this.setState(getDropState())
+    },
+
     getDefaultProps: function(){
         return {
-            defaultClassName: 'z-header-wrapper',
-            cellClassName   : 'z-column-header',
+            defaultClassName : 'z-header-wrapper',
+            draggingClassName: 'z-dragging',
+            cellClassName    : 'z-column-header',
             defaultStyle    : {},
             sortInfo        : null,
             scrollLeft      : 0,
@@ -71,7 +114,12 @@ module.exports = React.createClass({
     getInitialState: function(){
 
         return {
-            mouseOver : true
+            mouseOver : true,
+            dragging  : false,
+
+            shiftSize : null,
+            dragColumn: null,
+            shiftIndexes: null
         }
     },
 
@@ -100,8 +148,21 @@ module.exports = React.createClass({
 
         var text      = column.title
         var className = props.cellClassName || ''
+        var style     = {
+            left: 0
+        }
 
         var menu = this.renderColumnMenu(props, state, column, index)
+
+        if (state.dragColumn && state.shiftIndexes && state.shiftIndexes[index]){
+            style.left = state.shiftSize
+        }
+
+        if (state.dragColumn === column){
+            className += ' z-drag z-over'
+            style.zIndex = 1
+            style.left = state.dragLeft || 0
+        }
 
         var filter  = column.filterable?
                         <div className="z-show-filter" onClick={this.handleFilterClick.bind(this, column)}/>:
@@ -146,9 +207,11 @@ module.exports = React.createClass({
                 columns={props.columns}
                 index={index}
                 className={className}
+                style={style}
                 text={text}
                 onMouseOver={this.handleMouseOver.bind(this, column)}
                 onMouseOut={this.handleMouseOut.bind(this, column)}
+                onMouseDown={this.handleMouseDown.bind(this, column)}
                 onClick={this.handleClick.bind(this, column)}
             >
                 {filter}
@@ -276,6 +339,11 @@ module.exports = React.createClass({
         })
     },
 
+    handleMouseDown: function(column, event){
+        // debugger
+        setupColumnDrag(this, this.props, column, event)
+    },
+
     prepareProps: function(thisProps){
         var props = {}
 
@@ -290,6 +358,10 @@ module.exports = React.createClass({
     prepareClassName: function(props){
         props.className = props.className || ''
         props.className += ' ' + props.defaultClassName
+
+        if (this.state.dragging){
+            props.className += ' ' + props.draggingClassName
+        }
     },
 
     prepareStyle: function(props){

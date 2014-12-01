@@ -7,9 +7,6 @@
         .menu-row
             @extend .z-unselectable
 
-            // :first-child
-            //     display inline-block
-
             &:before
                 visibility hidden
                 padding 10px
@@ -19,9 +16,9 @@
         .menu-row.z-selected
             &:before
                 visibility visible
-
         .menu-row.over
             background $datagrid-row-over-background
+
     .z-header
         align-items stretch /* for vertical aligning text in header */
     &.z-with-column-menu
@@ -90,6 +87,10 @@
         flex 0 0 auto
         background $datagrid-header-background
         border-bottom $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
+
+        &.z-dragging
+            .z-column-header:not(.z-drag)
+                transition left 0.4s
 
     .z-column-header
         position relative

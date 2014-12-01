@@ -60,10 +60,6 @@ var LEN = 100
 var SORT_INFO = [ { name: 'firstName', dir: 'asc' } ]
 var data
 
-function sort(SORT_INFO, arr){
-
-}
-
 var App = React.createClass({
 
     handleChange: function(event){
@@ -87,6 +83,14 @@ var App = React.createClass({
         this.setState({})
     },
 
+    onColumnOrderChange: function(index, dropIndex){
+        var first = columns[index]
+        columns[index] = columns[dropIndex]
+        columns[dropIndex] = first
+
+        this.setState({})
+    },
+
     render: function(){
         var sort = sorty(SORT_INFO)
 
@@ -102,6 +106,7 @@ var App = React.createClass({
 
             <DataGrid
                 onColumnVisibilityChange={this.onColumnChange}
+                onColumnOrderChange={this.onColumnOrderChange}
                 sortInfo={SORT_INFO} onSortChange={this.handleSortChange} scrollBy={5} virtualRendering={true} idProperty='id' style={{border: '1px solid gray', height: 800}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
         </div>
 

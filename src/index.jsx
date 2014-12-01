@@ -127,6 +127,10 @@ module.exports = React.createClass({
         return endIndex
     },
 
+    onDropColumn: function(index, dropIndex){
+        this.props.onColumnOrderChange(index, dropIndex)
+    },
+
     toggleColumn: function(column){
 
         column = findColumn(this.props.columns, column)
@@ -168,6 +172,7 @@ module.exports = React.createClass({
             filterableColumns: props.filterableColumns,
             withColumnMenu   : props.withColumnMenu,
             sortable         : props.sortable,
+            onDropColumn     : this.onDropColumn,
             onSortChange     : props.onSortChange,
             showColumnMenu   : this.showColumnMenu,
             menuColumn       : this.state.menuColumn,
