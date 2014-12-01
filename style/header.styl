@@ -1,4 +1,27 @@
 .react-datagrid
+    .z-header-menu-column
+        background white
+        position absolute
+        top 0px
+
+        .menu-row
+            @extend .z-unselectable
+
+            // :first-child
+            //     display inline-block
+
+            &:before
+                visibility hidden
+                padding 10px
+                display inline-block
+                content '\2714'
+
+        .menu-row.z-selected
+            &:before
+                visibility visible
+
+        .menu-row.over
+            background $datagrid-row-over-background
     .z-header
         align-items stretch /* for vertical aligning text in header */
     &.z-with-column-menu
@@ -122,7 +145,7 @@
         .z-column-resize
             display inline-block
             height 100%
-            width 5px
+            width 3px
             right 0px
             cursor e-resize
             top 0px

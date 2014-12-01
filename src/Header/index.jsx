@@ -1,11 +1,12 @@
 'use strict';
 
-var React    = require('react')
-var assign   = require('object-assign')
-var clone    = require('clone')
-var humanize = require('ustring').humanize
+var React   = require('react')
+var Region  = require('region')
+var ReactMenu = React.createFactory(require('react-menus'))
+var assign  = require('object-assign')
+var clone   = require('clone')
 var asArray = require('../utils/asArray')
-var Cell     = require('../Cell')
+var Cell    = require('../Cell')
 
 function emptyFn(){}
 
@@ -57,7 +58,6 @@ module.exports = React.createClass({
     },
 
     getDefaultProps: function(){
-
         return {
             defaultClassName: 'z-header-wrapper',
             cellClassName   : 'z-column-header',
@@ -71,7 +71,7 @@ module.exports = React.createClass({
     getInitialState: function(){
 
         return {
-            mouseOver: false
+            mouseOver : true
         }
     },
 
@@ -79,39 +79,39 @@ module.exports = React.createClass({
 
         var props = this.prepareProps(this.props)
 
-        var cells = props.columns.map(this.renderCell.bind(this, props, this.state), this)
+        var cells = props.columns
+                        .map(this.renderCell.bind(this, props, this.state))
 
         var headerStyle = {
             paddingRight: props.scrollbarSize,
             transform   : 'translate3d(' + -props.scrollLeft + 'px, ' + -props.scrollTop + 'px, 0px)'
         }
 
-        return React.DOM.div({
-            style    : props.style,
-            className: props.className
-        }, <div className='z-header' style={headerStyle}>{cells}</div>)
+        return (
+            <div style={props.style} className={props.className}>
+                <div className='z-header' style={headerStyle}>
+                    {cells}
+                </div>
+            </div>
+        )
     },
 
     renderCell: function(props, state, column, index){
 
-        var text      = column.title || humanize(column.name)
+        var text      = column.title
         var className = props.cellClassName || ''
 
-        var menu = props.withColumnMenu?
-                    <div className="z-show-menu" />:
-                    null
+        var menu = this.renderColumnMenu(props, state, column, index)
 
-        var filter  = column.filterable === false || props.filterableColumns === false?
-                        null:
-                        <div className="z-show-filter" on/>
+        var filter  = column.filterable?
+                        <div className="z-show-filter" onClick={this.handleFilterClick.bind(this, column)}/>:
+                        null
 
-        var resizer = column.resizable === false || props.resizableColumns === false?
-                        null:
-                        <span className="z-column-resize" />
+        var resizer = column.resizable?
+                        <span className="z-column-resize" />:
+                        null
 
-        var sortable = this.isSortable(column)
-
-        if (sortable){
+        if (column.sortable){
             text = <span>{text}<span className="z-icon-sort-info" /></span>
 
             var sortInfo = getColumnSortInfo(column, props.sortInfo)
@@ -131,6 +131,10 @@ module.exports = React.createClass({
 
         if (state.mouseOver === column.name){
             className += ' z-over'
+        }
+
+        if (props.menuColumn === column.name){
+            className += ' z-active'
         }
 
         className += ' z-unselectable'
@@ -154,10 +158,6 @@ module.exports = React.createClass({
         )
     },
 
-    isSortable: function(column){
-        return column.sortable !== false && this.props.sortable
-    },
-
     toggleSort: function(column){
         var sortInfo       = asArray(clone(this.props.sortInfo))
         var columnSortInfo = getColumnSortInfo(column, sortInfo)
@@ -176,7 +176,7 @@ module.exports = React.createClass({
             column.toggleSort(columnSortInfo, sortInfo)
         } else {
 
-            var dir = columnSortInfo.dir
+            var dir     = columnSortInfo.dir
             var dirSign = dir === 'asc'? 1 : dir === 'desc'? -1: dir
             var newDir  = dirSign === 1? -1: dirSign === -1?  0: 1
 
@@ -190,10 +190,76 @@ module.exports = React.createClass({
         ;(this.props.onSortChange || emptyFn)(sortInfo)
     },
 
-    handleClick: function(column, event){
-        var sortable = this.isSortable(column)
+    renderColumnMenu: function(props, state, column, index){
+        if (!props.withColumnMenu){
+            return
+        }
 
-        if (sortable){
+        return <div className="z-show-menu" onClick={this.handleShowMenuClick.bind(this, props, column, index)} />
+    },
+
+    handleShowMenuClick: function(props, column, index, event){
+        event.stopPropagation()
+
+        var dom = this.getDOMNode()
+        var domRegion    = Region.from(dom)
+        var targetRegion = Region.from(event.target)
+        var offset = event.pageX - targetRegion.left
+
+        var menuOffset = {
+            left: event.pageX - domRegion.left - offset
+        }
+
+        if (index === props.columns.length - 1){
+            offset = targetRegion.right - event.pageX
+            menuOffset = {
+                right: domRegion.right - event.pageX - offset
+            }
+        }
+
+        this.showMenu(column, menuOffset, event)
+    },
+
+    showMenu: function(column, offset){
+
+        var callback = function(column){
+            return function(){
+                this.toggleColumn(column)
+            }
+        }
+
+        var menuItem = function(column){
+            return {
+                cls  : column.hidden? '': ' z-selected',
+                label: column.title,
+                fn   : callback(column).bind(this)
+            }
+        }.bind(this)
+
+        function menu(props){
+
+            props.items = this.props.allColumns.map(menuItem)
+
+            return ReactMenu(props)
+        }
+
+        this.props.showColumnMenu(menu.bind(this), column.name, offset)
+    },
+
+    toggleColumn: function(column){
+        this.props.toggleColumn(column)
+    },
+
+    hideMenu: function(){
+        this.props.showColumnMenu(null, null)
+    },
+
+    handleFilterClick: function(column, event){
+        event.stopPropagation()
+    },
+
+    handleClick: function(column){
+        if (column.sortable){
             this.toggleSort(column)
         }
     },
@@ -230,7 +296,5 @@ module.exports = React.createClass({
         var style = props.style = {}
 
         assign(style, props.defaultStyle)
-
-        style.height = props.rowHeight
     }
 })

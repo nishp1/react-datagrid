@@ -35,14 +35,15 @@ var gen = (function(){
         return arr
     }
 })()
-// console.log(data)
 
 var columns = [
     {
         name: 'id'
     },
     {
-        name: 'grade'
+        name: 'grade',
+        // hidden: true,
+        sortable: false
     },
     {
         name: 'firstName',
@@ -80,6 +81,12 @@ var App = React.createClass({
         this.setState({})
     },
 
+    onColumnChange: function(column, visible){
+        column.hidden = !visible
+
+        this.setState({})
+    },
+
     render: function(){
         var sort = sorty(SORT_INFO)
 
@@ -93,7 +100,9 @@ var App = React.createClass({
             <input value={ROW_HEIGHT} onChange={this.handleChange} />
             <input value={LEN} onChange={this.handleDataLenChange} />
 
-            <DataGrid sortInfo={SORT_INFO} onSortChange={this.handleSortChange} scrollBy={5} virtualRendering={true} idProperty='id' style={{border: '1px solid gray', height: 800}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
+            <DataGrid
+                onColumnVisibilityChange={this.onColumnChange}
+                sortInfo={SORT_INFO} onSortChange={this.handleSortChange} scrollBy={5} virtualRendering={true} idProperty='id' style={{border: '1px solid gray', height: 800}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
         </div>
 
     }

@@ -17,11 +17,11 @@ module.exports = React.createClass({
     displayName: 'ReactDataGrid.cell',
 
     propTypes: {
-        className: React.PropTypes.string,
+        className  : React.PropTypes.string,
         textPadding: React.PropTypes.number,
-        style: React.PropTypes.object,
-        text: React.PropTypes.any,
-        rowIndex: React.PropTypes.number
+        style      : React.PropTypes.object,
+        text       : React.PropTypes.any,
+        rowIndex   : React.PropTypes.number
     },
 
     getDefaultProps: function(){

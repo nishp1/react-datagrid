@@ -6,7 +6,6 @@ module.exports = function(){
         columnMinWidth: 50,
         cellPadding: 5,
         scrollbarSize: 16,
-
         virtualRendering: true,
 
         styleAlternateRowsCls: 'z-style-alternate',
@@ -16,6 +15,8 @@ module.exports = function(){
 
         withColumnMenu: true,
         sortable: true,
+        filterableColumns: true,
+        resizableColumns: true,
 
         showCellBordersCls: 'z-cell-borders',
         showCellBorders: false,

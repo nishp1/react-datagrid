@@ -3,7 +3,8 @@
 var React    = require('react')
 var assign   = require('object-assign')
 var LoadMask = require('react-load-mask')
-var clone    = require('clone')
+
+var Column = require('./models/Column')
 
 var PropTypes = require('./PropTypes')
 var Wrapper   = require('./Wrapper')
@@ -11,13 +12,29 @@ var Header   = require('./Header')
 var WrapperFactory = React.createFactory(Wrapper)
 var HeaderFactory = React.createFactory(Header)
 
+function emptyFn(){}
+
+function findColumn(columns, column){
+    var col
+
+    columns.some(function(it){
+
+        if (it.name === column.name){
+            col = it
+            return true
+        }
+    })
+
+    return col
+}
+
 module.exports = React.createClass({
 
     displayName: 'ReactDataGrid',
 
     propTypes: {
-        loading         : React.PropTypes.bool,
-        virtualRendering: React.PropTypes.bool,
+        loading          : React.PropTypes.bool,
+        virtualRendering : React.PropTypes.bool,
 
         //specify false if you don't any column to be resizable
         resizableColumns : React.PropTypes.bool,
@@ -27,29 +44,55 @@ module.exports = React.createClass({
         sortable         : React.PropTypes.bool,
         idProperty       : React.PropTypes.string.isRequired,
 
-        scrollBy        : PropTypes.numeric,
-        rowHeight       : PropTypes.numeric,
-        sortInfo        : PropTypes.sortInfo
+        /**
+         * @cfg {Number/String} columnMinWidth=50
+         */
+        columnMinWidth   : PropTypes.numeric,
+        scrollBy         : PropTypes.numeric,
+        rowHeight        : PropTypes.numeric,
+        sortInfo         : PropTypes.sortInfo,
+        columns          : PropTypes.column
     },
 
     getDefaultProps: require('./getDefaultProps'),
+
+    componentDidMount: function(){
+        window.addEventListener('click', this.windowClickListener = this.onWindowClick)
+    },
+
+    componentWillUnmount: function(){
+        window.removeEventListener('click', this.windowClickListener)
+    },
+
+    onWindowClick: function(){
+        if (this.state.menuColumn){
+            this.setState({
+                menuColumn: null,
+                menu      : null
+            })
+        }
+    },
 
     getInitialState: function(){
         return {
             scrollLeft: 0,
             scrollTop : 0,
-            renderStartIndex: 0
+            renderStartIndex: 0,
+            menuColumn: null
         }
     },
 
     handleScrollLeft: function(scrollLeft){
         this.setState({
-            scrollLeft: scrollLeft
+            scrollLeft: scrollLeft,
+            menuColumn: null
         })
     },
 
     handleScrollTop: function(scrollTop){
-        var state = {}
+        var state = {
+            menuColumn: null
+        }
 
         if (this.props.virtualRendering){
             state.renderStartIndex = Math.ceil(scrollTop / this.props.rowHeight)
@@ -84,23 +127,54 @@ module.exports = React.createClass({
         return endIndex
     },
 
+    toggleColumn: function(column){
+
+        column = findColumn(this.props.columns, column)
+
+        var visible = !column.hidden
+
+        var onHide  = this.props.onColumnHide || emptyFn
+        var onShow  = this.props.onColumnShow || emptyFn
+
+        if (visible){
+            onHide(column)
+        } else {
+            onShow(column)
+        }
+
+        var onChange = this.props.onColumnVisibilityChange || emptyFn
+        onChange(column, !visible)
+    },
+
+    showColumnMenu: function(menu, column, menuOffset, event){
+        this.setState({
+            menu: menu,
+            menuColumn: column,
+            menuOffset: menuOffset
+        })
+    },
+
     render: function(){
         var props = this.prepareProps(this.props)
 
         var header = (props.headerFactory || HeaderFactory)({
-            scrollLeft      : this.state.scrollLeft,
-            columns         : props.columns,
-            cellPadding     : props.cellPadding,
-            scrollbarSize   : props.scrollbarSize,
-            sortInfo        : props.sortInfo,
-            resizableColumns: props.resizableColumns,
+            scrollLeft       : this.state.scrollLeft,
+            columns          : props.columns.filter(c => c.visible),
+            allColumns       : props.columns,
+            cellPadding      : props.cellPadding,
+            scrollbarSize    : props.scrollbarSize,
+            sortInfo         : props.sortInfo,
+            resizableColumns : props.resizableColumns,
             filterableColumns: props.filterableColumns,
-            withColumnMenu  : props.withColumnMenu,
-            sortable  : props.sortable,
-            onSortChange: props.onSortChange
+            withColumnMenu   : props.withColumnMenu,
+            sortable         : props.sortable,
+            onSortChange     : props.onSortChange,
+            showColumnMenu   : this.showColumnMenu,
+            menuColumn       : this.state.menuColumn,
+            toggleColumn     : this.toggleColumn
         })
 
-        var wrapper = this.prepareWrapper(props)
+        var wrapper = this.prepareWrapper(props, this.state)
 
         var footer = (props.footerFactory || React.DOM.div)({
             className: 'z-footer-wrapper'
@@ -119,7 +193,7 @@ module.exports = React.createClass({
         )
     },
 
-    prepareWrapper: function(props){
+    prepareWrapper: function(props, state){
         var data       = props.data
         var scrollTop  = this.state.scrollTop
         var startIndex = this.state.renderStartIndex
@@ -143,9 +217,13 @@ module.exports = React.createClass({
             endIndex        : endIndex,
 
             onScrollLeft    : this.handleScrollLeft,
-            onScrollTop     : this.handleScrollTop
+            onScrollTop     : this.handleScrollTop,
+            menu            : state.menu,
+            menuColumn      : state.menuColumn,
+            menuOffset      : state.menuOffset
         }, props)
 
+        wrapperProps.columns = props.columns.filter(c => c.visible)
         wrapperProps.data = props.virtualRendering?
                                 data.slice(startIndex, endIndex + 1):
                                 data
@@ -163,62 +241,6 @@ module.exports = React.createClass({
         this.prepareColumns(props)
 
         return props
-    },
-
-    prepareColumns: function(props){
-        props.columns = clone(props.columns) || []
-
-        this.prepareColumnSizes(props)
-
-        props.columns.forEach(this.prepareColumnStyle.bind(this, props))
-    },
-
-    prepareColumnStyle: function(props, column){
-        var style    = column.style = {}
-        var minWidth = column.minWidth || props.columnMinWidth
-
-        style.minWidth = minWidth
-
-        if (this.isColumnFlexible(column)){
-            style.flex = column.flex || 1
-        } else {
-            style.width = column.width
-            style.minWidth = column.width
-        }
-    },
-
-    prepareColumnSizes: function(props){
-
-        var visibleColumns = props.columns
-        var totalWidth     = 0
-        var flexCount      = 0
-
-        visibleColumns.forEach(function(column){
-            column.minWidth = column.minWidth || props.columnMinWidth
-
-            if (! this.isColumnFlexible(column) ){
-                totalWidth += column.width
-                // column.sizeValue = column.width
-                return 0
-            } else if (column.minWidth){
-                totalWidth += column.minWidth
-            }
-
-            flexCount++
-
-            return column.flex || 1
-        }, this)
-
-        props.columnFlexCount  = flexCount
-        props.totalColumnWidth = totalWidth
-    },
-
-    isColumnFlexible: function(column){
-        return !column.width
-    },
-
-    isColumnHidden: function(column){
-        return !!column.hidden
     },
 
     prepareStyle: function(props){
@@ -254,5 +276,55 @@ module.exports = React.createClass({
         if (props.withColumnMenu){
             props.className += ' ' + props.withColumnMenuCls
         }
+    },
+
+    ///////////////////////////////////////
+    ///
+    /// Code dealing with preparing columns
+    ///
+    ///////////////////////////////////////
+    prepareColumns: function(props){
+        props.columns = props.columns.map(c => Column(c, props))
+
+        this.prepareColumnSizes(props)
+
+        props.columns.forEach(this.prepareColumnStyle.bind(this, props))
+    },
+
+    prepareColumnStyle: function(props, column){
+        var style    = column.style = {}
+        var minWidth = column.minWidth || props.columnMinWidth
+
+        style.minWidth = minWidth
+
+        if (column.flexible){
+            style.flex = column.flex || 1
+        } else {
+            style.width    = column.width
+            style.minWidth = column.width
+        }
+    },
+
+    prepareColumnSizes: function(props){
+
+        var visibleColumns = props.columns.filter(c => c.visible)
+        var totalWidth     = 0
+        var flexCount      = 0
+
+        visibleColumns.forEach(function(column){
+            column.minWidth = column.minWidth || props.columnMinWidth
+
+            if (!column.flexible){
+                totalWidth += column.width
+                return 0
+            } else if (column.minWidth){
+                totalWidth += column.minWidth
+            }
+
+            flexCount++
+        }, this)
+
+        props.columnFlexCount  = flexCount
+        props.totalColumnWidth = totalWidth
     }
 })

@@ -2,6 +2,7 @@
 
 var React  = require('react')
 var assign = require('object-assign')
+
 var Row      = require('../Row')
 var RowFactory = React.createFactory(Row)
 
@@ -55,11 +56,14 @@ module.exports = React.createClass({
             transform: 'translate3d(' + -props.scrollLeft + 'px, ' + -scrollTop + 'px, 0px)'
         }
 
+        var menu = this.renderMenu(props)
+
         return (
             <div className="z-wrapper" style={{height: rows.length * props.rowHeight}}>
                 <div ref="tableWrapper" className="z-table-wrapper" style={{paddingRight: props.scrollbarSize}} onWheel={this.handleWheel}>
                     <div ref="table" className="z-table" style={tableStyle}>
                         {rows}
+                        {menu}
                     </div>
                     <div ref="verticalScrollbar"  className="z-vertical-scrollbar" style={{width: props.scrollbarSize}} onScroll={this.handleVerticalScroll}>
                         <div className="z-vertical-scroller" style={{height: verticalScrollerSize}} />
@@ -71,6 +75,26 @@ module.exports = React.createClass({
                 </div>
             </div>
         )
+    },
+
+    renderMenu: function(props){
+        if (!props.menuColumn){
+            return
+        }
+
+        var style = {top: 0}
+        var offset = props.menuOffset
+
+        if (offset.left){
+            style.left = offset.left + props.scrollLeft
+        } else {
+            style.right = offset.right - props.scrollLeft - props.scrollbarSize
+        }
+
+        return props.menu({
+            style    : style,
+            className: 'z-header-menu-column'
+        })
     },
 
     handleWheel: function(event){

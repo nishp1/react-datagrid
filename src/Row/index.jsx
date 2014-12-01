@@ -36,10 +36,10 @@ module.exports = React.createClass({
 
         var props = this.prepareProps(this.props)
 
-        var cells = props.columns.map(this.renderCell.bind(this, props), this)
+        var cells = props.columns
+                        .map(this.renderCell.bind(this, props), this)
 
         return React.DOM.div({
-            'data-index': props.index,
             onMouseOver: this.handleMouseOver,
             onMouseOut : this.handleMouseOut,
             style      : props.style,
