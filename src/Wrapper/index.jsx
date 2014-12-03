@@ -47,22 +47,27 @@ module.exports = React.createClass({
     render: function() {
 
         var props     = this.prepareProps(this.props)
-        var rowsCount = props.data.length
+        var rowsCount = props.renderCount
 
-        var counter = { length: 0 }
+        var groupsCount = 0
         var table
 
         if (props.groupData){
-            table = renderGroupedTable(props, counter)
+            groupsCount += props.groupData.groupsCount
+            table = renderGroupedTable(props)
         } else {
             table = renderTable(props)
         }
 
-        rowsCount += counter.length
-        this.groupsCount = counter.length
+        if (props.virtualRendering){
+            rowsCount += groupsCount
+        }
+        this.groupsCount = groupsCount
+
+        // console.log(props.renderCount)
 
         var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize
-        var verticalScrollerSize   = (props.totalLength + counter.length) * props.rowHeight
+        var verticalScrollerSize   = (props.totalLength + groupsCount) * props.rowHeight
 
         return (
             <div className="z-wrapper" style={{height: rowsCount * props.rowHeight}}>

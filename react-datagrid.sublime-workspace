@@ -4,12 +4,96 @@
 		"selected_items":
 		[
 			[
-				"drag",
-				"dragColumn"
+				"row",
+				"rowsCount"
+			],
+			[
+				"grou",
+				"groupsCount"
+			],
+			[
+				"cell",
+				"cellStyle"
+			],
+			[
+				"cel",
+				"cellProps"
+			],
+			[
+				"re",
+				"require"
+			],
+			[
+				"table",
+				"tableProps"
+			],
+			[
+				"ta",
+				"tableChildren"
+			],
+			[
+				"tabl",
+				"tableStyle"
+			],
+			[
+				"tab",
+				"tableProps"
+			],
+			[
+				"render",
+				"renderTable"
+			],
+			[
+				"has",
+				"hasOwn"
+			],
+			[
+				"nextC",
+				"nextColumnSize"
+			],
+			[
+				"next",
+				"nextColumn"
+			],
+			[
+				"second",
+				"secondCol"
+			],
+			[
+				"first",
+				"firstSize"
+			],
+			[
+				"resize",
+				"resizeInfo"
+			],
+			[
+				"resi",
+				"resizeInfo"
 			],
 			[
 				"find",
-				"findIndexByName"
+				"findIndexBy"
+			],
+			[
+				"resoze",
+				"resizeProxyLeft"
+			],
+			[
+				"resizeP",
+				"resizeProxyLeft"
+			],
+			[
+				"resiezPro",
+				"resizeProxyLeft"
+			],
+			[
+				"onMo",
+				"onMouseDown"
+			],
+			[
+				"drag",
+				"dragColumn"
 			],
 			[
 				"colum",
@@ -52,10 +136,6 @@
 				"flexible"
 			],
 			[
-				"re",
-				"resizable"
-			],
-			[
 				"dir",
 				"dirSign"
 			],
@@ -78,10 +158,6 @@
 			[
 				"delta",
 				"deltaY"
-			],
-			[
-				"row",
-				"rowHeight"
 			],
 			[
 				"del",
@@ -108,20 +184,12 @@
 				"wrapperProps"
 			],
 			[
-				"render",
-				"renderStartIndex"
-			],
-			[
 				"de",
 				"delta"
 			],
 			[
 				"onS",
 				"onScrollTop"
-			],
-			[
-				"tab",
-				"tableWrapper"
 			],
 			[
 				"sc",
@@ -174,10 +242,6 @@
 			[
 				"handleMou",
 				"handleMouseOver"
-			],
-			[
-				"cell",
-				"cellClassName"
 			],
 			[
 				"get",
@@ -234,10 +298,6 @@
 			[
 				"dis",
 				"displayProperty"
-			],
-			[
-				"first",
-				"firstCollapsible"
 			],
 			[
 				"onSpl",
@@ -454,66 +514,6 @@
 			[
 				"side1",
 				"side1Value"
-			],
-			[
-				"side",
-				"sideNames"
-			],
-			[
-				"con",
-				"constrainRegion"
-			],
-			[
-				"input",
-				"inputStyle"
-			],
-			[
-				"old",
-				"oldAnchored"
-			],
-			[
-				"ancho",
-				"anchorArray"
-			],
-			[
-				"Data",
-				"DataManager"
-			],
-			[
-				"getI",
-				"getItemInnerRegionInCanvas"
-			],
-			[
-				"curr",
-				"currentItem"
-			],
-			[
-				"getC",
-				"getConstrainNode"
-			],
-			[
-				"paren",
-				"parentRegion"
-			],
-			[
-				"upa",
-				"updateItemsMap"
-			],
-			[
-				"getITEM",
-				"getItemRegionInCanvas"
-			],
-			[
-				"getItemR",
-				"getItemRegionInCanvas"
-			],
-			[
-				"di",
-				"diffTop"
-			],
-			[
-				"getIte",
-				"getItemRegion"
 			]
 		]
 	},
@@ -523,23 +523,31 @@
 			"file": "index.jsx",
 			"settings":
 			{
-				"buffer_size": 2600,
+				"buffer_size": 10635,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/Header/index.jsx",
+			"file": "src/Row/index.jsx",
 			"settings":
 			{
-				"buffer_size": 9543,
+				"buffer_size": 2464,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "style/header.styl",
+			"file": "src/Wrapper/index.jsx",
 			"settings":
 			{
-				"buffer_size": 5616,
+				"buffer_size": 5313,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Wrapper/renderMenu.jsx",
+			"settings":
+			{
+				"buffer_size": 441,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,33 +555,57 @@
 			"file": "src/index.jsx",
 			"settings":
 			{
-				"buffer_size": 9466,
+				"buffer_size": 11645,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "\n\nSearching 9 files for \"menucolumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  133          }\n  134  \n  135:         if (props.menuColumn === column.name){\n  136              className += ' z-active'\n  137          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   50  \n   51      onWindowClick: function(){\n   52:         if (this.state.menuColumn){\n   53              this.setState({\n   54:                 menuColumn: null\n   55              })\n   56          }\n   ..\n   62              scrollTop : 0,\n   63              renderStartIndex: 0,\n   64:             menuColumn: null\n   65          }\n   66      },\n   ..\n   69          this.setState({\n   70              scrollLeft: scrollLeft,\n   71:             menuColumn: null\n   72          })\n   73      },\n   ..\n   75      handleScrollTop: function(scrollTop){\n   76          var state = {\n   77:             menuColumn: null\n   78          }\n   79  \n   ..\n  113      showColumnMenu: function(column, menuOffset, event){\n  114          this.setState({\n  115:             menuColumn: column,\n  116              menuOffset: menuOffset\n  117          })\n  ...\n  133              onSortChange     : props.onSortChange,\n  134              showColumnMenu   : this.showColumnMenu,\n  135:             menuColumn       : this.state.menuColumn\n  136          })\n  137  \n  ...\n  180              onScrollLeft    : this.handleScrollLeft,\n  181              onScrollTop     : this.handleScrollTop,\n  182:             menuColumn      : state.menuColumn,\n  183              menuOffset      : state.menuOffset\n  184          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \"menucolumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  133          }\n  134  \n  135:         if (props.menuColumn === column.name){\n  136              className += ' z-active'\n  137          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   50  \n   51      onWindowClick: function(){\n   52:         if (this.state.menuColumn){\n   53              this.setState({\n   54:                 menuColumn: null\n   55              })\n   56          }\n   ..\n   62              scrollTop : 0,\n   63              renderStartIndex: 0,\n   64:             menuColumn: null\n   65          }\n   66      },\n   ..\n   69          this.setState({\n   70              scrollLeft: scrollLeft,\n   71:             menuColumn: null\n   72          })\n   73      },\n   ..\n   75      handleScrollTop: function(scrollTop){\n   76          var state = {\n   77:             menuColumn: null\n   78          }\n   79  \n   ..\n  113      showColumnMenu: function(column, menuOffset, event){\n  114          this.setState({\n  115:             menuColumn: column,\n  116              menuOffset: menuOffset\n  117          })\n  ...\n  133              onSortChange     : props.onSortChange,\n  134              showColumnMenu   : this.showColumnMenu,\n  135:             menuColumn       : this.state.menuColumn\n  136          })\n  137  \n  ...\n  180              onScrollLeft    : this.handleScrollLeft,\n  181              onScrollTop     : this.handleScrollTop,\n  182:             menuColumn      : state.menuColumn,\n  183              menuOffset      : state.menuOffset\n  184          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \"menuColumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  134          }\n  135  \n  136:         if (props.menuColumn === column.name){\n  137              className += ' z-active'\n  138          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   66  \n   67      onWindowClick: function(){\n   68:         if (this.state.menuColumn){\n   69              this.setState({\n   70:                 menuColumn: null,\n   71                  menu      : null\n   72              })\n   ..\n   79              scrollTop : 0,\n   80              renderStartIndex: 0,\n   81:             menuColumn: null\n   82          }\n   83      },\n   ..\n   86          this.setState({\n   87              scrollLeft: scrollLeft,\n   88:             menuColumn: null\n   89          })\n   90      },\n   ..\n   92      handleScrollTop: function(scrollTop){\n   93          var state = {\n   94:             menuColumn: null\n   95          }\n   96  \n   ..\n  149          this.setState({\n  150              menu: menu,\n  151:             menuColumn: column,\n  152              menuOffset: menuOffset\n  153          })\n  ...\n  170              onSortChange     : props.onSortChange,\n  171              showColumnMenu   : this.showColumnMenu,\n  172:             menuColumn       : this.state.menuColumn,\n  173              toggleColumn     : this.toggleColumn\n  174          })\n  ...\n  219              onScrollTop     : this.handleScrollTop,\n  220              menu            : state.menu,\n  221:             menuColumn      : state.menuColumn,\n  222              menuOffset      : state.menuOffset\n  223          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \".visible\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  232  \n  233          var menuItem = function(column){\n  234:             console.log(column.visible, column.title)\n  235              return {\n  236                  // cls  : column.hidden? 'zzzz': ' z-selected',\n\n/home/radu/code/react-datagrid/src/index.jsx:\n  160          var header = (props.headerFactory || HeaderFactory)({\n  161              scrollLeft       : this.state.scrollLeft,\n  162:             columns          : props.columns.filter(c => c.visible),\n  163              allColumns       : props.columns,\n  164              cellPadding      : props.cellPadding,\n  ...\n  224          }, props)\n  225  \n  226:         wrapperProps.columns = props.columns.filter(c => c.visible)\n  227          wrapperProps.data = props.virtualRendering?\n  228                                  data.slice(startIndex, endIndex + 1):\n  ...\n  308      prepareColumnSizes: function(props){\n  309  \n  310:         var visibleColumns = props.columns.filter(c => c.visible)\n  311          var totalWidth     = 0\n  312          var flexCount      = 0\n\n/home/radu/code/react-datagrid/src/models/Column.js:\n   32  \n   33      //visible\n   34:     col.visible  = !col.hidden\n   35  \n   36      //flexible\n\n5 matches across 3 files\n\n\nSearching 9 files for \"onColumnChange\"\n\n0 matches across 0 files\n\n\nSearching 9 files for \"z-unselectable\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  138          }\n  139  \n  140:         className += ' z-unselectable'\n  141  \n  142          return (\n\n1 match in 1 file\n",
+			"file": "package.json",
 			"settings":
 			{
-				"buffer_size": 7022,
+				"buffer_size": 1812,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\n\nSearching 9 files for \"menucolumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  133          }\n  134  \n  135:         if (props.menuColumn === column.name){\n  136              className += ' z-active'\n  137          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   50  \n   51      onWindowClick: function(){\n   52:         if (this.state.menuColumn){\n   53              this.setState({\n   54:                 menuColumn: null\n   55              })\n   56          }\n   ..\n   62              scrollTop : 0,\n   63              renderStartIndex: 0,\n   64:             menuColumn: null\n   65          }\n   66      },\n   ..\n   69          this.setState({\n   70              scrollLeft: scrollLeft,\n   71:             menuColumn: null\n   72          })\n   73      },\n   ..\n   75      handleScrollTop: function(scrollTop){\n   76          var state = {\n   77:             menuColumn: null\n   78          }\n   79  \n   ..\n  113      showColumnMenu: function(column, menuOffset, event){\n  114          this.setState({\n  115:             menuColumn: column,\n  116              menuOffset: menuOffset\n  117          })\n  ...\n  133              onSortChange     : props.onSortChange,\n  134              showColumnMenu   : this.showColumnMenu,\n  135:             menuColumn       : this.state.menuColumn\n  136          })\n  137  \n  ...\n  180              onScrollLeft    : this.handleScrollLeft,\n  181              onScrollTop     : this.handleScrollTop,\n  182:             menuColumn      : state.menuColumn,\n  183              menuOffset      : state.menuOffset\n  184          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \"menucolumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  133          }\n  134  \n  135:         if (props.menuColumn === column.name){\n  136              className += ' z-active'\n  137          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   50  \n   51      onWindowClick: function(){\n   52:         if (this.state.menuColumn){\n   53              this.setState({\n   54:                 menuColumn: null\n   55              })\n   56          }\n   ..\n   62              scrollTop : 0,\n   63              renderStartIndex: 0,\n   64:             menuColumn: null\n   65          }\n   66      },\n   ..\n   69          this.setState({\n   70              scrollLeft: scrollLeft,\n   71:             menuColumn: null\n   72          })\n   73      },\n   ..\n   75      handleScrollTop: function(scrollTop){\n   76          var state = {\n   77:             menuColumn: null\n   78          }\n   79  \n   ..\n  113      showColumnMenu: function(column, menuOffset, event){\n  114          this.setState({\n  115:             menuColumn: column,\n  116              menuOffset: menuOffset\n  117          })\n  ...\n  133              onSortChange     : props.onSortChange,\n  134              showColumnMenu   : this.showColumnMenu,\n  135:             menuColumn       : this.state.menuColumn\n  136          })\n  137  \n  ...\n  180              onScrollLeft    : this.handleScrollLeft,\n  181              onScrollTop     : this.handleScrollTop,\n  182:             menuColumn      : state.menuColumn,\n  183              menuOffset      : state.menuOffset\n  184          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \"menuColumn\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  134          }\n  135  \n  136:         if (props.menuColumn === column.name){\n  137              className += ' z-active'\n  138          }\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   79  \n   80      renderMenu: function(props){\n   81:         if (!props.menuColumn){\n   82              return\n   83          }\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   66  \n   67      onWindowClick: function(){\n   68:         if (this.state.menuColumn){\n   69              this.setState({\n   70:                 menuColumn: null,\n   71                  menu      : null\n   72              })\n   ..\n   79              scrollTop : 0,\n   80              renderStartIndex: 0,\n   81:             menuColumn: null\n   82          }\n   83      },\n   ..\n   86          this.setState({\n   87              scrollLeft: scrollLeft,\n   88:             menuColumn: null\n   89          })\n   90      },\n   ..\n   92      handleScrollTop: function(scrollTop){\n   93          var state = {\n   94:             menuColumn: null\n   95          }\n   96  \n   ..\n  149          this.setState({\n  150              menu: menu,\n  151:             menuColumn: column,\n  152              menuOffset: menuOffset\n  153          })\n  ...\n  170              onSortChange     : props.onSortChange,\n  171              showColumnMenu   : this.showColumnMenu,\n  172:             menuColumn       : this.state.menuColumn,\n  173              toggleColumn     : this.toggleColumn\n  174          })\n  ...\n  219              onScrollTop     : this.handleScrollTop,\n  220              menu            : state.menu,\n  221:             menuColumn      : state.menuColumn,\n  222              menuOffset      : state.menuOffset\n  223          }, props)\n\n12 matches across 3 files\n\n\nSearching 9 files for \".visible\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  232  \n  233          var menuItem = function(column){\n  234:             console.log(column.visible, column.title)\n  235              return {\n  236                  // cls  : column.hidden? 'zzzz': ' z-selected',\n\n/home/radu/code/react-datagrid/src/index.jsx:\n  160          var header = (props.headerFactory || HeaderFactory)({\n  161              scrollLeft       : this.state.scrollLeft,\n  162:             columns          : props.columns.filter(c => c.visible),\n  163              allColumns       : props.columns,\n  164              cellPadding      : props.cellPadding,\n  ...\n  224          }, props)\n  225  \n  226:         wrapperProps.columns = props.columns.filter(c => c.visible)\n  227          wrapperProps.data = props.virtualRendering?\n  228                                  data.slice(startIndex, endIndex + 1):\n  ...\n  308      prepareColumnSizes: function(props){\n  309  \n  310:         var visibleColumns = props.columns.filter(c => c.visible)\n  311          var totalWidth     = 0\n  312          var flexCount      = 0\n\n/home/radu/code/react-datagrid/src/models/Column.js:\n   32  \n   33      //visible\n   34:     col.visible  = !col.hidden\n   35  \n   36      //flexible\n\n5 matches across 3 files\n\n\nSearching 9 files for \"onColumnChange\"\n\n0 matches across 0 files\n\n\nSearching 9 files for \"z-unselectable\"\n\n/home/radu/code/react-datagrid/src/Header/index.jsx:\n  138          }\n  139  \n  140:         className += ' z-unselectable'\n  141  \n  142          return (\n\n1 match in 1 file\n\n\nSearching 21 files for \"onScrollTop\"\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n  162  \n  163      onVerticalScroll: function(pos){\n  164:         this.props.onScrollTop(pos)\n  165      },\n  166  \n\n/home/radu/code/react-datagrid/src/index.jsx:\n  235  \n  236              onScrollLeft    : this.handleScrollLeft,\n  237:             onScrollTop     : this.handleScrollTop,\n  238              menu            : state.menu,\n  239              menuColumn      : state.menuColumn,\n\n2 matches across 2 files\n\n\nSearching 21 files for \"totalLength\"\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   51  \n   52          var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize\n   53:         var verticalScrollerSize   = props.totalLength * props.rowHeight\n   54  \n   55          var counter = { length: 0 }\n   ..\n  108          var props  = this.props\n  109          var result = props.virtualRendering?\n  110:                         (props.totalLength + this.groupsCount || 0) * props.rowHeight:\n  111                          this.refs.table.getDOMNode().offsetHeight\n  112  \n\n/home/radu/code/react-datagrid/src/index.jsx:\n  231              scrollTop       : scrollTop,\n  232              startIndex      : startIndex,\n  233:             totalLength     : data.length,\n  234              endIndex        : endIndex,\n  235  \n\n3 matches across 2 files\n",
+			"settings":
+			{
+				"buffer_size": 8406,
 				"line_ending": "Unix",
 				"name": "Find Results",
 				"scratch": true
 			}
 		},
 		{
-			"file": "src/Header/setupColumnDrag.js",
+			"file": "src/Wrapper/Table.jsx",
 			"settings":
 			{
-				"buffer_size": 3861,
+				"buffer_size": 29,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/Cell/index.jsx",
+			"file": "src/Wrapper/renderTable.jsx",
 			"settings":
 			{
-				"buffer_size": 1946,
+				"buffer_size": 468,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Wrapper/renderRow.jsx",
+			"settings":
+			{
+				"buffer_size": 720,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Wrapper/renderGroupedTable.jsx",
+			"settings":
+			{
+				"buffer_size": 2037,
 				"line_ending": "Unix"
 			}
 		}
@@ -591,6 +623,10 @@
 			[
 				"rena",
 				"File: Rename"
+			],
+			[
+				"ss javas",
+				"Set Syntax: JavaScript"
 			],
 			[
 				"dele",
@@ -659,10 +695,6 @@
 			[
 				"mardk",
 				"Markdown Preview: Preview in Browser"
-			],
-			[
-				"ss javas",
-				"Set Syntax: JavaScript"
 			],
 			[
 				"del",
@@ -798,32 +830,46 @@
 	},
 	"file_history":
 	[
-		"/home/radu/code/react-datagrid/index.html",
-		"/home/radu/code/react-datagrid/src/index.jsx",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactElement.js",
+		"/home/radu/code/react-datagrid/style/resize.styl",
+		"/home/radu/code/react-datagrid/src/Wrapper/renderRow.jsx",
+		"/home/radu/code/react-datagrid/src/Cell/index.jsx",
+		"/home/radu/code/react-datagrid/style/header.styl",
+		"/home/radu/code/react-datagrid/style/contents.styl",
+		"/home/radu/code/react-datagrid/style/borders.styl",
+		"/home/radu/code/react-datagrid/style/constants.styl",
 		"/home/radu/code/react-datagrid/src/models/Column.js",
+		"/home/radu/code/react-datagrid/node_modules/gulp/completion/zsh",
+		"/home/radu/code/react-datagrid/node_modules/stylus-loader/node_modules/stylus/node_modules/glob/test/zz-cleanup.js",
+		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/node-libs-browser/node_modules/browserify-zlib/test/test-zlib-convenience-methods.js",
+		"/home/radu/code/react-datagrid/src/Header/setupColumnResize.js",
+		"/home/radu/code/react-datagrid/src/utils/findIndexByName.js",
+		"/home/radu/code/react-datagrid/src/Wrapper/index.jsx",
+		"/home/radu/code/react-datagrid/src/Wrapper/tableStyle.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactOwner.js",
+		"/home/radu/code/react-datagrid/src/getDefaultProps.js",
+		"/home/radu/code/react-datagrid/src/index.jsx",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactNativeComponent.js",
 		"/home/radu/code/react-datagrid/src/Header/index.jsx",
+		"/home/radu/code/react-datagrid/src/utils/getDataForGroup.js",
+		"/home/radu/code/react-datagrid/src/utils/group.js",
+		"/home/radu/code/react-datagrid/src/utils/findIndexBy.js",
+		"/home/radu/code/react-datagrid/node_modules/gulp/completion/fish",
+		"/home/radu/code/react-datagrid/src/Header/setupColumnDrag.js",
+		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/minimist/test/stop_early.js",
+		"/home/radu/code/react-datagrid/index.html",
 		"/home/radu/code/react-datagrid/node_modules/css-utils/styles/utils-ellipsis.styl",
 		"/home/radu/code/react-datagrid/node_modules/webpack/lib/dependencies/ContextElementDependency.js",
 		"/home/radu/code/react-datagrid/node_modules/http-server/node_modules/ecstatic/test/core-error.js",
 		"/home/radu/code/react-datagrid/node_modules/gulp-react/node_modules/react-tools/src/browser/syntheticEvents/__tests__/SyntheticEvent-test.js",
-		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/minimist/test/stop_early.js",
 		"/home/radu/code/react-datagrid/style/summary.styl",
 		"/home/radu/code/react-datagrid/src/utils/asArray.js",
-		"/home/radu/code/react-datagrid/src/Wrapper/index.jsx",
 		"/home/radu/code/react-datagrid/package.json",
-		"/home/radu/code/react-datagrid/src/getDefaultProps.js",
-		"/home/radu/code/react-datagrid/src/Cell/index.jsx",
-		"/home/radu/code/react-datagrid/style/constants.styl",
-		"/home/radu/code/react-datagrid/src/Header/setupColumnDrag.js",
-		"/home/radu/code/react-datagrid/style/header.styl",
 		"/home/radu/code/react-datagrid/node_modules/react-load-mask/node_modules/http-server/node_modules/union/test/header-test.js",
 		"/home/radu/code/react-datagrid/node_modules/http-server/node_modules/union/test/header-test.js",
-		"/home/radu/code/react-datagrid/style/contents.styl",
 		"/home/radu/code/react-datagrid/src/Row/index.jsx",
 		"/home/radu/code/react-datagrid/node_modules/webpack-dev-server/node_modules/socket.io/node_modules/socket.io-client/node_modules/active-x-obfuscator/node_modules/zeparser/test-tokenizer.html",
 		"/home/radu/code/react-datagrid/node_modules/webpack-dev-server/node_modules/socket.io/node_modules/socket.io-client/node_modules/active-x-obfuscator/node_modules/zeparser/test-parser.html",
-		"/home/radu/code/react-datagrid/node_modules/stylus-loader/node_modules/stylus/node_modules/glob/test/zz-cleanup.js",
-		"/home/radu/code/react-datagrid/node_modules/gulp/completion/zsh",
 		"/home/radu/code/react-datagrid/node_modules/http-server/node_modules/optimist/node_modules/wordwrap/test/wrap.js",
 		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/vinyl-fs/node_modules/graceful-fs/test/write-then-read.js",
 		"/home/radu/code/react-datagrid/webpack.config.js",
@@ -835,8 +881,6 @@
 		"/home/radu/code/react-datagrid/node_modules/react/lib/getEventKey.js",
 		"/home/radu/code/react-datagrid/node_modules/copy-utils/copyList.js",
 		"/home/radu/code/react-datagrid/src/PropTypes.js",
-		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactOwner.js",
-		"/home/radu/code/react-datagrid/style/resize.styl",
 		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/enhanced-resolve/lib/FileAppendPlugin.js",
 		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/orchestrator/node_modules/end-of-stream/node_modules/once/node_modules/wrappy/wrappy.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/watchpack/node_modules/chokidar/node_modules/readdirp/stream-api.js",
@@ -846,10 +890,8 @@
 		"/home/radu/code/react-datagrid/node_modules/stylus-loader/node_modules/stylus/node_modules/sax/test/script.js",
 		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/chalk/node_modules/.bin/supports-color",
 		"/home/radu/code/react-datagrid/Gulpfile.js",
-		"/home/radu/code/react-datagrid/style/borders.styl",
 		"/home/radu/code/react-datagrid/node_modules/stylus-loader/node_modules/stylus/node_modules/sax/test/buffer-overrun.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/bin/config-optimist.js",
-		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactElement.js",
 		"/home/radu/code/react-datagrid/README.md",
 		"/home/radu/code/react-datagrid/dist.min.config.js",
 		"/home/radu/code/react-datagrid/dist.config.js",
@@ -915,17 +957,7 @@
 		"/home/radu/code/entity-designer/src/js/ToolArea.jsx",
 		"/home/radu/code/entity-designer/src/js/widgets/create.js",
 		"/home/radu/code/entity-designer/src/js/render/createItem.js",
-		"/home/radu/code/entity-designer/src/js/render/mixin.js",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/index.styl",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Container/index.jsx",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Line/index.jsx",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Tab/index.jsx",
-		"/home/radu/code/entity-designer/src/js/widgets/Tab/index.js",
-		"/home/radu/code/entity-designer/src/js/views/items/AlignToolbox.jsx",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Tab/index.styl",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Line/index.styl",
-		"/home/radu/code/entity-designer/src/js/render/createProxy.js",
-		"/home/radu/code/entity-designer/src/js/runtime/render.jsx"
+		"/home/radu/code/entity-designer/src/js/render/mixin.js"
 	],
 	"find":
 	{
@@ -995,6 +1027,44 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"props.data",
+			"rowIndex",
+			"this.groupsCount",
+			"totalLength",
+			"groupsCount",
+			"handlescrollto",
+			"onScrollTop",
+			"onVerticalScroll",
+			"syncVerticalScroller",
+			"totalLength",
+			"border-botto",
+			".z-cell",
+			"z-column",
+			"cellPadding",
+			"cellcla",
+			"groupData",
+			"props.index",
+			"props.groupda",
+			"renderRow",
+			"renderTable",
+			"renderMenu",
+			"renderRow",
+			"renderTable",
+			"handleWheel",
+			"300",
+			"this",
+			"emptyfn",
+			"findColumn",
+			"findCol",
+			"findcolumn",
+			"header",
+			"state",
+			"prepareResizeProxy",
+			"resizepro",
+			"props.columns",
+			"handleresi",
+			"asArray",
+			"setupColumnDrag",
 			"toggleColumn",
 			"header",
 			"state.dra",
@@ -1084,45 +1154,7 @@
 			"withco",
 			"padding",
 			"withColumnMenu",
-			"onMouseOver",
-			"filterableColumns",
-			"resizableColumns",
-			"isvir",
-			"prepareWrapper",
-			"getRenderEndIndex",
-			"scrollTop",
-			"scrolltop",
-			"scrollTop",
-			"syncVerticalScroller",
-			"props.data",
-			"syncVerticalScroller",
-			"renderstart",
-			"props.onScrollTop",
-			"renderRow",
-			"syncVerticalScroller",
-			"scrolltop",
-			"scrollTop",
-			"addMouseWheelDelta",
-			"horizontalScrollbar",
-			"scrolltop",
-			"rendercell",
-			"renderCell",
-			"renderc",
-			"prepareProps",
-			"handleVerticalScroll",
-			"scrollerSize",
-			"ScrollerSize",
-			"scrollerSize",
-			"totalColumnWidth",
-			"columnName",
-			"this.props",
-			"z-row",
-			"flexes",
-			"z-ellip",
-			"ellip",
-			"$z-",
-			"/*\n\n This file is part of the ZippyUI Framework\n\n Copyright (c) 2011 ZippyUI.com\n\n All rights reserved to zippyui.com\n This software cannot be used/copied/distributed without the express permission from staff at zippyui.com\n\n */\n\n/*\n * This file is imported in the z-datagrid.styl file, under the .z-datagrid selector\n * therefore, make sure it does not have another root selector for the rules inside it,\n * so don't nest the rules below in yet another selector\n */\n.z-footer-wrapper\n    background $z-datagrid-summary-row-background\n\n.z-summary\n    border-top $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n    align-items stretch /* for vertical aligning text in header */\n\n    .z-cell\n        position relative\n        .z-inner\n            display flex\n\n            align-items center\n            align-content flex-start\n            flex-flow row\n\n            height 100%\n\n        .z-text\n            @extend .z-ellipsis\n\n        border-bottom $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n        &.z-last\n            border-right $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n\n        &:not(.z-first)\nz-resize-proxy",
-			"/*\n\n This file is part of the ZippyUI Framework\n\n Copyright (c) 2011 ZippyUI.com\n\n All rights reserved to zippyui.com\n This software cannot be used/copied/distributed without the express permission from staff at zippyui.com\n\n */\n\n/*\n * This file is imported in the z-datagrid.styl file, under the .z-datagrid selector\n * therefore, make sure it does not have another root selector for the rules inside it,\n * so don't nest the rules below in yet another selector\n */\n.z-footer-wrapper\n    background $z-datagrid-summary-row-background\n\n.z-summary\n    border-top $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n    align-items stretch /* for vertical aligning text in header */\n\n    .z-cell\n        position relative\n        .z-inner\n            display flex\n\n            align-items center\n            align-content flex-start\n            flex-flow row\n\n            height 100%\n\n        .z-text\n            @extend .z-ellipsis\n\n        border-bottom $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n        &.z-last\n            border-right $z-datagrid-header-border-width $z-datagrid-header-border-style $z-datagrid-header-border-color\n\n        &:not(.z-first)\n.z-resize-proxy"
+			"onMouseOver"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1140,7 +1172,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1149,128 +1181,543 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2600,
+						"buffer_size": 10635,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1614,
-								1614
+								10269,
+								10269
 							]
 						],
 						"settings":
 						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
 							"history_list_is_closing": true,
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 831.0,
+						"translation.y": 1458.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/Row/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2464,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								310,
+								310
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 756.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/Wrapper/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5313,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1415,
+								1415
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 639.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "src/Header/index.jsx",
+					"buffer": 3,
+					"file": "src/Wrapper/renderMenu.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9543,
+						"buffer_size": 441,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1384,
-								1384
+								0,
+								0
 							]
 						],
 						"settings":
 						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"open_with_edit": true,
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 810.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "style/header.styl",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5616,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3150,
-								3150
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Sass/Syntaxes/Sass.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 972.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "src/index.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9466,
+						"buffer_size": 11645,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4249,
-								4249
+								2457,
+								2457
 							]
 						],
 						"settings":
 						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
 							"history_list_is_closing": true,
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2548.0,
+						"translation.y": 1179.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
+					"file": "package.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7022,
+						"buffer_size": 1812,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								757,
+								757
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8406,
 						"regions":
 						{
 							"match":
@@ -1447,8 +1894,28 @@
 										6969
 									],
 									[
-										7022,
-										7022
+										7194,
+										7205
+									],
+									[
+										7367,
+										7378
+									],
+									[
+										7778,
+										7789
+									],
+									[
+										7994,
+										8005
+									],
+									[
+										8294,
+										8305
+									],
+									[
+										8406,
+										8406
 									]
 								],
 								"scope": ""
@@ -1457,15 +1924,74 @@
 						"selection":
 						[
 							[
-								6960,
-								6960
+								7539,
+								7539
 							]
 						],
 						"settings":
 						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
 							"detect_indentation": false,
 							"line_numbers": false,
-							"output_tag": 7,
+							"output_tag": 9,
 							"result_base_dir": "",
 							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
 							"result_line_regex": "^ +([0-9]+):",
@@ -1474,104 +2000,368 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4248.0,
+						"translation.y": 4806.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
-					"buffer": 5,
-					"file": "src/Header/setupColumnDrag.js",
+					"buffer": 7,
+					"file": "src/Wrapper/Table.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3861,
+						"buffer_size": 29,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1939,
-								1939
+								29,
+								29
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 729.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "src/Cell/index.jsx",
+					"buffer": 8,
+					"file": "src/Wrapper/renderTable.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1946,
+						"buffer_size": 468,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1611,
-								1611
+								328,
+								328
 							]
 						],
 						"settings":
 						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"open_with_edit": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": -0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/Wrapper/renderRow.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 720,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								397,
+								397
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 378.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "src/index.jsx",
+					"buffer": 10,
+					"file": "src/Wrapper/renderGroupedTable.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9466,
+						"buffer_size": 2037,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3413,
-								3413
+								2033,
+								2033
 							]
 						],
 						"settings":
 						{
-							"history_list_is_closing": true,
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"open_with_edit": true,
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1899.0,
+						"translation.y": 432.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -1608,7 +2398,7 @@
 		"cols":
 		[
 			0.0,
-			0.448478723788,
+			0.574253197146,
 			1.0
 		],
 		"rows":
@@ -1646,16 +2436,44 @@
 		"selected_items":
 		[
 			[
+				"renderrow",
+				"src/Wrapper/renderRow.jsx"
+			],
+			[
+				"content",
+				"style/contents.styl"
+			],
+			[
+				"header",
+				"style/header.styl"
+			],
+			[
+				"rowindex",
+				"src/Row/index.jsx"
+			],
+			[
+				"gd",
+				"src/getDefaultProps.js"
+			],
+			[
+				"pac",
+				"package.json"
+			],
+			[
+				"findi",
+				"src/utils/findIndexByName.js"
+			],
+			[
+				"setupc",
+				"src/Header/setupColumnDrag.js"
+			],
+			[
 				"index",
 				"src/index.jsx"
 			],
 			[
 				"headerin",
 				"src/Header/index.jsx"
-			],
-			[
-				"header",
-				"style/header.styl"
 			],
 			[
 				"cellindex",
@@ -1694,24 +2512,12 @@
 				"loaders.config.js"
 			],
 			[
-				"rowindex",
-				"src/Row/index.jsx"
-			],
-			[
 				"wrapperin",
 				"src/Wrapper/index.jsx"
 			],
 			[
 				"wrapin",
 				"src/Wrapper/index.jsx"
-			],
-			[
-				"pac",
-				"package.json"
-			],
-			[
-				"gd",
-				"src/getDefaultProps.js"
 			],
 			[
 				"gdp",
@@ -1732,10 +2538,6 @@
 			[
 				"pack",
 				"package.json"
-			],
-			[
-				"content",
-				"style/contents.styl"
 			],
 			[
 				"border",
@@ -2144,18 +2946,6 @@
 			[
 				"selectionmanager",
 				"src/js/data/SelectionManager.js"
-			],
-			[
-				"desing",
-				"src/js/Designer.jsx"
-			],
-			[
-				"getitemparent",
-				"src/js/render/getItemParent.js"
-			],
-			[
-				"getitemsm",
-				"src/js/render/getItemsMap.js"
 			]
 		],
 		"width": 0.0

@@ -15,7 +15,7 @@ function copyProps(target, source, list){
 
 module.exports = React.createClass({
 
-    displayName: 'ReactDataGrid.cell',
+    displayName: 'ReactDataGrid.Cell',
 
     propTypes: {
         className  : React.PropTypes.string,

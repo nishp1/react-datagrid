@@ -104,24 +104,29 @@ module.exports = React.createClass({
     },
 
     getRenderEndIndex: function(){
-        var props      = this.props
+        var props      = this.state.props
         var startIndex = this.state.renderStartIndex
         var rowCount   = props.rowCountBuffer
+        var length     = props.data.length
+
+        if (props.groupData){
+            length += props.groupData.groupsCount
+        }
 
         if (!rowCount){
             var maxHeight
             if (props.style && typeof props.style.height === 'number'){
                 maxHeight = props.style.height
             } else {
-                maxHeight = window.innerHeight
+                maxHeight = window.screen.height
             }
             rowCount = Math.floor(maxHeight / props.rowHeight)
         }
 
         var endIndex = startIndex + rowCount
 
-        if (endIndex > props.data.length - 1){
-            endIndex = props.data.length
+        if (endIndex > length - 1){
+            endIndex = length
         }
 
         return endIndex
@@ -211,12 +216,18 @@ module.exports = React.createClass({
     },
 
     prepareWrapper: function(props, state){
+        var virtualRendering = props.virtualRendering
+
         var data       = props.data
         var scrollTop  = this.state.scrollTop
         var startIndex = this.state.renderStartIndex
-        var endIndex   = props.virtualRendering?
+        var endIndex   = virtualRendering?
                             this.getRenderEndIndex():
                             0
+
+        var renderCount = virtualRendering?
+                            endIndex + 1 - startIndex:
+                            data.length
 
         if (startIndex > data.length - 1){
             startIndex = 0
@@ -231,6 +242,7 @@ module.exports = React.createClass({
             scrollTop       : scrollTop,
             startIndex      : startIndex,
             totalLength     : data.length,
+            renderCount     : renderCount,
             endIndex        : endIndex,
 
             onScrollLeft    : this.handleScrollLeft,
@@ -241,16 +253,13 @@ module.exports = React.createClass({
         }, props)
 
         wrapperProps.columns = props.columns.filter(c => c.visible)
-        wrapperProps.data = props.virtualRendering?
-                                data.slice(startIndex, endIndex + 1):
-                                data
 
         return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
     },
 
     prepareProps: function(thisProps){
-        var props = assign({}, this.props)
+        var props = assign({}, thisProps)
 
         this.prepareClassName(props)
         this.prepareStyle(props)
@@ -262,11 +271,8 @@ module.exports = React.createClass({
     },
 
     prepareData: function(props){
-        var groupData
-
         if (props.groupBy){
-            groupData = group(props.data, props.groupBy)
-            props.groupData = groupData
+            props.groupData = group(props.data, props.groupBy)
         }
     },
 

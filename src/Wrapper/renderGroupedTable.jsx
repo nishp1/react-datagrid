@@ -9,6 +9,8 @@ var CellFactory = React.createFactory(Cell)
 var renderRow   = require('./renderRow')
 var renderTable = require('./renderTable')
 
+var slice = require('./slice')
+
 function renderData(props, data, depth){
 
     return data.map(function(data, index){
@@ -42,7 +44,7 @@ function renderGroupRow(props, groupData){
         maxWidth: props.totalColumnWidth
     }
 
-    return <Row className='z-group-row' key={groupData.namePath} rowHeight={props.rowHeight}>
+    return <Row className='z-group-row' key={groupData.valuePath} rowHeight={props.rowHeight}>
         <Cell
             className='z-group-cell'
             textPadding={props.cellPadding}
@@ -53,29 +55,36 @@ function renderGroupRow(props, groupData){
     </Row>
 }
 
-function renderGroup(props, groupData, counter){
+function renderGroup(props, groupData){
 
-    if (counter){
-        counter.length++
-    }
+    var result = [renderGroupRow(props, groupData)]
 
-    var result
     if (groupData && groupData.leaf){
-        result = renderData(props, groupData.data, groupData.depth)
+        result.push.apply(result, renderData(props, groupData.data, groupData.depth))
     } else {
-        result = groupData.keys.map(key => renderGroup(props, groupData.data[key], counter))
+        groupData.keys.forEach(function(key){
+            var items = renderGroup(props, groupData.data[key])
+            result.push.apply(result, items)
+        })
     }
-
-    result.unshift(renderGroupRow(props, groupData))
 
     return result
 }
 
-function renderGroups(props, groupsData, counter){
-    return groupsData.keys.map(key => renderGroup(props, groupsData.data[key], counter))
+function renderGroups(props, groupsData){
+    var result = []
+
+    groupsData.keys.map(function(key){
+        result.push.apply(result, renderGroup(props, groupsData.data[key]))
+    })
+
+    return result
 }
 
-module.exports = function(props, counter){
+module.exports = function(props){
+    var rows = renderGroups(props, props.groupData)
 
-    return renderTable(props, renderGroups(props, props.groupData, counter))
+    rows = slice(rows, props)
+
+    return renderTable(props, rows)
 }

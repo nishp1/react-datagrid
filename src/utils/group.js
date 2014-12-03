@@ -34,6 +34,8 @@ function groupByFields(data, fields, path, names, fieldIndex){
         delete group.name
     }
 
+    var groupsCount = group.length
+
     if (group.keys && group.keys.length){
 
         group.leaf = false
@@ -63,7 +65,15 @@ function groupByFields(data, fields, path, names, fieldIndex){
 
             group.data[key] = data
 
+            if (!data.leaf){
+                groupsCount += data.groupsCount
+            }
+
         })
+    }
+
+    if (!group.leaf){
+        group.groupsCount = groupsCount
     }
 
     return group

@@ -125,10 +125,10 @@ var App = React.createClass({
                 onColumnOrderChange={this.onColumnOrderChange}
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
-                groupByx={groupBy}
+                groupBy={groupBy}
                 onSortChange={this.handleSortChange}
                 scrollBy={5} virtualRendering={true}
-                idProperty='id' style={{border: '1px solid gray', height: 800}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
+                idProperty='id' style={{border: '1px solid gray', height: 700}} rowHeight={ROW_HEIGHT} showCellBorders={true} data={data} columns={columns}/>
         </div>
 
     }
