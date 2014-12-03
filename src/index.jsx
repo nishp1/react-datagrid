@@ -225,16 +225,14 @@ module.exports = React.createClass({
 
     renderTable: function(props, state){
         var table
+        var rows
 
         if (props.groupData){
-            // console.log(props.groupData,'!')
             var rows = state.groupedRows || getGroupedRows(props)
-            table = renderTable(props, slice(rows, props))
-
-            // table = slice()
-        } else {
-            table = renderTable(props)
+            rows = slice(rows, props)
         }
+
+        table = renderTable(props, rows)
 
         return table
     },
