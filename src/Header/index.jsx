@@ -6,30 +6,13 @@ var ReactMenu = React.createFactory(require('react-menus'))
 var assign  = require('object-assign')
 var clone   = require('clone')
 var asArray = require('../utils/asArray')
+var findIndexBy = require('../utils/findIndexBy')
+var findIndexByName = require('../utils/findIndexByName')
 var Cell    = require('../Cell')
-var setupColumnDrag    = require('./setupColumnDrag')
+var setupColumnDrag   = require('./setupColumnDrag')
+var setupColumnResize = require('./setupColumnResize')
 
 function emptyFn(){}
-
-function findIndexBy(arr, fn){
-
-    var i = 0
-    var len = arr.length
-
-    for (; i < len; i++){
-        if (fn(arr[i]) === true){
-            return i
-        }
-    }
-
-    return -1
-}
-
-function findIndexByName(arr, name){
-    return findIndexBy(arr, function(info){
-        return info.name === name
-    })
-}
 
 function getColumnSortInfo(column, sortInfo){
 
@@ -146,6 +129,7 @@ module.exports = React.createClass({
 
     renderCell: function(props, state, column, index){
 
+        var resizing  = props.resizing
         var text      = column.title
         var className = props.cellClassName || ''
         var style     = {
@@ -169,7 +153,7 @@ module.exports = React.createClass({
                         null
 
         var resizer = column.resizable?
-                        <span className="z-column-resize" />:
+                        <span className="z-column-resize" onMouseDown={this.handleResizeMouseDown.bind(this, column)} />:
                         null
 
         if (column.sortable){
@@ -190,7 +174,7 @@ module.exports = React.createClass({
             className += ' z-filterable'
         }
 
-        if (state.mouseOver === column.name){
+        if (state.mouseOver === column.name && !resizing){
             className += ' z-over'
         }
 
@@ -317,6 +301,12 @@ module.exports = React.createClass({
         this.props.showColumnMenu(null, null)
     },
 
+    handleResizeMouseDown: function(column, event){
+
+        setupColumnResize(this, this.props, column, event)
+
+    },
+
     handleFilterClick: function(column, event){
         event.stopPropagation()
     },
@@ -342,6 +332,18 @@ module.exports = React.createClass({
     handleMouseDown: function(column, event){
         // debugger
         setupColumnDrag(this, this.props, column, event)
+    },
+
+    onResizeDragStart: function(config){
+        this.props.onColumnResizeDragStart(config)
+    },
+
+    onResizeDrag: function(config){
+        this.props.onColumnResizeDrag(config)
+    },
+
+    onResizeDrop: function(config, resizeInfo){
+        this.props.onColumnResizeDrop(config, resizeInfo)
     },
 
     prepareProps: function(thisProps){

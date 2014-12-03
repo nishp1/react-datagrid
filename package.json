@@ -45,6 +45,7 @@
     "copy-utils": "^1.0.0",
     "css-utils": "^0.4.2",
     "drag-helper": "^1.2.0",
+    "hasown": "^1.0.1",
     "normalize.css": "^3.0.2",
     "object-assign": "^2.0.0",
     "react": "^0.12.1",

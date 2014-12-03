@@ -3,6 +3,7 @@
 var React    = require('react')
 var assign   = require('object-assign')
 var LoadMask = require('react-load-mask')
+var Region   = require('region')
 
 var Column = require('./models/Column')
 
@@ -12,20 +13,19 @@ var Header   = require('./Header')
 var WrapperFactory = React.createFactory(Wrapper)
 var HeaderFactory = React.createFactory(Header)
 
+var findIndexByName = require('./utils/findIndexByName')
+var group = require('./utils/group')
+
 function emptyFn(){}
 
 function findColumn(columns, column){
-    var col
 
-    columns.some(function(it){
+    var name = typeof column === 'string'? column: column.name
+    var index = findIndexByName(columns, name)
 
-        if (it.name === column.name){
-            col = it
-            return true
-        }
-    })
-
-    return col
+    if (~index){
+        return columns[index]
+    }
 }
 
 module.exports = React.createClass({
@@ -161,10 +161,16 @@ module.exports = React.createClass({
     render: function(){
         var props = this.prepareProps(this.props)
 
+        var columns    = props.columns.filter(c => c.visible)
+        var allColumns = props.columns
+
+        this.state.props = props
+
         var header = (props.headerFactory || HeaderFactory)({
             scrollLeft       : this.state.scrollLeft,
-            columns          : props.columns.filter(c => c.visible),
-            allColumns       : props.columns,
+            resizing         : this.state.resizing,
+            columns          : columns,
+            allColumns       : allColumns,
             cellPadding      : props.cellPadding,
             scrollbarSize    : props.scrollbarSize,
             sortInfo         : props.sortInfo,
@@ -176,7 +182,10 @@ module.exports = React.createClass({
             onSortChange     : props.onSortChange,
             showColumnMenu   : this.showColumnMenu,
             menuColumn       : this.state.menuColumn,
-            toggleColumn     : this.toggleColumn
+            toggleColumn     : this.toggleColumn,
+            onColumnResizeDragStart: this.onColumnResizeDragStart,
+            onColumnResizeDrag: this.onColumnResizeDrag,
+            onColumnResizeDrop: this.onColumnResizeDrop
         })
 
         var wrapper = this.prepareWrapper(props, this.state)
@@ -184,6 +193,8 @@ module.exports = React.createClass({
         var footer = (props.footerFactory || React.DOM.div)({
             className: 'z-footer-wrapper'
         })
+
+        var resizeProxy = this.prepareResizeProxy(props, this.state)
 
         return (
             <div className={props.className} style={props.style}>
@@ -194,6 +205,7 @@ module.exports = React.createClass({
                 </div>
 
                 <LoadMask visible={props.loading} />
+                {resizeProxy}
             </div>
         )
     },
@@ -244,8 +256,18 @@ module.exports = React.createClass({
         this.prepareStyle(props)
 
         this.prepareColumns(props)
+        this.prepareData(props)
 
         return props
+    },
+
+    prepareData: function(props){
+        var groupData
+
+        if (props.groupBy){
+            groupData = group(props.data, props.groupBy)
+            props.groupData = groupData
+        }
     },
 
     prepareStyle: function(props){
@@ -331,5 +353,56 @@ module.exports = React.createClass({
 
         props.columnFlexCount  = flexCount
         props.totalColumnWidth = totalWidth
+    },
+
+    prepareResizeProxy: function(props, state){
+
+        var style = {}
+
+        if (state.resizing){
+            style.display = 'block'
+            style.left = state.resizeProxyLeft
+        }
+
+        return <div className='z-resize-proxy' style={style}></div>
+    },
+
+    onColumnResizeDragStart: function(config){
+
+        var domNode = this.getDOMNode()
+        var region  = Region.from(domNode)
+        var state = config
+
+        state.resizeProxyOffset = state.resizeProxyLeft - region.left
+        state.resizeProxyLeft = state.resizeProxyOffset
+
+        this.setState(state)
+    },
+
+    onColumnResizeDrag: function(config){
+        var resizeProxyOffset = this.state.resizeProxyOffset
+
+        config.resizeProxyLeft = resizeProxyOffset + config.resizeProxyDiff
+
+        this.setState(config)
+    },
+
+    onColumnResizeDrop: function(config, resizeInfo){
+
+        this.setState(config)
+
+        var columns = this.props.columns
+
+        var onColumnResize = this.props.onColumnResize || emptyFn
+        var first = resizeInfo[0]
+
+        var firstCol  = findColumn(columns, first.name)
+        var firstSize = first.size
+
+        var second = resizeInfo[1]
+        var secondCol = second? findColumn(columns, second.name): undefined
+        var secondSize = second? second.size: undefined
+
+        onColumnResize(firstCol, firstSize, secondCol, secondSize)
     }
 })
