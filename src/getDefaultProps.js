@@ -24,6 +24,8 @@ module.exports = function(){
         cellEllipsis: true,
         rowHeight: 31,
 
+        groupNestingWidth: 20,
+
         defaultStyle: {
             position: 'relative'
         }

@@ -12,14 +12,13 @@ module.exports = React.createClass({
     propTypes: {
         data   : React.PropTypes.object,
         columns: React.PropTypes.array,
-        index  : React.PropTypes.number.isRequired
+        index  : React.PropTypes.number
     },
 
     getDefaultProps: function(){
 
         return {
             defaultClassName: 'z-row',
-            cellClassName   : 'z-cell',
             mouseOverCls    : 'z-over',
             defaultStyle    : {}
         }
@@ -35,9 +34,8 @@ module.exports = React.createClass({
     render: function() {
 
         var props = this.prepareProps(this.props)
-
-        var cells = props.columns
-                        .map(this.renderCell.bind(this, props), this)
+        var cells = props.children || props.columns
+                                        .map(this.renderCell.bind(this, props), this)
 
         return React.DOM.div({
             onMouseOver: this.handleMouseOver,
@@ -70,13 +68,11 @@ module.exports = React.createClass({
 
     renderCell: function(props, column, index){
 
-        var text        = props.data[column.name]
-        var className   = props.cellClassName
+        var text = props.data[column.name]
 
         var cellProps = {
             key        : column.name,
             data       : props.data,
-            className  : className,
             columns    : props.columns,
             index      : index,
             rowIndex   : props.index,

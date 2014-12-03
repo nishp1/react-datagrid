@@ -3,8 +3,8 @@
 var React  = require('react')
 var assign = require('object-assign')
 
-var Row      = require('../Row')
-var RowFactory = React.createFactory(Row)
+var renderTable        = require('./renderTable')
+var renderGroupedTable = require('./renderGroupedTable')
 
 function signum(x){
     return x < 0? -1: 1
@@ -46,25 +46,28 @@ module.exports = React.createClass({
 
     render: function() {
 
-        var props = this.prepareProps(this.props)
-        var rows  = props.data.map(this.renderRow.bind(this, props))
-        var scrollTop = props.virtualRendering? 0: props.scrollTop
+        var props     = this.prepareProps(this.props)
+        var rowsCount = props.data.length
 
-        var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize
-        var verticalScrollerSize = props.totalLength * props.rowHeight
-        var tableStyle = {
-            transform: 'translate3d(' + -props.scrollLeft + 'px, ' + -scrollTop + 'px, 0px)'
+        var counter = { length: 0 }
+        var table
+
+        if (props.groupData){
+            table = renderGroupedTable(props, counter)
+        } else {
+            table = renderTable(props)
         }
 
-        var menu = this.renderMenu(props)
+        rowsCount += counter.length
+        this.groupsCount = counter.length
+
+        var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize
+        var verticalScrollerSize   = (props.totalLength + counter.length) * props.rowHeight
 
         return (
-            <div className="z-wrapper" style={{height: rows.length * props.rowHeight}}>
+            <div className="z-wrapper" style={{height: rowsCount * props.rowHeight}}>
                 <div ref="tableWrapper" className="z-table-wrapper" style={{paddingRight: props.scrollbarSize}} onWheel={this.handleWheel}>
-                    <div ref="table" className="z-table" style={tableStyle}>
-                        {rows}
-                        {menu}
-                    </div>
+                    {table}
                     <div ref="verticalScrollbar"  className="z-vertical-scrollbar" style={{width: props.scrollbarSize}} onScroll={this.handleVerticalScroll}>
                         <div className="z-vertical-scroller" style={{height: verticalScrollerSize}} />
                     </div>
@@ -75,26 +78,6 @@ module.exports = React.createClass({
                 </div>
             </div>
         )
-    },
-
-    renderMenu: function(props){
-        if (!props.menuColumn){
-            return
-        }
-
-        var style = {top: 0}
-        var offset = props.menuOffset
-
-        if (offset.left){
-            style.left = offset.left + props.scrollLeft
-        } else {
-            style.right = offset.right - props.scrollLeft - props.scrollbarSize
-        }
-
-        return props.menu({
-            style    : style,
-            className: 'z-header-menu-column'
-        })
     },
 
     handleWheel: function(event){
@@ -124,7 +107,7 @@ module.exports = React.createClass({
     getTableScrollHeight: function(){
         var props  = this.props
         var result = props.virtualRendering?
-                        props.totalLength * props.rowHeight:
+                        (props.totalLength + this.groupsCount || 0) * props.rowHeight:
                         this.refs.table.getDOMNode().offsetHeight
 
         return result
@@ -188,25 +171,5 @@ module.exports = React.createClass({
         assign(props, thisProps)
 
         return props
-    },
-
-    renderRow: function(props, data, index){
-        var rowIndex = index + props.startIndex
-        var factory  = props.rowFactory || RowFactory
-        var key      = data[props.idProperty]
-
-        return factory({
-            className: rowIndex % 2 === 0? 'z-even': 'z-odd',
-            // key      : index,
-            key      : key,
-            data     : data,
-            index    : rowIndex,
-
-            renderCell : props.renderCell,
-            renderText : props.renderText,
-            cellPadding: props.cellPadding,
-            rowHeight  : props.rowHeight,
-            columns    : props.columns
-        })
     }
 })

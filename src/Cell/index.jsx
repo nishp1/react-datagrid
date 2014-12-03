@@ -27,7 +27,8 @@ module.exports = React.createClass({
 
     getDefaultProps: function(){
         return {
-            text: ''
+            text: '',
+            defaultClassName: 'z-cell'
         }
     },
 
@@ -36,11 +37,12 @@ module.exports = React.createClass({
 
         var columns   = props.columns
         var index     = props.index
-        var column    = columns[index]
+        var column    = columns? columns[index]: null
         var className = props.className || ''
         var text      = props.renderText?
                             props.renderText(props.text, column, props.rowIndex):
                             props.text
+
         var textCellProps = {
             className: 'z-text',
             style    : {padding: props.textPadding}
@@ -52,20 +54,22 @@ module.exports = React.createClass({
         if (!index){
             className += ' z-first'
         }
-        if (index == columns.length - 1){
+        if (columns && index == columns.length - 1){
             className += ' z-last'
         }
 
+        className += ' ' + props.defaultClassName
+
         var cellProps = {
             className: className,
-            style    : assign({}, props.style, column.style)
+            style    : assign({}, props.style, column? column.style: null)
         }
 
         copyProps(cellProps, props, ['onMouseOver', 'onMouseOut', 'onClick', 'onMouseDown'])
 
         return (
             <div {...cellProps}>
-                <div className='z-inner'>
+                <div className='z-inner' style={props.innerStyle}>
                     {textCell}
                 </div>
                 {props.children}

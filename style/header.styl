@@ -161,8 +161,8 @@
                     display none !important
 
     //set left border correctly for each column header. (the first one should not have a left border)
-    .z-column-header:not(.z-first)
+    .z-header .z-column-header.z-cell:not(.z-first)
         border-left $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
 
-    .z-column-header.z-last
+    .z-header .z-column-header.z-cell.z-last
         border-right $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
