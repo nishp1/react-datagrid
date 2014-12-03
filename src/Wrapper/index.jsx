@@ -3,9 +3,6 @@
 var React  = require('react')
 var assign = require('object-assign')
 
-var renderTable        = require('./renderTable')
-var renderGroupedTable = require('./renderGroupedTable')
-
 function signum(x){
     return x < 0? -1: 1
 }
@@ -50,18 +47,16 @@ module.exports = React.createClass({
         var rowsCount = props.renderCount
 
         var groupsCount = 0
-        var table
+        var table = props.table
 
         if (props.groupData){
-            groupsCount += props.groupData.groupsCount
-            table = renderGroupedTable(props)
-        } else {
-            table = renderTable(props)
+            groupsCount = props.groupData.groupsCount
         }
 
         if (props.virtualRendering){
             rowsCount += groupsCount
         }
+
         this.groupsCount = groupsCount
 
         // console.log(props.renderCount)

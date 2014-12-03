@@ -16,6 +16,11 @@ var HeaderFactory = React.createFactory(Header)
 var findIndexByName = require('./utils/findIndexByName')
 var group = require('./utils/group')
 
+var slice        = require('./render/slice')
+var renderTable        = require('./render/renderTable')
+var getGroupedRows = require('./render/getGroupedRows')
+
+
 function emptyFn(){}
 
 function findColumn(columns, column){
@@ -103,9 +108,8 @@ module.exports = React.createClass({
         this.setState(state)
     },
 
-    getRenderEndIndex: function(){
-        var props      = this.state.props
-        var startIndex = this.state.renderStartIndex
+    getRenderEndIndex: function(props, state){
+        var startIndex = state.renderStartIndex
         var rowCount   = props.rowCountBuffer
         var length     = props.data.length
 
@@ -163,17 +167,14 @@ module.exports = React.createClass({
         })
     },
 
-    render: function(){
-        var props = this.prepareProps(this.props)
+    prepareHeader: function(props, state){
 
         var columns    = props.columns.filter(c => c.visible)
         var allColumns = props.columns
 
-        this.state.props = props
-
-        var header = (props.headerFactory || HeaderFactory)({
-            scrollLeft       : this.state.scrollLeft,
-            resizing         : this.state.resizing,
+        return (props.headerFactory || HeaderFactory)({
+            scrollLeft       : state.scrollLeft,
+            resizing         : state.resizing,
             columns          : columns,
             allColumns       : allColumns,
             cellPadding      : props.cellPadding,
@@ -186,19 +187,26 @@ module.exports = React.createClass({
             onDropColumn     : this.onDropColumn,
             onSortChange     : props.onSortChange,
             showColumnMenu   : this.showColumnMenu,
-            menuColumn       : this.state.menuColumn,
+            menuColumn       : state.menuColumn,
             toggleColumn     : this.toggleColumn,
             onColumnResizeDragStart: this.onColumnResizeDragStart,
             onColumnResizeDrag: this.onColumnResizeDrag,
             onColumnResizeDrop: this.onColumnResizeDrop
         })
+    },
 
-        var wrapper = this.prepareWrapper(props, this.state)
-
-        var footer = (props.footerFactory || React.DOM.div)({
+    prepareFooter: function(props, state){
+        return (props.footerFactory || React.DOM.div)({
             className: 'z-footer-wrapper'
         })
+    },
 
+    render: function(){
+        var props = this.props
+
+        var header      = this.prepareHeader(props, this.state)
+        var wrapper     = this.prepareWrapper(props, this.state)
+        var footer      = this.prepareFooter(props, this.state)
         var resizeProxy = this.prepareResizeProxy(props, this.state)
 
         return (
@@ -215,30 +223,42 @@ module.exports = React.createClass({
         )
     },
 
+    renderTable: function(props, state){
+        var table
+
+        if (props.groupData){
+            // console.log(props.groupData,'!')
+            var rows = state.groupedRows || getGroupedRows(props)
+            table = renderTable(props, slice(rows, props))
+
+            // table = slice()
+        } else {
+            table = renderTable(props)
+        }
+
+        return table
+    },
+
     prepareWrapper: function(props, state){
         var virtualRendering = props.virtualRendering
 
         var data       = props.data
-        var scrollTop  = this.state.scrollTop
-        var startIndex = this.state.renderStartIndex
+        var scrollTop  = state.scrollTop
+        var startIndex = state.renderStartIndex
         var endIndex   = virtualRendering?
-                            this.getRenderEndIndex():
+                            this.getRenderEndIndex(props, state):
                             0
 
         var renderCount = virtualRendering?
                             endIndex + 1 - startIndex:
                             data.length
 
-        if (startIndex > data.length - 1){
-            startIndex = 0
-        }
-
         if (props.virtualRendering){
             scrollTop = startIndex * props.rowHeight
         }
 
         var wrapperProps = assign({
-            scrollLeft      : this.state.scrollLeft,
+            scrollLeft      : state.scrollLeft,
             scrollTop       : scrollTop,
             startIndex      : startIndex,
             totalLength     : data.length,
@@ -253,6 +273,7 @@ module.exports = React.createClass({
         }, props)
 
         wrapperProps.columns = props.columns.filter(c => c.visible)
+        wrapperProps.table = this.renderTable(wrapperProps, state)
 
         return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
@@ -265,15 +286,28 @@ module.exports = React.createClass({
         this.prepareStyle(props)
 
         this.prepareColumns(props)
-        this.prepareData(props)
 
         return props
     },
 
-    prepareData: function(props){
+    groupData: function(props){
         if (props.groupBy){
             props.groupData = group(props.data, props.groupBy)
+
+            this.setState({
+                groupedRows: getGroupedRows(props)
+            })
         }
+    },
+
+    componentWillMount: function(){
+        assign(this.props, this.prepareProps(this.props))
+        this.groupData(this.props)
+    },
+
+    componentWillReceiveProps: function(nextProps){
+        assign(nextProps, this.prepareProps(nextProps))
+        this.groupData(nextProps)
     },
 
     prepareStyle: function(props){

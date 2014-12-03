@@ -6,10 +6,7 @@ var Row         = require('../Row')
 var Cell        = require('../Cell')
 var CellFactory = React.createFactory(Cell)
 
-var renderRow   = require('./renderRow')
-var renderTable = require('./renderTable')
-
-var slice = require('./slice')
+var renderRow = require('./renderRow')
 
 function renderData(props, data, depth){
 
@@ -44,7 +41,7 @@ function renderGroupRow(props, groupData){
         maxWidth: props.totalColumnWidth
     }
 
-    return <Row className='z-group-row' key={groupData.valuePath} rowHeight={props.rowHeight}>
+    return <Row className='z-group-row' key={'group-'+groupData.valuePath} rowHeight={props.rowHeight}>
         <Cell
             className='z-group-cell'
             textPadding={props.cellPadding}
@@ -82,9 +79,5 @@ function renderGroups(props, groupsData){
 }
 
 module.exports = function(props){
-    var rows = renderGroups(props, props.groupData)
-
-    rows = slice(rows, props)
-
-    return renderTable(props, rows)
+    return renderGroups(props, props.groupData)
 }
