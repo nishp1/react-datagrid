@@ -20,7 +20,6 @@ var slice          = require('./render/slice')
 var renderTable    = require('./render/renderTable')
 var getGroupedRows = require('./render/getGroupedRows')
 
-
 function emptyFn(){}
 
 function getVisibleCount(columns){
@@ -40,6 +39,10 @@ function findColumn(columns, column){
 module.exports = React.createClass({
 
     displayName: 'ReactDataGrid',
+
+    mixins: [
+        require('./RowSelect')
+    ],
 
     propTypes: {
         loading          : React.PropTypes.bool,
@@ -78,8 +81,8 @@ module.exports = React.createClass({
         window.removeEventListener('click', this.windowClickListener)
     },
 
-    onWindowClick: function(){
-        if (this.state.menuColumn){
+    onWindowClick: function(event){
+        if (this.state.menu){
             this.setState({
                 menuColumn: null,
                 menu      : null
@@ -88,11 +91,16 @@ module.exports = React.createClass({
     },
 
     getInitialState: function(){
+
+        var props = this.props
+        var defaultSelected = props.defaultSelected
+
         return {
             scrollLeft: 0,
             scrollTop : 0,
             renderStartIndex: 0,
-            menuColumn: null
+            menuColumn: null,
+            defaultSelected: defaultSelected
         }
     },
 
@@ -177,13 +185,26 @@ module.exports = React.createClass({
         }
     },
 
-    showColumnMenu: function(menu, column, menuOffset, event){
+    showMenu: function(menu, state){
 
-        this.setState({
-            menu: menu,
-            menuColumn: column,
-            menuOffset: menuOffset
-        })
+        state = state || {}
+        state.menu = menu
+
+        if (this.state.menu){
+            this.setState({
+                menu: null
+            })
+        }
+
+        setTimeout(function(){
+            //since menu is hidden on click on window,
+            //show it in a timeout, after the click event has reached the window
+            this.setState(state)
+        }.bind(this), 0)
+    },
+
+    showRowMenu: function(menu, rowProps){
+
     },
 
     prepareHeader: function(props, state){
@@ -211,7 +232,7 @@ module.exports = React.createClass({
             onColumnResizeDrop: this.onColumnResizeDrop,
 
             toggleColumn     : this.toggleColumn.bind(this, props),
-            showColumnMenu   : this.showColumnMenu,
+            showMenu         : this.showMenu,
             menuColumn       : state.menuColumn,
             columnMenuFactory: props.columnMenuFactory
 
@@ -224,6 +245,24 @@ module.exports = React.createClass({
         })
     },
 
+    prepareRenderProps: function(props){
+
+        var result = {}
+        var list = {
+            className: true,
+            style: true
+        }
+
+        Object.keys(props).forEach(function(name){
+            // if (list[name] || name.indexOf('data-') == 0 || name.indexOf('on') === 0){
+            if (list[name]){
+                result[name] = props[name]
+            }
+        })
+
+        return result
+    },
+
     render: function(){
         var props = this.prepareProps(this.props)
 
@@ -232,8 +271,10 @@ module.exports = React.createClass({
         var footer      = this.prepareFooter(props, this.state)
         var resizeProxy = this.prepareResizeProxy(props, this.state)
 
+        var renderProps = this.prepareRenderProps(props)
+
         return (
-            <div className={props.className} style={props.style}>
+            <div {...renderProps}>
                 <div className="z-inner">
                     {header}
                     {wrapper}
@@ -293,11 +334,17 @@ module.exports = React.createClass({
 
             menu            : state.menu,
             menuColumn      : state.menuColumn,
-            menuOffset      : state.menuOffset,
+            showMenu        : this.showMenu,
 
             cellFactory     : props.cellFactory,
             rowStyle        : props.rowStyle,
-            rowClassName    : props.rowClassName
+            rowClassName    : props.rowClassName,
+            rowContextMenu  : props.rowContextMenu,
+
+            onRowClick: this.handleRowClick,
+            selected        : props.selected == null?
+                                    state.defaultSelected:
+                                    props.selected
         }, props)
 
         wrapperProps.columns = props.columns.filter(c => c.visible)
@@ -305,6 +352,14 @@ module.exports = React.createClass({
 
         return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
+    },
+
+    handleRowClick: function(rowProps, event){
+        if (this.props.onRowClick){
+            this.props.onRowClick(rowProps.data, rowProps, event)
+        }
+
+        this.handleSelection(rowProps, event)
     },
 
     prepareProps: function(thisProps){
@@ -348,7 +403,7 @@ module.exports = React.createClass({
 
     prepareClassName: function(props){
         props.className = props.className || ''
-        props.className += props.defaultClassName
+        props.className += ' ' + props.defaultClassName
 
         if (props.cellEllipsis){
             props.className += ' ' + props.cellEllipsisCls

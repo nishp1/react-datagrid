@@ -250,28 +250,12 @@ module.exports = React.createClass({
     },
 
     handleShowMenuClick: function(props, column, index, event){
-        event.stopPropagation()
+        // event.stopPropagation()
 
-        var dom = this.getDOMNode()
-        var domRegion    = Region.from(dom)
-        var targetRegion = Region.from(event.target)
-        var offset = event.pageX - targetRegion.left
-
-        var menuOffset = {
-            left: event.pageX - domRegion.left - offset
-        }
-
-        if (index === props.columns.length - 1){
-            offset = targetRegion.right - event.pageX
-            menuOffset = {
-                right: domRegion.right - event.pageX - offset
-            }
-        }
-
-        this.showMenu(column, menuOffset, event)
+        this.showMenu(column, event)
     },
 
-    showMenu: function(column, offset, event){
+    showMenu: function(column, event){
 
         var menuItem = function(column){
             return {
@@ -308,7 +292,9 @@ module.exports = React.createClass({
                     result
         }
 
-        this.props.showColumnMenu(menu.bind(this, event.target), column.name, offset, event)
+        this.props.showMenu(menu.bind(this, event.target), {
+            menuColumn: column.name
+        })
     },
 
     toggleColumn: function(column){
