@@ -2,6 +2,7 @@
 
 var getSelected = require('./getSelected')
 
+
 module.exports = {
 
     handleSelection: function(rowProps, event){
