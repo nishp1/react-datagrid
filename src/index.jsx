@@ -7,21 +7,25 @@ var Region   = require('region')
 
 var Column = require('./models/Column')
 
-var PropTypes = require('./PropTypes')
-var Wrapper   = require('./Wrapper')
-var Header   = require('./Header')
+var PropTypes      = require('./PropTypes')
+var Wrapper        = require('./Wrapper')
+var Header         = require('./Header')
 var WrapperFactory = React.createFactory(Wrapper)
-var HeaderFactory = React.createFactory(Header)
+var HeaderFactory  = React.createFactory(Header)
 
 var findIndexByName = require('./utils/findIndexByName')
-var group = require('./utils/group')
+var group           = require('./utils/group')
 
-var slice        = require('./render/slice')
-var renderTable        = require('./render/renderTable')
+var slice          = require('./render/slice')
+var renderTable    = require('./render/renderTable')
 var getGroupedRows = require('./render/getGroupedRows')
 
 
 function emptyFn(){}
+
+function getVisibleCount(columns){
+    return columns.filter(c => c.visible).length
+}
 
 function findColumn(columns, column){
 
@@ -41,13 +45,18 @@ module.exports = React.createClass({
         loading          : React.PropTypes.bool,
         virtualRendering : React.PropTypes.bool,
 
-        //specify false if you don't any column to be resizable
+        //specify false if you don't want any column to be resizable
         resizableColumns : React.PropTypes.bool,
         filterableColumns: React.PropTypes.bool,
+
+        //specify false if you don't want column menus to be displayed
         withColumnMenu   : React.PropTypes.bool,
         cellEllipsis     : React.PropTypes.bool,
         sortable         : React.PropTypes.bool,
         idProperty       : React.PropTypes.string.isRequired,
+
+        //you can customize the column menu by specifying a factory
+        columnMenuFactory: React.PropTypes.func,
 
         /**
          * @cfg {Number/String} columnMinWidth=50
@@ -113,8 +122,8 @@ module.exports = React.createClass({
         var rowCount   = props.rowCountBuffer
         var length     = props.data.length
 
-        if (props.groupData){
-            length += props.groupData.groupsCount
+        if (state.groupData){
+            length += state.groupData.groupsCount
         }
 
         if (!rowCount){
@@ -137,29 +146,39 @@ module.exports = React.createClass({
     },
 
     onDropColumn: function(index, dropIndex){
-        this.props.onColumnOrderChange(index, dropIndex)
+        ;(this.props.onColumnOrderChange || emptyFn)(index, dropIndex)
     },
 
-    toggleColumn: function(column){
+    toggleColumn: function(props, column){
+
+        var visible = column.visible
 
         column = findColumn(this.props.columns, column)
 
-        var visible = !column.hidden
+        if (visible && getVisibleCount(props.columns) === 1){
+            return
+        }
 
         var onHide  = this.props.onColumnHide || emptyFn
         var onShow  = this.props.onColumnShow || emptyFn
 
-        if (visible){
-            onHide(column)
-        } else {
+        visible?
+            onHide(column):
             onShow(column)
-        }
 
         var onChange = this.props.onColumnVisibilityChange || emptyFn
+
         onChange(column, !visible)
+
+        if (column.defaultVisible != null){
+            //stateful behaviour
+            column.defaultVisible = !visible
+            this.setState({})
+        }
     },
 
     showColumnMenu: function(menu, column, menuOffset, event){
+
         this.setState({
             menu: menu,
             menuColumn: column,
@@ -169,8 +188,8 @@ module.exports = React.createClass({
 
     prepareHeader: function(props, state){
 
-        var columns    = props.columns.filter(c => c.visible)
         var allColumns = props.columns
+        var columns    = props.columns.filter(c => c.visible)
 
         return (props.headerFactory || HeaderFactory)({
             scrollLeft       : state.scrollLeft,
@@ -184,14 +203,18 @@ module.exports = React.createClass({
             filterableColumns: props.filterableColumns,
             withColumnMenu   : props.withColumnMenu,
             sortable         : props.sortable,
+
             onDropColumn     : this.onDropColumn,
             onSortChange     : props.onSortChange,
-            showColumnMenu   : this.showColumnMenu,
-            menuColumn       : state.menuColumn,
-            toggleColumn     : this.toggleColumn,
             onColumnResizeDragStart: this.onColumnResizeDragStart,
             onColumnResizeDrag: this.onColumnResizeDrag,
-            onColumnResizeDrop: this.onColumnResizeDrop
+            onColumnResizeDrop: this.onColumnResizeDrop,
+
+            toggleColumn     : this.toggleColumn.bind(this, props),
+            showColumnMenu   : this.showColumnMenu,
+            menuColumn       : state.menuColumn,
+            columnMenuFactory: props.columnMenuFactory
+
         })
     },
 
@@ -202,7 +225,7 @@ module.exports = React.createClass({
     },
 
     render: function(){
-        var props = this.props
+        var props = this.prepareProps(this.props)
 
         var header      = this.prepareHeader(props, this.state)
         var wrapper     = this.prepareWrapper(props, this.state)
@@ -227,8 +250,8 @@ module.exports = React.createClass({
         var table
         var rows
 
-        if (props.groupData){
-            var rows = state.groupedRows || getGroupedRows(props)
+        if (props.groupBy){
+            rows = this.groupedRows = this.groupedRows || getGroupedRows(props, state.groupData)
             rows = slice(rows, props)
         }
 
@@ -263,15 +286,22 @@ module.exports = React.createClass({
             renderCount     : renderCount,
             endIndex        : endIndex,
 
+            allColumns      : props.columns,
+
             onScrollLeft    : this.handleScrollLeft,
             onScrollTop     : this.handleScrollTop,
+
             menu            : state.menu,
             menuColumn      : state.menuColumn,
-            menuOffset      : state.menuOffset
+            menuOffset      : state.menuOffset,
+
+            cellFactory     : props.cellFactory,
+            rowStyle        : props.rowStyle,
+            rowClassName    : props.rowClassName
         }, props)
 
         wrapperProps.columns = props.columns.filter(c => c.visible)
-        wrapperProps.table = this.renderTable(wrapperProps, state)
+        wrapperProps.table   = this.renderTable(wrapperProps, state)
 
         return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
@@ -281,40 +311,39 @@ module.exports = React.createClass({
         var props = assign({}, thisProps)
 
         this.prepareClassName(props)
-        this.prepareStyle(props)
+        props.style = this.prepareStyle(props)
 
         this.prepareColumns(props)
+        // this.groupData(props)
 
         return props
     },
 
     groupData: function(props){
         if (props.groupBy){
-            props.groupData = group(props.data, props.groupBy)
 
             this.setState({
-                groupedRows: getGroupedRows(props)
+                groupData: group(props.data, props.groupBy)
             })
         }
+
+        delete this.groupedRows
     },
 
     componentWillMount: function(){
-        assign(this.props, this.prepareProps(this.props))
         this.groupData(this.props)
     },
 
     componentWillReceiveProps: function(nextProps){
-        assign(nextProps, this.prepareProps(nextProps))
         this.groupData(nextProps)
     },
 
     prepareStyle: function(props){
         var style = {}
 
-        assign(style, props.defaultStyle)
-        assign(style, props.style)
+        assign(style, props.defaultStyle, props.style)
 
-        props.style = style
+        return style
     },
 
     prepareClassName: function(props){
@@ -427,11 +456,10 @@ module.exports = React.createClass({
 
     onColumnResizeDrop: function(config, resizeInfo){
 
-        this.setState(config)
+        var props   = this.props
+        var columns = props.columns
 
-        var columns = this.props.columns
-
-        var onColumnResize = this.props.onColumnResize || emptyFn
+        var onColumnResize = props.onColumnResize || emptyFn
         var first = resizeInfo[0]
 
         var firstCol  = findColumn(columns, first.name)
@@ -440,6 +468,17 @@ module.exports = React.createClass({
         var second = resizeInfo[1]
         var secondCol = second? findColumn(columns, second.name): undefined
         var secondSize = second? second.size: undefined
+
+        //if defaultWidth specified, update it
+        if (firstCol.width == null && firstCol.defaultWidth){
+            firstCol.defaultWidth = firstSize
+        }
+
+        if (secondCol && secondCol.width == null && secondCol.defaultWidth){
+            secondCol.defaultWidth = secondSize
+        }
+
+        this.setState(config)
 
         onColumnResize(firstCol, firstSize, secondCol, secondSize)
     }
