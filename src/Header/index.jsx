@@ -152,7 +152,7 @@ module.exports = React.createClass({
         }
 
         var filter  = column.filterable?
-                        <div className="z-show-filter" onClick={this.handleFilterClick.bind(this, column)}/>:
+                        <div className="z-show-filter" onMouseUp={this.handleFilterMouseUp.bind(this, column)}/>:
                         null
 
         var resizer = column.resizable?
@@ -246,11 +246,11 @@ module.exports = React.createClass({
             return
         }
 
-        return <div className="z-show-menu" onClick={this.handleShowMenuClick.bind(this, props, column, index)} />
+        return <div className="z-show-menu" onMouseUp={this.handleShowMenuMouseUp.bind(this, props, column, index)} />
     },
 
-    handleShowMenuClick: function(props, column, index, event){
-        // event.stopPropagation()
+    handleShowMenuMouseUp: function(props, column, index, event){
+        event.nativeEvent.stopSort = true
 
         this.showMenu(column, event)
     },
@@ -297,6 +297,38 @@ module.exports = React.createClass({
         })
     },
 
+    showFilterMenu: function(column, event){
+
+        function menu(eventTarget, props){
+
+            var defaultFactory = this.props.filterMenuFactory
+            var factory = column.filterMenuFactory || defaultFactory
+
+            props.columns = ['component']
+            props.column = column
+            props.alignTo = eventTarget
+            props.alignPositions = [
+                'tl-bl',
+                'tr-br',
+                'bl-tl',
+                'br-tr'
+            ]
+            props.style = {
+                position: 'absolute'
+            }
+
+            var result = factory(props)
+
+            return result === undefined?
+                        defaultFactory(props):
+                        result
+        }
+
+        this.props.showMenu(menu.bind(this, event.target), {
+            menuColumn: column.name
+        })
+    },
+
     toggleColumn: function(column){
         this.props.toggleColumn(column)
     },
@@ -317,12 +349,19 @@ module.exports = React.createClass({
         }
     },
 
-    handleFilterClick: function(column, event){
-        event.stopPropagation()
+    handleFilterMouseUp: function(column, event){
+        event.nativeEvent.stopSort = true
+
+        this.showFilterMenu(column, event)
+        // event.stopPropagation()
     },
 
     handleMouseUp: function(column, event){
         if (this.state.dragging){
+            return
+        }
+
+        if (event && event.nativeEvent && event.nativeEvent.stopSort){
             return
         }
 

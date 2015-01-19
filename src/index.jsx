@@ -41,7 +41,8 @@ module.exports = React.createClass({
     displayName: 'ReactDataGrid',
 
     mixins: [
-        require('./RowSelect')
+        require('./RowSelect'),
+        require('./ColumnFilter')
     ],
 
     propTypes: {
@@ -192,7 +193,8 @@ module.exports = React.createClass({
 
         if (this.state.menu){
             this.setState({
-                menu: null
+                menu: null,
+                menuColumn: null
             })
         }
 
@@ -201,10 +203,6 @@ module.exports = React.createClass({
             //show it in a timeout, after the click event has reached the window
             this.setState(state)
         }.bind(this), 0)
-    },
-
-    showRowMenu: function(menu, rowProps){
-
     },
 
     prepareHeader: function(props, state){
@@ -233,6 +231,7 @@ module.exports = React.createClass({
 
             toggleColumn     : this.toggleColumn.bind(this, props),
             showMenu         : this.showMenu,
+            filterMenuFactory : this.filterMenuFactory,
             menuColumn       : state.menuColumn,
             columnMenuFactory: props.columnMenuFactory
 
