@@ -7,6 +7,7 @@ var Cell        = require('../Cell')
 var CellFactory = React.createFactory(Cell)
 var ReactMenu = require('react-menus')
 var ReactMenuFactory = React.createFactory(ReactMenu)
+var prefixer  = require('react-prefixr')
 
 module.exports = React.createClass({
 
@@ -24,7 +25,9 @@ module.exports = React.createClass({
             defaultClassName  : 'z-row',
             mouseOverClassName: 'z-over',
             selectedClassName : 'z-selected',
-            defaultStyle      : {}
+            defaultStyle      : prefixer({
+                userSelect: 'none'
+            })
         }
     },
 

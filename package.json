@@ -55,6 +55,7 @@
     "react": "^0.12.1",
     "react-load-mask": "^0.1.0",
     "react-menus": "^0.1.0",
+    "react-prefixr": "^0.1.0",
     "region": "^2.1.0",
     "region-align": "^2.1.0",
     "ustring": "^1.4.1"

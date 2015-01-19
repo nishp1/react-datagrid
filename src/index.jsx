@@ -296,7 +296,7 @@ module.exports = React.createClass({
             rows = slice(rows, props)
         }
 
-        table = renderTable(props, rows)
+        table = renderTable.call(this, props, rows)
 
         return table
     },

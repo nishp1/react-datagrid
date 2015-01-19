@@ -87,5 +87,9 @@ module.exports = function renderRow(props, data, index, fn){
         row = RowFactory(config)
     }
 
+    if (config.selected && this){
+        this.selIndex = index
+    }
+
     return row
 }

@@ -4,6 +4,98 @@
 		"selected_items":
 		[
 			[
+				"ctrl",
+				"ctrlKey"
+			],
+			[
+				"default",
+				"defaultSelected"
+			],
+			[
+				"getSe",
+				"getSelectedMap"
+			],
+			[
+				"toggle",
+				"toggleRowSelect"
+			],
+			[
+				"selected",
+				"selectedMap"
+			],
+			[
+				"row",
+				"rowProps"
+			],
+			[
+				"defa",
+				"defaultSelected"
+			],
+			[
+				"defaul",
+				"defaultSelected"
+			],
+			[
+				"R",
+				"ReactMenuFactory"
+			],
+			[
+				"reaM",
+				"ReactMenu"
+			],
+			[
+				"create",
+				"createFactory"
+			],
+			[
+				"con",
+				"onContextMenu"
+			],
+			[
+				"res",
+				"result"
+			],
+			[
+				"column",
+				"columnMenuFactory"
+			],
+			[
+				"vi",
+				"visible"
+			],
+			[
+				"visi",
+				"visibleInfo"
+			],
+			[
+				"defau",
+				"defaultHidden"
+			],
+			[
+				"vis",
+				"visibleInfo"
+			],
+			[
+				"defaut",
+				"defaultVisible"
+			],
+			[
+				"cellP",
+				"cellPadding"
+			],
+			[
+				"sec",
+				"secondCol"
+			],
+			[
+				"first",
+				"firstSize"
+			],
+			[
+				"fir",
+				"firstCol"
+			],
+			[
 				"text",
 				"textPadding"
 			],
@@ -46,10 +138,6 @@
 			[
 				"vir",
 				"virtualRendering"
-			],
-			[
-				"row",
-				"rowsCount"
 			],
 			[
 				"cell",
@@ -96,10 +184,6 @@
 				"secondCol"
 			],
 			[
-				"first",
-				"firstSize"
-			],
-			[
 				"resize",
 				"resizeInfo"
 			],
@@ -138,10 +222,6 @@
 			[
 				"itR",
 				"itRegion"
-			],
-			[
-				"column",
-				"columnData"
 			],
 			[
 				"header",
@@ -222,10 +302,6 @@
 			[
 				"scroll",
 				"scrollTop"
-			],
-			[
-				"cellP",
-				"cellProps"
 			],
 			[
 				"Cell",
@@ -438,82 +514,6 @@
 			[
 				"ver",
 				"verticalCenter"
-			],
-			[
-				"xCenter",
-				"xCenterResults"
-			],
-			[
-				"xC",
-				"xCenterAbsDiff"
-			],
-			[
-				"yCen",
-				"yCenterAbsDiff"
-			],
-			[
-				"itemM",
-				"itemMiddleX"
-			],
-			[
-				"xM",
-				"xMiddle"
-			],
-			[
-				"yM",
-				"yMiddles"
-			],
-			[
-				"dragItem",
-				"dragItem"
-			],
-			[
-				"dropTa",
-				"dropTargetArgs"
-			],
-			[
-				"cons",
-				"constrainRegion"
-			],
-			[
-				"dra",
-				"draggedItems"
-			],
-			[
-				"onItem",
-				"onItemMouseDown"
-			],
-			[
-				"DRA",
-				"DRAG_ITEM"
-			],
-			[
-				"absD",
-				"absDiff22"
-			],
-			[
-				"sec",
-				"second"
-			],
-			[
-				"firs",
-				"firstAbsDiff"
-			],
-			[
-				"fir",
-				"firstDiff"
-			],
-			[
-				"bui",
-				"buildResults"
-			],
-			[
-				"secon",
-				"secondSnapValue"
-			],
-			[
-				"verti",
-				"verticalStyle"
 			]
 		]
 	},
@@ -523,49 +523,49 @@
 			"file": "src/index.jsx",
 			"settings":
 			{
-				"buffer_size": 13054,
+				"buffer_size": 15157,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/getDefaultProps.js",
+			"contents": "Searching 7 files for \".z-selected\"\n\n/home/radu/code/react-datagrid/style/contents.styl:\n   15          &.z-over .z-cell\n   16              background $datagrid-row-over-background\n   17:         &.z-selected .z-cell\n   18              background $datagrid-row-selected-background\n   19          .z-cell\n\n/home/radu/code/react-datagrid/style/header.styl:\n   14          //         content '\\2714'\n   15  \n   16:         // .menu-row.z-selected\n   17          //     &:before\n   18          //         visibility visible\n\n2 matches across 2 files\n",
 			"settings":
 			{
-				"buffer_size": 804,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 21 files for \"nestingWidth\"\n\n/home/radu/code/react-datagrid/src/getDefaultProps.js:\n   25          rowHeight: 31,\n   26  \n   27:         groupNestingWidth: 20,\n   28  \n   29          defaultStyle: {\n\n/home/radu/code/react-datagrid/src/render/getGroupedRows.jsx:\n   17                  if (cellProps.index === 0){\n   18                      cellProps.innerStyle = {\n   19:                         paddingLeft: depth * props.groupNestingWidth\n   20                      }\n   21                  }\n   ..\n   34  \n   35      var style = {\n   36:         paddingLeft: (groupData.depth - 1)* props.groupNestingWidth\n   37      }\n   38  \n\n3 matches across 2 files\n\n\nSearching 21 files for \"column.render\"\n\n/home/radu/code/react-datagrid/src/Row/index.jsx:\n   90          }\n   91  \n   92:         if (typeof column.render == 'function'){\n   93:             text = column.render(text, props.data, cellProps)\n   94          }\n   95  \n\n2 matches in 1 file\n\n\nSearching 21 files for \"scrollby\"\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n  134          }\n  135  \n  136:         if (virtual && props.scrollBy){\n  137:             deltaY = signum(deltaY) * props.scrollBy * props.rowHeight\n  138          }\n  139  \n\n/home/radu/code/react-datagrid/src/getDefaultProps.js:\n    7          cellPadding: 5,\n    8          scrollbarSize: 16,\n    9:         scrollBy: undefined,\n   10          virtualRendering: true,\n   11  \n\n/home/radu/code/react-datagrid/src/index.jsx:\n   58           */\n   59          columnMinWidth   : PropTypes.numeric,\n   60:         scrollBy         : PropTypes.numeric,\n   61          rowHeight        : PropTypes.numeric,\n   62          sortInfo         : PropTypes.sortInfo,\n\n4 matches across 3 files\n\n\nSearching 21 files for \"scrollby\"\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n  134          }\n  135  \n  136:         if (virtual && props.scrollBy){\n  137:             deltaY = signum(deltaY) * props.scrollBy * props.rowHeight\n  138          }\n  139  \n\n/home/radu/code/react-datagrid/src/getDefaultProps.js:\n    8          scrollbarSize: 16,\n    9  \n   10:         //scrollBy: undefined\n   11          virtualRendering: true,\n   12  \n\n/home/radu/code/react-datagrid/src/index.jsx:\n   58           */\n   59          columnMinWidth   : PropTypes.numeric,\n   60:         scrollBy         : PropTypes.numeric,\n   61          rowHeight        : PropTypes.numeric,\n   62          sortInfo         : PropTypes.sortInfo,\n\n4 matches across 3 files\n\n\nSearching 21 files for \"rowHeight\"\n\n/home/radu/code/react-datagrid/src/PropTypes.js:\n   12      numeric: val(function(value){\n   13          if (value * 1 != value){\n   14:             return new Error('Invalid rowHeight value')\n   15          }\n   16      }),\n\n/home/radu/code/react-datagrid/src/Row/index.jsx:\n  123          var style = assign({}, props.defaultStyle, props.style)\n  124  \n  125:         style.height = props.rowHeight\n  126  \n  127          return style\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   18          totalColumnWidth: React.PropTypes.number,\n   19          cellPadding     : React.PropTypes.number,\n   20:         rowHeight       : React.PropTypes.any,\n   21  \n   22          data            : React.PropTypes.array,\n   ..\n   63  \n   64          var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize\n   65:         var verticalScrollerSize   = (props.totalLength + groupsCount) * props.rowHeight\n   66  \n   67          return (\n   68:             <div className=\"z-wrapper\" style={{height: rowsCount * props.rowHeight}}>\n   69                  <div ref=\"tableWrapper\" className=\"z-table-wrapper\" style={{paddingRight: props.scrollbarSize}} onWheel={this.handleWheel}>\n   70                      {table}\n   ..\n  108          var props  = this.props\n  109          var result = props.virtualRendering?\n  110:                         (props.totalLength + this.groupsCount || 0) * props.rowHeight:\n  111                          this.refs.table.getDOMNode().offsetHeight\n  112  \n  ...\n  124  \n  125          var scrollTop = virtual?\n  126:                             props.startIndex * props.rowHeight:\n  127                              props.scrollTop\n  128  \n  129:         if (virtual && deltaY < 0 && -deltaY < props.rowHeight){\n  130              //when scrolling to go up, account for the case where abs(deltaY)\n  131:             //is less than the rowHeight, as this results in no scrolling\n  132              //so make sure it's at least deltaY\n  133:             deltaY = -props.rowHeight\n  134          }\n  135  \n  136          if (virtual && props.scrollBy){\n  137:             deltaY = signum(deltaY) * props.scrollBy * props.rowHeight\n  138          }\n  139  \n\n/home/radu/code/react-datagrid/src/getDefaultProps.js:\n   25          styleAlternateRows: true,\n   26          cellEllipsis: true,\n   27:         rowHeight: 31,\n   28  \n   29          groupNestingWidth: 20,\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   59          columnMinWidth   : PropTypes.numeric,\n   60          scrollBy         : PropTypes.numeric,\n   61:         // rowHeight        : PropTypes.numeric,\n   62          sortInfo         : PropTypes.sortInfo,\n   63          columns          : PropTypes.column\n   ..\n  105  \n  106          if (this.props.virtualRendering){\n  107:             state.renderStartIndex = Math.ceil(scrollTop / this.props.rowHeight)\n  108          } else {\n  109              state.scrollTop = scrollTop\n  ...\n  129                  maxHeight = window.screen.height\n  130              }\n  131:             rowCount = Math.floor(maxHeight / props.rowHeight)\n  132          }\n  133  \n  ...\n  265  \n  266          if (props.virtualRendering){\n  267:             scrollTop = startIndex * props.rowHeight\n  268          }\n  269  \n\n/home/radu/code/react-datagrid/src/render/getGroupedRows.jsx:\n   42      }\n   43  \n   44:     return <Row className='z-group-row' key={'group-'+groupData.valuePath} rowHeight={props.rowHeight}>\n   45          <Cell\n   46              className='z-group-cell'\n\n/home/radu/code/react-datagrid/src/render/renderRow.jsx:\n   20          renderText : props.renderText,\n   21          cellPadding: props.cellPadding,\n   22:         rowHeight  : props.rowHeight,\n   23          columns    : props.columns\n   24      }\n\n20 matches across 7 files\n\n\nSearching 21 files for \"rowHeight\"\n\n/home/radu/code/react-datagrid/src/PropTypes.js:\n   12      numeric: val(function(value){\n   13          if (value * 1 != value){\n   14:             return new Error('Invalid rowHeight value')\n   15          }\n   16      }),\n\n/home/radu/code/react-datagrid/src/Row/index.jsx:\n  123          var style = assign({}, props.defaultStyle, props.style)\n  124  \n  125:         style.height = props.rowHeight\n  126  \n  127          return style\n\n/home/radu/code/react-datagrid/src/Wrapper/index.jsx:\n   18          totalColumnWidth: React.PropTypes.number,\n   19          cellPadding     : React.PropTypes.number,\n   20:         rowHeight       : React.PropTypes.any,\n   21  \n   22          data            : React.PropTypes.array,\n   ..\n   63  \n   64          var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize\n   65:         var verticalScrollerSize   = (props.totalLength + groupsCount) * props.rowHeight\n   66  \n   67          return (\n   68:             <div className=\"z-wrapper\" style={{height: rowsCount * props.rowHeight}}>\n   69                  <div ref=\"tableWrapper\" className=\"z-table-wrapper\" style={{paddingRight: props.scrollbarSize}} onWheel={this.handleWheel}>\n   70                      {table}\n   ..\n  108          var props  = this.props\n  109          var result = props.virtualRendering?\n  110:                         (props.totalLength + this.groupsCount || 0) * props.rowHeight:\n  111                          this.refs.table.getDOMNode().offsetHeight\n  112  \n  ...\n  124  \n  125          var scrollTop = virtual?\n  126:                             props.startIndex * props.rowHeight:\n  127                              props.scrollTop\n  128  \n  129:         if (virtual && deltaY < 0 && -deltaY < props.rowHeight){\n  130              //when scrolling to go up, account for the case where abs(deltaY)\n  131:             //is less than the rowHeight, as this results in no scrolling\n  132              //so make sure it's at least deltaY\n  133:             deltaY = -props.rowHeight\n  134          }\n  135  \n  136          if (virtual && props.scrollBy){\n  137:             deltaY = signum(deltaY) * props.scrollBy * props.rowHeight\n  138          }\n  139  \n\n/home/radu/code/react-datagrid/src/getDefaultProps.js:\n   25          styleAlternateRows: true,\n   26          cellEllipsis: true,\n   27:         rowHeight: 31,\n   28  \n   29          groupNestingWidth: 20,\n\n/home/radu/code/react-datagrid/src/index.jsx:\n   59          columnMinWidth   : PropTypes.numeric,\n   60          scrollBy         : PropTypes.numeric,\n   61:         // rowHeight        : PropTypes.numeric,\n   62          sortInfo         : PropTypes.sortInfo,\n   63          columns          : PropTypes.column\n   ..\n  105  \n  106          if (this.props.virtualRendering){\n  107:             state.renderStartIndex = Math.ceil(scrollTop / this.props.rowHeight)\n  108          } else {\n  109              state.scrollTop = scrollTop\n  ...\n  129                  maxHeight = window.screen.height\n  130              }\n  131:             rowCount = Math.floor(maxHeight / props.rowHeight)\n  132          }\n  133  \n  ...\n  265  \n  266          if (props.virtualRendering){\n  267:             scrollTop = startIndex * props.rowHeight\n  268          }\n  269  \n\n/home/radu/code/react-datagrid/src/render/getGroupedRows.jsx:\n   42      }\n   43  \n   44:     return <Row className='z-group-row' key={'group-'+groupData.valuePath} rowHeight={props.rowHeight}>\n   45          <Cell\n   46              className='z-group-cell'\n\n/home/radu/code/react-datagrid/src/render/renderRow.jsx:\n   20          renderText : props.renderText,\n   21          cellPadding: props.cellPadding,\n   22:         rowHeight  : props.rowHeight,\n   23          columns    : props.columns\n   24      }\n\n20 matches across 7 files\n",
-			"settings":
-			{
-				"buffer_size": 10162,
+				"buffer_size": 546,
 				"line_ending": "Unix",
 				"name": "Find Results",
 				"scratch": true
 			}
 		},
 		{
-			"file": "src/Wrapper/index.jsx",
+			"file": "style/constants.styl",
 			"settings":
 			{
-				"buffer_size": 5240,
+				"buffer_size": 1395,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/render/renderRow.jsx",
+			"file": "src/render/renderMenu.jsx",
 			"settings":
 			{
-				"buffer_size": 1270,
+				"buffer_size": 218,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/Cell/index.jsx",
+			"file": "src/models/Column.js",
 			"settings":
 			{
-				"buffer_size": 2187,
+				"buffer_size": 2005,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 2042,
 				"line_ending": "Unix"
 			}
 		},
@@ -578,10 +578,18 @@
 			}
 		},
 		{
-			"file": "src/Header/index.jsx",
+			"file": "src/Row/index.jsx",
 			"settings":
 			{
-				"buffer_size": 10317,
+				"buffer_size": 4688,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/RowSelect.js",
+			"settings":
+			{
+				"buffer_size": 2671,
 				"line_ending": "Unix"
 			}
 		},
@@ -589,39 +597,7 @@
 			"file": "index.jsx",
 			"settings":
 			{
-				"buffer_size": 11202,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/render/slice.js",
-			"settings":
-			{
-				"buffer_size": 243,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/render/getGroupedRows.jsx",
-			"settings":
-			{
-				"buffer_size": 2048,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/Row/index.jsx",
-			"settings":
-			{
-				"buffer_size": 3035,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/PropTypes.js",
-			"settings":
-			{
-				"buffer_size": 1104,
+				"buffer_size": 11691,
 				"line_ending": "Unix"
 			}
 		}
@@ -629,13 +605,9 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 390.0,
+		"height": 392.0,
 		"selected_items":
 		[
-			[
-				"package",
-				"Preferences: Browse Packages"
-			],
 			[
 				"du",
 				"File: Duplicate"
@@ -643,6 +615,10 @@
 			[
 				"dele",
 				"File: Delete"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
 			],
 			[
 				"move",
@@ -829,7 +805,7 @@
 				"Set Syntax: LiveScript"
 			]
 		],
-		"width": 593.0
+		"width": 502.0
 	},
 	"console":
 	{
@@ -851,37 +827,40 @@
 	"expanded_folders":
 	[
 		"/home/radu/code/react-datagrid",
-		"/home/radu/code/react-datagrid/node_modules",
 		"/home/radu/code/react-datagrid/node_modules/drag-helper",
 		"/home/radu/code/react-datagrid/src",
-		"/home/radu/code/react-datagrid/src/Cell",
-		"/home/radu/code/react-datagrid/src/Header",
-		"/home/radu/code/react-datagrid/src/Row",
-		"/home/radu/code/react-datagrid/src/Wrapper",
-		"/home/radu/code/react-datagrid/src/models",
-		"/home/radu/code/react-datagrid/src/render",
 		"/home/radu/code/react-datagrid/style"
 	],
 	"file_history":
 	[
-		"/home/radu/code/react-datagrid/node_modules/dummy-data/node_modules/bluebird/js/main/promise_resolver.js",
-		"/home/radu/code/react-datagrid/package.json",
-		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactElement.js",
-		"/home/radu/code/react-datagrid/style/resize.styl",
-		"/home/radu/code/react-datagrid/src/render/renderTable.jsx",
-		"/home/radu/code/react-datagrid/src/getDefaultProps.js",
-		"/home/radu/code/react-datagrid/node_modules/react/lib/getEventKey.js",
-		"/home/radu/code/react-datagrid/src/Wrapper/index.jsx",
+		"/home/radu/code/react-datagrid/src/getSelected.js",
 		"/home/radu/code/react-datagrid/src/render/renderRow.jsx",
+		"/home/radu/code/react-datagrid/src/handleSelection.js",
+		"/home/radu/code/react-datagrid/src/isMultiSelect.js",
 		"/home/radu/code/react-datagrid/src/Cell/index.jsx",
-		"/home/radu/code/react-datagrid/src/Header/setupColumnDrag.js",
-		"/home/radu/code/react-datagrid/src/render/getGroupedRows.jsx",
-		"/home/radu/code/react-datagrid/src/Row/index.jsx",
-		"/home/radu/code/react-datagrid/index.jsx",
+		"/home/radu/code/react-datagrid/src/getDefaultProps.js",
 		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactOwner.js",
+		"/home/radu/code/react-datagrid/style/resize.styl",
+		"/home/radu/code/react-datagrid/src/Header/index.jsx",
+		"/home/radu/code/react-datagrid/src/render/renderTable.jsx",
+		"/home/radu/code/react-datagrid/lib/getDefaultProps.js",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/getEventKey.js",
+		"/home/radu/code/react-datagrid/src/Row/index.jsx",
+		"/home/radu/code/react-datagrid/node_modules/react/lib/ReactElement.js",
+		"/home/radu/code/react-datagrid/src/render/renderMenu.jsx",
+		"/home/radu/code/react-datagrid/index.styl",
+		"/home/radu/code/react-datagrid/package.json",
+		"/home/radu/code/react-datagrid/style/header.styl",
+		"/home/radu/code/react-datagrid/src/PropTypes.js",
+		"/home/radu/code/react-datagrid/src/models/Column.js",
+		"/home/radu/code/react-datagrid/src/render/getGroupedRows.jsx",
+		"/home/radu/code/react-datagrid/src/render/slice.js",
+		"/home/radu/code/react-datagrid/index.jsx",
+		"/home/radu/code/react-datagrid/src/Wrapper/index.jsx",
+		"/home/radu/code/react-datagrid/node_modules/dummy-data/node_modules/bluebird/js/main/promise_resolver.js",
+		"/home/radu/code/react-datagrid/src/Header/setupColumnDrag.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/lib/dependencies/ContextElementDependency.js",
 		"/home/radu/code/react-datagrid/node_modules/http-server/node_modules/ecstatic/test/core-error.js",
-		"/home/radu/code/react-datagrid/src/models/Column.js",
 		"/home/radu/code/react-datagrid/src/index.jsx",
 		"/home/radu/code/react-datagrid/node_modules/drag-helper/index.js",
 		"/home/radu/code/react-datagrid/style/index.styl",
@@ -892,17 +871,12 @@
 		"/home/radu/code/react-datagrid/node_modules/webpack-dev-server/node_modules/socket.io/node_modules/socket.io-client/node_modules/xmlhttprequest/tests/test-headers.js",
 		"/home/radu/code/react-datagrid/node_modules/react-load-mask/node_modules/http-server/node_modules/union/test/header-test.js",
 		"/home/radu/code/react-datagrid/node_modules/http-server/node_modules/union/test/header-test.js",
-		"/home/radu/code/react-datagrid/style/header.styl",
 		"/home/radu/code/react-datagrid/node_modules/webpack/lib/web/WebEnvironmentPlugin.js",
 		"/home/radu/code/react-datagrid/style/constants.styl",
 		"/home/radu/code/react-datagrid/node_modules/gulp-react/node_modules/react-tools/node_modules/commoner/node_modules/install/node_modules/whiskey/example/test-long-running-1.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/node-libs-browser/node_modules/constants-browserify/build.sh",
-		"/home/radu/code/react-datagrid/index.styl",
 		"/home/radu/code/react-datagrid/node_modules/gulp/completion/zsh",
-		"/home/radu/code/react-datagrid/src/Header/index.jsx",
-		"/home/radu/code/react-datagrid/src/render/renderMenu.jsx",
 		"/home/radu/code/react-datagrid/src/Header/setupColumnResize.js",
-		"/home/radu/code/react-datagrid/src/render/slice.js",
 		"/home/radu/code/react-datagrid/src/render/renderGroupedTable.jsx",
 		"/home/radu/.bash_profile",
 		"/home/radu/.config/sublime-text-3/Cache/Color Scheme - Default/Monokai.tmTheme.cache",
@@ -943,7 +917,6 @@
 		"/home/radu/code/react-datagrid/lib/index.js",
 		"/home/radu/code/react-datagrid/loaders.config.js",
 		"/home/radu/code/react-datagrid/node_modules/copy-utils/copyList.js",
-		"/home/radu/code/react-datagrid/src/PropTypes.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/enhanced-resolve/lib/FileAppendPlugin.js",
 		"/home/radu/code/react-datagrid/node_modules/gulp/node_modules/orchestrator/node_modules/end-of-stream/node_modules/once/node_modules/wrappy/wrappy.js",
 		"/home/radu/code/react-datagrid/node_modules/webpack/node_modules/watchpack/node_modules/chokidar/node_modules/readdirp/stream-api.js",
@@ -987,11 +960,7 @@
 		"/home/radu/code/entity-designer/src/js/runtime/index.js",
 		"/home/radu/code/entity-designer/src/js/runtime/utils/traverse.js",
 		"/home/radu/code/entity-designer/lib/ui/SplitContainer/index.jsx",
-		"/home/radu/code/entity-designer/src/js/widgets/SplitContainer/index.js",
-		"/home/radu/code/entity-designer/src/js/widgets/TabPanel/props.js",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/SplitContainer/index.jsx",
-		"/home/radu/code/entity-designer/src/js/runtime/widgets/Label/index.styl",
-		"/home/radu/code/entity-designer/src/js/data/DataManager.js"
+		"/home/radu/code/entity-designer/src/js/widgets/SplitContainer/index.js"
 	],
 	"find":
 	{
@@ -1002,6 +971,7 @@
 		"height": 90.0,
 		"where_history":
 		[
+			"/home/radu/code/react-datagrid/style",
 			"/home/radu/code/react-datagrid/src",
 			"/home/radu/code/react-datagrid",
 			"/home/radu/code/react-datagrid/src",
@@ -1063,6 +1033,77 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"handleSelection",
+			"getSelected",
+			"ismultisele",
+			".z-selected",
+			"selected",
+			"getGroupedRows",
+			"handleRowSelectionClick",
+			"asObject",
+			"!rowSelected",
+			"defaultSelected",
+			"getDefaultProps",
+			"mouseOverCls",
+			"prepareClassName",
+			"rendertable",
+			"menu:",
+			"showmenu",
+			"rowContextMenu",
+			"showColumnMenu",
+			"showColumnMenu(",
+			"showColumnMenu",
+			"menuOffset",
+			"menuColumn",
+			"showColumnMenu",
+			"stoppro",
+			"window",
+			"document",
+			"'click'",
+			"handleShowMenuClick",
+			"stoppro",
+			"showColumnMenu(",
+			"prepareProps",
+			"rendertab",
+			"renderTable",
+			"rendertab",
+			"defaultclassname",
+			"react-datagrid",
+			"showcolumnmenu",
+			"withColumnMenu",
+			"HeaderFactory",
+			"header",
+			"showmenu(",
+			"showColumnMenu(",
+			"showcolumnmenu",
+			"debugger",
+			"gridcolumns",
+			"content",
+			"preparecolumns",
+			".hidden",
+			"showMenu",
+			"showColumnMenu",
+			"showC",
+			"rendermenu(",
+			"renderMenu",
+			"showColumnMenu",
+			"this.state.menu",
+			"showColumnMenu",
+			"this.state.menu",
+			"showColumnMenu",
+			"ReactMenu",
+			"showmenu",
+			"rendermenu(",
+			"menuColumn",
+			"react-menus",
+			"[description]",
+			"renderrow(",
+			"RowFactory",
+			"factory",
+			"rowfactory",
+			".visible",
+			"this.",
+			"oncolumnresize",
 			"scrollby",
 			"rowHeight",
 			"scrollby",
@@ -1119,78 +1160,7 @@
 			"sort",
 			"mouseover",
 			"mouseOver",
-			"handleMouseOver",
-			"getVisibleCount",
-			"toggleColumn",
-			"c.vi",
-			"getVisibleCount",
-			"togglecolumn",
-			"showcolumn",
-			"renderTable",
-			"preparewra",
-			"prepareHeader",
-			"prepareWrapper",
-			"showMenu",
-			"prepareHeader",
-			"renderTable",
-			"rendertable",
-			"menucolumn",
-			"rendertable",
-			"allcolumns",
-			"prepareProps",
-			"prepareColumns",
-			"prepareprops",
-			"rendertab",
-			"rendertabl",
-			"groupData",
-			"props",
-			"groupdata",
-			"prepareColumns",
-			"toggleColumn",
-			"prepareprops",
-			"groupData",
-			"prepareProps",
-			"render:",
-			"prepareprops",
-			"CellFactory",
-			"this.state.props",
-			"prepareprops",
-			"prepareProps",
-			"prepareprops",
-			"groupedRows",
-			"renderGroupedTable",
-			"groupedRows",
-			"getGroupedRows",
-			"renderTable",
-			"renderGroupedTable",
-			"console.",
-			"console",
-			"rendergro",
-			"renderGroupedTable",
-			"rendergro",
-			"prepareData",
-			"console.log",
-			"prepareData",
-			"getrendere",
-			"this.state",
-			"getRenderEndIndex",
-			"prepareWrapper",
-			"this.state",
-			"getRenderEndIndex",
-			"this.state.pr",
-			"setstate",
-			"getRenderEndIndex",
-			"props",
-			"state.props",
-			"debugge",
-			"renderTable",
-			"handleScrollTop",
-			"onscrolltop",
-			"var len",
-			"getRenderEndIndex",
-			"renderstarti",
-			"startindex",
-			"this.groupsCount"
+			"handleMouseOver"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1217,15 +1187,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13054,
+						"buffer_size": 15157,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1007,
-								1007
+								841,
+								841
 							]
 						],
 						"settings":
@@ -1233,36 +1203,31 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1273,11 +1238,11 @@
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
@@ -1287,34 +1252,54 @@
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
 							],
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 372.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/getDefaultProps.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 804,
+						"buffer_size": 546,
 						"regions":
 						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										197,
+										208
+									],
+									[
+										432,
+										443
+									]
+								],
+								"scope": ""
+							}
 						},
 						"selection":
 						[
 							[
-								189,
-								189
+								261,
+								261
 							]
 						],
 						"settings":
@@ -1322,36 +1307,31 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -1362,11 +1342,11 @@
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
@@ -1376,9 +1356,560 @@
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "style/constants.styl",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1395,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								600,
+								600
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"syntax": "Packages/Sass/Syntaxes/Sass.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/render/renderMenu.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								79,
+								79
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/models/Column.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2005,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1308,
+								1308
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
 							],
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 702.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2042,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1670,
+								1670
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"history_list_is_closing": true,
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 489.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/render/renderTable.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 636,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								596,
+								596
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"history_list_is_closing": true,
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 7,
+					"file": "src/Row/index.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4688,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14,
+								14
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
@@ -1390,786 +1921,108 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10162,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										152,
-										164
-									],
-									[
-										438,
-										450
-									],
-									[
-										606,
-										618
-									],
-									[
-										809,
-										822
-									],
-									[
-										865,
-										878
-									],
-									[
-										1106,
-										1114
-									],
-									[
-										1168,
-										1176
-									],
-									[
-										1356,
-										1364
-									],
-									[
-										1558,
-										1566
-									],
-									[
-										1881,
-										1889
-									],
-									[
-										1943,
-										1951
-									],
-									[
-										2110,
-										2118
-									],
-									[
-										2311,
-										2319
-									],
-									[
-										2695,
-										2704
-									],
-									[
-										2911,
-										2920
-									],
-									[
-										3141,
-										3150
-									],
-									[
-										3433,
-										3442
-									],
-									[
-										3555,
-										3564
-									],
-									[
-										3930,
-										3939
-									],
-									[
-										4136,
-										4145
-									],
-									[
-										4266,
-										4275
-									],
-									[
-										4401,
-										4410
-									],
-									[
-										4534,
-										4543
-									],
-									[
-										4684,
-										4693
-									],
-									[
-										4866,
-										4875
-									],
-									[
-										5098,
-										5107
-									],
-									[
-										5381,
-										5390
-									],
-									[
-										5605,
-										5614
-									],
-									[
-										5749,
-										5758
-									],
-									[
-										5950,
-										5959
-									],
-									[
-										5967,
-										5976
-									],
-									[
-										6210,
-										6219
-									],
-									[
-										6229,
-										6238
-									],
-									[
-										6535,
-										6544
-									],
-									[
-										6751,
-										6760
-									],
-									[
-										6981,
-										6990
-									],
-									[
-										7273,
-										7282
-									],
-									[
-										7395,
-										7404
-									],
-									[
-										7770,
-										7779
-									],
-									[
-										7976,
-										7985
-									],
-									[
-										8106,
-										8115
-									],
-									[
-										8241,
-										8250
-									],
-									[
-										8374,
-										8383
-									],
-									[
-										8524,
-										8533
-									],
-									[
-										8706,
-										8715
-									],
-									[
-										8938,
-										8947
-									],
-									[
-										9221,
-										9230
-									],
-									[
-										9445,
-										9454
-									],
-									[
-										9589,
-										9598
-									],
-									[
-										9790,
-										9799
-									],
-									[
-										9807,
-										9816
-									],
-									[
-										10050,
-										10059
-									],
-									[
-										10069,
-										10078
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								8942,
-								8942
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 6,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4194.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/Wrapper/index.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5240,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								511,
-								511
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/render/renderRow.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1270,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								334,
-								334
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/Cell/index.jsx",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 2187,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16,
-								16
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/render/renderTable.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 636,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"history_list_is_closing": true,
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 5,
-			"sheets":
-			[
-				{
-					"buffer": 7,
-					"file": "src/Header/index.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10317,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1231,
-								1231
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 687.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
 					"buffer": 8,
+					"file": "src/RowSelect.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2671,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1157,
+								1157
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"open_with_edit": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": -0.0,
+						"translation.y": 324.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "index.jsx",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11202,
+						"buffer_size": 11691,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10732,
-								10732
+								10133,
+								10133
 							]
 						],
 						"settings":
@@ -2177,36 +2030,31 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
@@ -2217,11 +2065,11 @@
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
@@ -2231,9 +2079,13 @@
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
 							],
-							"history_list_is_closing": true,
 							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
@@ -2242,451 +2094,7 @@
 						"translation.y": 2160.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "src/render/slice.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 243,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "src/render/getGroupedRows.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2048,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								755,
-								755
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "src/Row/index.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3035,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2163,
-								2163
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1155.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "src/PropTypes.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1104,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								244,
-								244
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/render/renderTable.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 636,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								457,
-								457
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content"
-							],
-							"history_list_is_closing": true,
-							"syntax": "Packages/SublimeLinter-jsxhint/JavaScript (JSX).tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
 					"type": "text"
 				}
 			]
@@ -2720,7 +2128,7 @@
 		"cols":
 		[
 			0.0,
-			0.571871127633,
+			0.668008501527,
 			1.0
 		],
 		"rows":
@@ -2758,20 +2166,48 @@
 		"selected_items":
 		[
 			[
-				"prop",
-				"src/PropTypes.js"
+				"rowindex",
+				"src/Row/index.jsx"
 			],
 			[
-				"gdp",
+				"getdp",
 				"src/getDefaultProps.js"
+			],
+			[
+				"renderrow",
+				"src/render/renderRow.jsx"
+			],
+			[
+				"rendermenu",
+				"src/render/renderMenu.jsx"
+			],
+			[
+				"renderr",
+				"src/render/renderRow.jsx"
+			],
+			[
+				"renderta",
+				"src/render/renderTable.jsx"
+			],
+			[
+				"pac",
+				"package.json"
+			],
+			[
+				"pack",
+				"package.json"
 			],
 			[
 				"rendertab",
 				"src/render/renderTable.jsx"
 			],
 			[
-				"renderrow",
-				"src/render/renderRow.jsx"
+				"prop",
+				"src/PropTypes.js"
+			],
+			[
+				"gdp",
+				"src/getDefaultProps.js"
 			],
 			[
 				"rendert",
@@ -2784,10 +2220,6 @@
 			[
 				"getgrou",
 				"src/render/getGroupedRows.jsx"
-			],
-			[
-				"rowindex",
-				"src/Row/index.jsx"
 			],
 			[
 				"cell",
@@ -2816,10 +2248,6 @@
 			[
 				"index.s",
 				"style/index.styl"
-			],
-			[
-				"rendermenu",
-				"src/render/renderMenu.jsx"
 			],
 			[
 				"setupc",
@@ -2860,10 +2288,6 @@
 			[
 				"gd",
 				"src/getDefaultProps.js"
-			],
-			[
-				"pac",
-				"package.json"
 			],
 			[
 				"findi",
@@ -2924,10 +2348,6 @@
 			[
 				"rowin",
 				"src/Row/index.jsx"
-			],
-			[
-				"pack",
-				"package.json"
 			],
 			[
 				"border",
@@ -3256,18 +2676,6 @@
 			[
 				"mapper",
 				"src/js/widgets/mapper.js"
-			],
-			[
-				"texta",
-				"src/js/widgets/props/style/textAlign.js"
-			],
-			[
-				"thela",
-				"src/js/widgets/props/theLabel.js"
-			],
-			[
-				"itempr",
-				"src/resources/css/ItemProxy.styl"
 			]
 		],
 		"width": 0.0
@@ -3396,15 +2804,15 @@
 		],
 		"width": 638.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},
 	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": true,
-	"side_bar_width": 306.0,
+	"side_bar_visible": false,
+	"side_bar_width": 504.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
