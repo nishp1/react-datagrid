@@ -46,9 +46,8 @@
   },
   "dependencies": {
     "clone": "^0.1.18",
-    "copy-utils": "^1.0.0",
     "css-utils": "^0.4.2",
-    "drag-helper": "^1.2.0",
+    "drag-helper": "^1.2.2",
     "hasown": "^1.0.1",
     "normalize.css": "^3.0.2",
     "object-assign": "^2.0.0",
@@ -56,8 +55,8 @@
     "react-load-mask": "^0.1.0",
     "react-menus": "^0.1.0",
     "react-prefixr": "^0.1.0",
-    "region": "^2.1.0",
-    "region-align": "^2.1.0",
+    "region": "^2.1.1",
+    "region-align": "^2.1.1",
     "ustring": "^1.4.1"
   },
   "author": "Radu Brehar",
