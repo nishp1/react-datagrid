@@ -40,6 +40,7 @@ var columns = [
     {
         name: 'id',
         width: 200,
+        filterable: false,
         type: 'number'
     },
     {

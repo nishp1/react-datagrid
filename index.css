@@ -1052,7 +1052,7 @@ html.u-app body * {
   background: #d7e7ff;
 }
 .react-datagrid .z-row.z-selected .z-cell {
-  background: #ddebff;
+  background: #c4dbfc;
 }
 .react-datagrid .z-row .z-cell {
   display: -webkit-box;

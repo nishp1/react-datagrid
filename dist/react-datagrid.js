@@ -57,25 +57,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	/** @jsx React.DOM */'use strict';
 
 	var React    = __webpack_require__(1)
-	var assign   = __webpack_require__(12)
-	var LoadMask = __webpack_require__(14)
-	var Region   = __webpack_require__(13)
+	var assign   = __webpack_require__(14)
+	var LoadMask = __webpack_require__(16)
+	var Region   = __webpack_require__(15)
 
-	var Column = __webpack_require__(4)
+	var Column = __webpack_require__(2)
 
-	var PropTypes      = __webpack_require__(2)
-	var Wrapper        = __webpack_require__(5)
-	var Header         = __webpack_require__(8)
+	var PropTypes      = __webpack_require__(3)
+	var Wrapper        = __webpack_require__(12)
+	var Header         = __webpack_require__(13)
 	var WrapperFactory = React.createFactory(Wrapper)
 	var HeaderFactory  = React.createFactory(Header)
 
-	var findIndexByName = __webpack_require__(6)
-	var group           = __webpack_require__(7)
+	var findIndexByName = __webpack_require__(4)
+	var group           = __webpack_require__(5)
 
-	var slice          = __webpack_require__(9)
-	var renderTable    = __webpack_require__(10)
-	var getGroupedRows = __webpack_require__(11)
-
+	var slice          = __webpack_require__(6)
+	var renderTable    = __webpack_require__(7)
+	var getGroupedRows = __webpack_require__(8)
 
 	function emptyFn(){}
 
@@ -96,6 +95,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = React.createClass({
 
 	    displayName: 'ReactDataGrid',
+
+	    mixins: [
+	        __webpack_require__(9),
+	        __webpack_require__(10)
+	    ],
 
 	    propTypes: {
 	        loading          : React.PropTypes.bool,
@@ -124,7 +128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        columns          : PropTypes.column
 	    },
 
-	    getDefaultProps: __webpack_require__(3),
+	    getDefaultProps: __webpack_require__(11),
 
 	    componentDidMount: function(){
 	        window.addEventListener('click', this.windowClickListener = this.onWindowClick)
@@ -134,8 +138,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        window.removeEventListener('click', this.windowClickListener)
 	    },
 
-	    onWindowClick: function(){
-	        if (this.state.menuColumn){
+	    onWindowClick: function(event){
+	        if (this.state.menu){
 	            this.setState({
 	                menuColumn: null,
 	                menu      : null
@@ -144,11 +148,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    getInitialState: function(){
+
+	        var props = this.props
+	        var defaultSelected = props.defaultSelected
+
 	        return {
 	            scrollLeft: 0,
 	            scrollTop : 0,
 	            renderStartIndex: 0,
-	            menuColumn: null
+	            menuColumn: null,
+	            defaultSelected: defaultSelected
 	        }
 	    },
 
@@ -233,13 +242,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 
-	    showColumnMenu: function(menu, column, menuOffset, event){
+	    showMenu: function(menu, state){
 
-	        this.setState({
-	            menu: menu,
-	            menuColumn: column,
-	            menuOffset: menuOffset
-	        })
+	        state = state || {}
+	        state.menu = menu
+
+	        if (this.state.menu){
+	            this.setState({
+	                menu: null,
+	                menuColumn: null
+	            })
+	        }
+
+	        setTimeout(function(){
+	            //since menu is hidden on click on window,
+	            //show it in a timeout, after the click event has reached the window
+	            this.setState(state)
+	        }.bind(this), 0)
 	    },
 
 	    prepareHeader: function(props, state){
@@ -267,7 +286,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onColumnResizeDrop: this.onColumnResizeDrop,
 
 	            toggleColumn     : this.toggleColumn.bind(this, props),
-	            showColumnMenu   : this.showColumnMenu,
+	            showMenu         : this.showMenu,
+	            filterMenuFactory : this.filterMenuFactory,
 	            menuColumn       : state.menuColumn,
 	            columnMenuFactory: props.columnMenuFactory
 
@@ -280,6 +300,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        })
 	    },
 
+	    prepareRenderProps: function(props){
+
+	        var result = {}
+	        var list = {
+	            className: true,
+	            style: true
+	        }
+
+	        Object.keys(props).forEach(function(name){
+	            // if (list[name] || name.indexOf('data-') == 0 || name.indexOf('on') === 0){
+	            if (list[name]){
+	                result[name] = props[name]
+	            }
+	        })
+
+	        return result
+	    },
+
 	    render: function(){
 	        var props = this.prepareProps(this.props)
 
@@ -288,8 +326,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var footer      = this.prepareFooter(props, this.state)
 	        var resizeProxy = this.prepareResizeProxy(props, this.state)
 
+	        var renderProps = this.prepareRenderProps(props)
+
 	        return (
-	            React.createElement("div", {className: props.className, style: props.style}, 
+	            React.createElement("div", React.__spread({},  renderProps), 
 	                React.createElement("div", {className: "z-inner"}, 
 	                    header, 
 	                    wrapper, 
@@ -311,7 +351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rows = slice(rows, props)
 	        }
 
-	        table = renderTable(props, rows)
+	        table = renderTable.call(this, props, rows)
 
 	        return table
 	    },
@@ -349,11 +389,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            menu            : state.menu,
 	            menuColumn      : state.menuColumn,
-	            menuOffset      : state.menuOffset,
+	            showMenu        : this.showMenu,
 
 	            cellFactory     : props.cellFactory,
 	            rowStyle        : props.rowStyle,
-	            rowClassName    : props.rowClassName
+	            rowClassName    : props.rowClassName,
+	            rowContextMenu  : props.rowContextMenu,
+
+	            onRowClick: this.handleRowClick,
+	            selected        : props.selected == null?
+	                                    state.defaultSelected:
+	                                    props.selected
 	        }, props)
 
 	        wrapperProps.columns = props.columns.filter(function(c)  {return c.visible;})
@@ -361,6 +407,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
+	    },
+
+	    handleRowClick: function(rowProps, event){
+	        if (this.props.onRowClick){
+	            this.props.onRowClick(rowProps.data, rowProps, event)
+	        }
+
+	        this.handleSelection(rowProps, event)
 	    },
 
 	    prepareProps: function(thisProps){
@@ -404,7 +458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    prepareClassName: function(props){
 	        props.className = props.className || ''
-	        props.className += props.defaultClassName
+	        props.className += ' ' + props.defaultClassName
 
 	        if (props.cellEllipsis){
 	            props.className += ' ' + props.cellEllipsisCls
@@ -552,104 +606,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	function val(fn){
-
-	    return function(props, propName){
-
-	        return fn(props[propName], propName, props)
-	    }
-	}
-
-	module.exports = {
-	    numeric: val(function(value, propName){
-
-	        if (value == null){
-	            return
-	        }
-	        if (value * 1 != value){
-	            return new Error('Invalid numeric value for ' + propName)
-	        }
-	    }),
-
-	    sortInfo: val(function(value){
-	        if (typeof value == 'string' || typeof value == 'number'){
-	            return new Error('Invalid sortInfo specified')
-	        }
-	    }),
-
-	    column: val(function(value, props, propName){
-
-	        if (!value){
-	            return new Error('No columns specified. Please specify at least one column!')
-	        }
-
-	        if (!Array.isArray(value)){
-	            value = props[propName] = [value]
-	        }
-
-	        var err
-
-	        value.some(function(col, index){
-	            if (!col.name){
-	                err = new Error('All grid columns must have a name! Column at index ' + index + ' has no name!')
-	                return true
-	            }
-	        })
-
-	        return err
-
-	    })
-	}
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = function(){
-	    return {
-	        loading: false,
-	        columnMinWidth: 50,
-	        cellPadding: 5,
-	        scrollbarSize: 16,
-
-	        scrollBy: undefined,
-	        virtualRendering: true,
-
-	        styleAlternateRowsCls: 'z-style-alternate',
-	        withColumnMenuCls: 'z-with-column-menu',
-	        cellEllipsisCls: 'z-cell-ellipsis',
-	        defaultClassName: 'react-datagrid',
-
-	        withColumnMenu: true,
-	        sortable: true,
-	        filterableColumns: true,
-	        resizableColumns: true,
-
-	        showCellBordersCls: 'z-cell-borders',
-	        showCellBorders: false,
-	        styleAlternateRows: true,
-	        cellEllipsis: true,
-	        rowHeight: 31,
-
-	        groupNestingWidth: 20,
-
-	        defaultStyle: {
-	            position: 'relative'
-	        }
-
-	    }
-	}
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var humanize = __webpack_require__(24).humanize
-	var assign   = __webpack_require__(12)
+	var humanize = __webpack_require__(27).humanize
+	var assign   = __webpack_require__(14)
 
 	function getVisibleInfo(col){
 	    var visible = true
@@ -742,13 +700,803 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Column
 
 /***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function val(fn){
+
+	    return function(props, propName){
+
+	        return fn(props[propName], propName, props)
+	    }
+	}
+
+	module.exports = {
+	    numeric: val(function(value, propName){
+
+	        if (value == null){
+	            return
+	        }
+	        if (value * 1 != value){
+	            return new Error('Invalid numeric value for ' + propName)
+	        }
+	    }),
+
+	    sortInfo: val(function(value){
+	        if (typeof value == 'string' || typeof value == 'number'){
+	            return new Error('Invalid sortInfo specified')
+	        }
+	    }),
+
+	    column: val(function(value, props, propName){
+
+	        if (!value){
+	            return new Error('No columns specified. Please specify at least one column!')
+	        }
+
+	        if (!Array.isArray(value)){
+	            value = props[propName] = [value]
+	        }
+
+	        var err
+
+	        value.some(function(col, index){
+	            if (!col.name){
+	                err = new Error('All grid columns must have a name! Column at index ' + index + ' has no name!')
+	                return true
+	            }
+	        })
+
+	        return err
+
+	    })
+	}
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var findIndexBy =__webpack_require__(17)
+
+	function findIndexByName(arr, name){
+	    return findIndexBy(arr, function(info){
+	        return info.name === name
+	    })
+	}
+
+	module.exports = findIndexByName
+
+/***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var hasown = __webpack_require__(28)
+
+	function copyIf(source, target){
+	    var hasOwn = hasown(target)
+
+	    Object.keys(source).forEach(function(key){
+	        if (!hasOwn(key)){
+	            target[key] = source[key]
+	        }
+	    })
+	}
+
+	function groupByFields(data, fields, path, names, fieldIndex){
+	    data       = data       || []
+	    fieldIndex = fieldIndex || 0
+
+	    var field = fields[fieldIndex]
+
+	    if (!field){
+	        return data
+	    }
+
+	    var group     = groupArrayByField(data, field)
+	    var fieldName = typeof field == 'string'?
+	                            field:
+	                            field.name
+
+	    if (!fieldIndex){
+	        group.namePath  = []
+	        group.valuePath = []
+	        group.depth     = 0
+	        delete group.name
+	    }
+
+	    var groupsCount = group.length
+
+	    if (group.keys && group.keys.length){
+
+	        group.leaf = false
+	        group.keys.forEach(function(key){
+
+	            var groupPath  = (path || []).concat(key)
+	            var fieldNames = (names || []).concat(fieldName)
+	            var data = groupByFields(group.data[key], fields, groupPath, fieldNames, fieldIndex + 1)
+
+	            if (Array.isArray(data)){
+	                data = {
+	                    data: data,
+	                    leaf: true
+	                }
+	            }
+
+	            data.name      = fieldName
+	            data.value     = key
+	            data.valuePath = groupPath
+	            data.namePath  = fieldNames
+	            data.depth     = fieldIndex + 1
+
+	            if (typeof field != 'string'){
+
+	                copyIf(field, data)
+	            }
+
+	            group.data[key] = data
+
+	            if (!data.leaf){
+	                groupsCount += data.groupsCount
+	            }
+
+	        })
+	    }
+
+	    if (!group.leaf){
+	        group.groupsCount = groupsCount
+	    }
+
+	    return group
+	}
+
+	function groupArrayByField(data, field){
+
+	    var groupKeys      = {}
+	    var groupKeysArray = []
+
+	    var fieldName      = typeof field == 'string'?
+	                            field:
+	                            field.name
+
+	    ;(data || []).forEach(function(item){
+	        var itemKey = item[fieldName]
+
+	        if (groupKeys[itemKey]){
+	            groupKeys[itemKey].push(item)
+	        } else {
+	            groupKeys[itemKey] = [item]
+	            groupKeysArray.push(itemKey)
+	        }
+	    })
+
+	    var result = {
+	        keys      : groupKeysArray,
+	        data      : groupKeys,
+	        childName : fieldName,
+	        length    : groupKeysArray.length,
+	        leaf      : true
+	    }
+
+	    return result
+	}
+
+	module.exports = groupByFields
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function slice(data, props){
+
+	    if (!props.virtualRendering){
+	        return data
+	    }
+
+	    return data.slice(
+	            props.startIndex,
+	            props.startIndex + props.renderCount
+	        )
+	}
+
+	module.exports = slice
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */'use strict';
+
+	var React = __webpack_require__(1)
+	var renderMenu = __webpack_require__(18)
+	var renderRow  = __webpack_require__(19)
+	var tableStyle  = __webpack_require__(20)
+	var slice  = __webpack_require__(6)
+
+	function getData(props){
+
+	    if (!props.virtualRendering){
+	        return props.data
+	    }
+
+	    return slice(props.data, props)
+	}
+
+	module.exports = function(props, rows){
+
+	    rows = rows || getData(props).map(function(data, index){
+	        return renderRow.call(this, props, data, index + props.startIndex)
+	    }, this)
+
+	    return React.createElement("div", {ref: "table", className: "z-table", style: tableStyle(props)}, 
+	        rows, 
+	        renderMenu(props)
+	    )
+	}
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */'use strict';
+
+	var React = __webpack_require__(1)
+
+	var Row         = __webpack_require__(25)
+	var Cell        = __webpack_require__(26)
+	var CellFactory = React.createFactory(Cell)
+
+	var renderRow = __webpack_require__(19)
+
+	function renderData(props, data, depth){
+
+	    return data.map(function(data, index){
+
+	        return renderRow(props, data, index, function(config){
+	            config.cellFactory = function(cellProps){
+	                if (cellProps.index === 0){
+	                    cellProps.innerStyle = {
+	                        paddingLeft: depth * props.groupNestingWidth
+	                    }
+	                }
+
+	                return CellFactory(cellProps)
+	            }
+
+	            config.className += ' z-grouped'
+
+	            return config
+	        })
+	    })
+	}
+
+	function renderGroupRow(props, groupData){
+
+	    var style = {
+	        paddingLeft: (groupData.depth - 1)* props.groupNestingWidth
+	    }
+
+	    var cellStyle = {
+	        minWidth: props.totalColumnWidth,
+	        maxWidth: props.totalColumnWidth
+	    }
+
+	    return React.createElement(Row, {className: "z-group-row", key: 'group-'+groupData.valuePath, rowHeight: props.rowHeight}, 
+	        React.createElement(Cell, {
+	            className: "z-group-cell", 
+	            textPadding: props.cellPadding, 
+	            innerStyle: style, 
+	            text: groupData.value, 
+	            style: cellStyle}
+	        )
+	    )
+	}
+
+	function renderGroup(props, groupData){
+
+	    var result = [renderGroupRow(props, groupData)]
+
+	    if (groupData && groupData.leaf){
+	        result.push.apply(result, renderData(props, groupData.data, groupData.depth))
+	    } else {
+	        groupData.keys.forEach(function(key){
+	            var items = renderGroup(props, groupData.data[key])
+	            result.push.apply(result, items)
+	        })
+	    }
+
+	    return result
+	}
+
+	function renderGroups(props, groupsData){
+	    var result = []
+
+	    groupsData.keys.map(function(key){
+	        result.push.apply(result, renderGroup(props, groupsData.data[key]))
+	    })
+
+	    return result
+	}
+
+	module.exports = function(props, groupData){
+	    return renderGroups(props, groupData)
+	}
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var assign = __webpack_require__(14)
+	var getSelected = __webpack_require__(21)
+
+	var hasOwn = function(obj, prop){
+	    return Object.prototype.hasOwnProperty.call(obj, prop)
+	}
+
+	/**
+	 * Here is how multi selection is implemented - trying to emulate behavior in OSX Finder
+	 *
+	 * When there is no selection, and an initial click for selection is done, keep that index (SELINDEX)
+	 *
+	 * Next, if we shift+click, we mark as selected the items from initial index to current click index.
+	 *
+	 * Now, if we ctrl+click elsewhere, keep the selection, but also add the selected file,
+	 * and set SELINDEX to the new index. Now on any subsequent clicks, have the same behavior,
+	 * selecting/deselecting items starting from SELINDEX to the new click index
+	 */
+
+
+	module.exports = {
+
+	    findInitialSelectionIndex: function(){
+	        var selected = getSelected(this.props, this.state)
+	        var index = undefined
+
+	        if (!Object.keys(selected).length){
+	            return index
+	        }
+
+
+	        var i = 0
+	        var data = this.props.data
+	        var len = data.length
+	        var id
+	        var idProperty = this.props.idProperty
+
+	        for (; i < len; i++){
+	            id = data[i][idProperty]
+
+	            if (selected[id]){
+	                index = i
+	            }
+	        }
+
+	        return index
+	    },
+
+	    notifySelection: function(selected, data){
+	        if (typeof this.props.onSelectionChange == 'function'){
+	            this.props.onSelectionChange(selected, data)
+	        }
+
+	        if (!hasOwn(this.props, 'selected')){
+	            this.setState({
+	                defaultSelected: selected
+	            })
+	        }
+	    },
+
+	    handleSingleSelection: function(data, event){
+	        var props = this.props
+
+	        var rowSelected = this.isRowSelected(data)
+	        var newSelected = !rowSelected
+
+	        if (rowSelected && event && !event.ctrlKey){
+	            //if already selected and not ctrl, keep selected
+	            newSelected = true
+	        }
+
+	        var selectedId = newSelected?
+	                            data[props.idProperty]:
+	                            null
+
+	        this.notifySelection(selectedId, data)
+	    },
+
+
+	    handleMultiSelection: function(data, event, config){
+
+	        var selIndex = config.selIndex
+	        var prevShiftKeyIndex = config.prevShiftKeyIndex
+
+	        var props = this.props
+	        var map   = selIndex == null?
+	                        {}:
+	                        assign({}, getSelected(props, this.state))
+
+	        if (prevShiftKeyIndex != null && selIndex != null){
+	            var min = Math.min(prevShiftKeyIndex, selIndex)
+	            var max = Math.max(prevShiftKeyIndex, selIndex)
+
+	            var removeArray = props.data.slice(min, max + 1) || []
+
+	            removeArray.forEach(function(item){
+	                if (item){
+	                    var id = item[props.idProperty]
+	                    delete map[id]
+	                }
+	            })
+	        }
+
+	        data.forEach(function(item){
+	            if (item){
+	                var id = item[props.idProperty]
+	                map[id] = item
+	            }
+	        })
+
+	        this.notifySelection(map, data)
+	    },
+
+	    handleMultiSelectionRowToggle: function(data, event){
+
+	        var selected   = getSelected(this.props, this.state)
+	        var isSelected = this.isRowSelected(data)
+
+	        var clone = assign({}, selected)
+	        var id    = data[this.props.idProperty]
+
+	        if (isSelected){
+	            delete clone[id]
+	        } else {
+	            clone[id] = data
+	        }
+
+	        this.notifySelection(clone, data)
+
+	        return isSelected
+	    },
+
+	    handleSelection: function(rowProps, event){
+
+	        var props = this.props
+
+	        if (!hasOwn(props, 'selected') && !hasOwn(props, 'defaultSelected')){
+	            return
+	        }
+
+	        var isSelected  = this.isRowSelected(rowProps.data)
+	        var multiSelect = this.isMultiSelect()
+
+	        if (!multiSelect){
+	            this.handleSingleSelection(rowProps.data, event)
+	            return
+	        }
+
+	        if (this.selIndex === undefined){
+	            this.selIndex = this.findInitialSelectionIndex()
+	        }
+
+	        var selIndex = this.selIndex
+
+	        //multi selection
+	        var index = rowProps.index
+	        var prevShiftKeyIndex = this.shiftKeyIndex
+	        var start
+	        var end
+	        var data
+
+	        if (event.ctrlKey){
+	            this.selIndex = index
+	            this.shiftKeyIndex = null
+
+	            var unselect = this.handleMultiSelectionRowToggle(props.data[index], event)
+
+	            if (unselect){
+	                this.selIndex++
+	                this.shiftKeyIndex = prevShiftKeyIndex
+	            }
+
+	            return
+	        }
+
+	        if (!event.shiftKey){
+	            //set selIndex, for future use
+	            this.selIndex = index
+	            this.shiftKeyIndex = null
+
+	            //should not select many, so make selIndex null
+	            selIndex = null
+	        } else {
+	            this.shiftKeyIndex = index
+	        }
+
+	        if (selIndex == null){
+	            data = [props.data[index]]
+	        } else {
+	            start = Math.min(index, selIndex)
+	            end   = Math.max(index, selIndex) + 1
+	            data  = props.data.slice(start, end)
+	        }
+
+	        this.handleMultiSelection(data, event, {
+	            selIndex: selIndex,
+	            prevShiftKeyIndex: prevShiftKeyIndex
+	        })
+	    },
+
+
+	    isRowSelected: function(data){
+	        var selectedMap = this.getSelectedMap()
+	        var id          = data[this.props.idProperty]
+
+	        return selectedMap[id]
+	    },
+
+	    isMultiSelect: function(){
+	        var selected = getSelected(this.props, this.state)
+
+	        return selected && typeof selected == 'object'
+	    },
+
+	    getSelectedMap: function(){
+	        var selected    = getSelected(this.props, this.state)
+	        var multiSelect = selected && typeof selected == 'object'
+	        var map
+
+	        if (multiSelect){
+	            map = selected
+	        } else {
+	            map = {}
+	            map[selected] = true
+	        }
+
+	        return map
+	    }
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var assign = __webpack_require__(14)
+	var ReactMenu = __webpack_require__(30)
+
+	function stopPropagation(event){
+	    event.stopPropagation()
+	}
+
+	function emptyFn(){}
+
+	var FILTER_FIELDS = {}
+
+	module.exports = {
+
+	    getColumnFilterFieldFactory: function(column){
+
+	        var type = column.type || 'string'
+
+	        return FILTER_FIELDS[type] || React.DOM.input
+	    },
+
+	    getFilterField: function(props){
+	        var column = props.column
+	        var filterValue = this.filterValues?
+	                            this.filterValues[column.name]:
+	                            ''
+
+	        var fieldProps = {
+	            autoFocus   : true,
+	            defaultValue: filterValue,
+	            column      : column,
+	            onChange    : this.onFilterChange.bind(this, column),
+	            onKeyUp     : this.onFilterKeyUp.bind(this, column)
+	        }
+
+	        var fieldFactory = column.renderFilterField || this.props.renderFilterField
+	        var field
+
+	        if (fieldFactory){
+	            field = fieldFactory(fieldProps)
+	        }
+
+	        if (field === undefined){
+	            field = this.getColumnFilterFieldFactory(column)(fieldProps)
+	        }
+
+	        return field
+	    },
+
+	    onFilterKeyUp: function(column, event){
+	        if (event.key == 'Enter'){
+	            this.onFilterClick(column, event)
+	        }
+	    },
+
+	    onFilterChange: function(column, eventOrValue){
+
+	        var value = eventOrValue
+
+	        if (eventOrValue && eventOrValue.target){
+	            value = eventOrValue.target.value
+	        }
+
+	        this.filterValues = this.filterValues || {}
+	        this.filterValues[column.name] = value
+
+	        if (this.props.liveFilter){
+	            this.filterBy(column, value)
+	        }
+	    },
+
+	    filterBy: function(column, value, event){
+	        ;(this.props.onFilter || emptyFn)(column, value, this.filterValues, event)
+	    },
+
+	    onFilterClick: function(column, event){
+	        this.showMenu(null)
+
+	        var value = this.filterValues? this.filterValues[column.name]: ''
+
+	        this.filterBy(column, value, event)
+	    },
+
+	    onFilterClear: function(column){
+	        this.showMenu(null)
+
+	        if (this.filterValues){
+	            this.filterValues[column.name] = ''
+	        }
+
+	        this.filterBy(column, '')
+
+	        ;(this.props.onClearFilter || emptyFn).apply(null, arguments)
+	    },
+
+	    getFilterButtons: function(props){
+
+	        var column = props.column
+	        var factory = column.renderFilterButtons || this.props.renderFilterButtons
+
+	        var result
+
+	        if (factory){
+	            result = factory(props)
+	        }
+
+	        if (result !== undefined){
+	            return result
+	        }
+
+	        var doFilter = this.onFilterClick.bind(this, column)
+	        var doClear = this.onFilterClear.bind(this, column)
+
+	        return React.createElement("div", {style: {textAlign: 'center'}}, 
+	            React.createElement("button", {onClick: doFilter}, "Filter"), 
+	            React.createElement("button", {onClick: doClear, style: {marginLeft: 5}}, "Clear")
+	        )
+	    },
+
+	    filterMenuFactory: function(props){
+
+	        var overStyle = {
+	            background: 'white'
+	        }
+
+	        var column  = props.column
+	        var field   = this.getFilterField(props)
+	        var buttons = this.getFilterButtons({
+	            column: column
+	        })
+
+	        var children = [
+	            field,
+	            buttons
+	        ].map(function(x, index){
+	            return React.createElement(ReactMenu.Item, {key: index}, 
+	                React.createElement(ReactMenu.Item.Cell, null, 
+	                    x
+	                )
+	            )
+	        })
+
+	        props.itemOverStyle   = props.itemOverStyle || overStyle
+	        props.itemActiveStyle = props.itemActiveStyle || overStyle
+	        props.onClick = props.onClick || stopPropagation
+
+	        var factory = this.props.filterMenuFactory
+	        var result
+
+	        if (factory){
+	            result = factory(props)
+
+	            if (result !== undefined){
+	                return result
+	            }
+	        }
+
+	        props.onMount = this.onFilterMenuMount
+
+	        return React.createElement(ReactMenu, React.__spread({},  props), 
+	            children
+	        )
+	    },
+
+	    onFilterMenuMount: function(menu){
+	        var dom = menu.getDOMNode()
+
+	        if (dom){
+	            var input = dom.querySelector('input')
+
+	            if (input){
+	                setTimeout(function(){
+	                    input.focus()
+	                }, 10)
+	            }
+	        }
+	    }
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function(){
+	    return {
+	        loading: false,
+	        columnMinWidth: 50,
+	        cellPadding: 5,
+	        scrollbarSize: 16,
+
+	        scrollBy: undefined,
+	        virtualRendering: true,
+
+	        styleAlternateRowsCls: 'z-style-alternate',
+	        withColumnMenuCls: 'z-with-column-menu',
+	        cellEllipsisCls: 'z-cell-ellipsis',
+	        defaultClassName: 'react-datagrid',
+
+	        withColumnMenu: true,
+	        sortable: true,
+	        filterableColumns: true,
+	        resizableColumns: true,
+
+	        showCellBordersCls: 'z-cell-borders',
+	        showCellBorders: false,
+	        styleAlternateRows: true,
+	        cellEllipsis: true,
+	        rowHeight: 31,
+
+	        groupNestingWidth: 20,
+
+	        defaultStyle: {
+	            position: 'relative'
+	        }
+	    }
+	}
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */'use strict';
 
 	var React  = __webpack_require__(1)
-	var assign = __webpack_require__(12)
+	var assign = __webpack_require__(14)
 
 	function signum(x){
 	    return x < 0? -1: 1
@@ -923,156 +1671,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var findIndexBy =__webpack_require__(15)
-
-	function findIndexByName(arr, name){
-	    return findIndexBy(arr, function(info){
-	        return info.name === name
-	    })
-	}
-
-	module.exports = findIndexByName
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var hasown = __webpack_require__(25)
-
-	function copyIf(source, target){
-	    var hasOwn = hasown(target)
-
-	    Object.keys(source).forEach(function(key){
-	        if (!hasOwn(key)){
-	            target[key] = source[key]
-	        }
-	    })
-	}
-
-	function groupByFields(data, fields, path, names, fieldIndex){
-	    data       = data       || []
-	    fieldIndex = fieldIndex || 0
-
-	    var field = fields[fieldIndex]
-
-	    if (!field){
-	        return data
-	    }
-
-	    var group     = groupArrayByField(data, field)
-	    var fieldName = typeof field == 'string'?
-	                            field:
-	                            field.name
-
-	    if (!fieldIndex){
-	        group.namePath  = []
-	        group.valuePath = []
-	        group.depth     = 0
-	        delete group.name
-	    }
-
-	    var groupsCount = group.length
-
-	    if (group.keys && group.keys.length){
-
-	        group.leaf = false
-	        group.keys.forEach(function(key){
-
-	            var groupPath  = (path || []).concat(key)
-	            var fieldNames = (names || []).concat(fieldName)
-	            var data = groupByFields(group.data[key], fields, groupPath, fieldNames, fieldIndex + 1)
-
-	            if (Array.isArray(data)){
-	                data = {
-	                    data: data,
-	                    leaf: true
-	                }
-	            }
-
-	            data.name      = fieldName
-	            data.value     = key
-	            data.valuePath = groupPath
-	            data.namePath  = fieldNames
-	            data.depth     = fieldIndex + 1
-
-	            if (typeof field != 'string'){
-
-	                copyIf(field, data)
-	            }
-
-	            group.data[key] = data
-
-	            if (!data.leaf){
-	                groupsCount += data.groupsCount
-	            }
-
-	        })
-	    }
-
-	    if (!group.leaf){
-	        group.groupsCount = groupsCount
-	    }
-
-	    return group
-	}
-
-	function groupArrayByField(data, field){
-
-	    var groupKeys      = {}
-	    var groupKeysArray = []
-
-	    var fieldName      = typeof field == 'string'?
-	                            field:
-	                            field.name
-
-	    ;(data || []).forEach(function(item){
-	        var itemKey = item[fieldName]
-
-	        if (groupKeys[itemKey]){
-	            groupKeys[itemKey].push(item)
-	        } else {
-	            groupKeys[itemKey] = [item]
-	            groupKeysArray.push(itemKey)
-	        }
-	    })
-
-	    var result = {
-	        keys      : groupKeysArray,
-	        data      : groupKeys,
-	        childName : fieldName,
-	        length    : groupKeysArray.length,
-	        leaf      : true
-	    }
-
-	    return result
-	}
-
-	module.exports = groupByFields
-
-/***/ },
-/* 8 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */'use strict';
 
 	var React   = __webpack_require__(1)
-	var Region  = __webpack_require__(13)
-	var ReactMenu = React.createFactory(__webpack_require__(28))
-	var assign  = __webpack_require__(12)
-	var clone   = __webpack_require__(26)
-	var asArray = __webpack_require__(16)
-	var findIndexBy = __webpack_require__(15)
-	var findIndexByName = __webpack_require__(6)
-	var Cell    = __webpack_require__(22)
-	var setupColumnDrag   = __webpack_require__(17)
-	var setupColumnResize = __webpack_require__(18)
+	var Region  = __webpack_require__(15)
+	var ReactMenu = React.createFactory(__webpack_require__(30))
+	var assign  = __webpack_require__(14)
+	var clone   = __webpack_require__(31)
+	var asArray = __webpack_require__(22)
+	var findIndexBy = __webpack_require__(17)
+	var findIndexByName = __webpack_require__(4)
+	var Cell    = __webpack_require__(26)
+	var setupColumnDrag   = __webpack_require__(23)
+	var setupColumnResize = __webpack_require__(24)
 
 	function emptyFn(){}
 
@@ -1214,7 +1828,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        var filter  = column.filterable?
-	                        React.createElement("div", {className: "z-show-filter", onClick: this.handleFilterClick.bind(this, column)}):
+	                        React.createElement("div", {className: "z-show-filter", onMouseUp: this.handleFilterMouseUp.bind(this, column)}):
 	                        null
 
 	        var resizer = column.resizable?
@@ -1308,32 +1922,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return
 	        }
 
-	        return React.createElement("div", {className: "z-show-menu", onClick: this.handleShowMenuClick.bind(this, props, column, index)})
+	        return React.createElement("div", {className: "z-show-menu", onMouseUp: this.handleShowMenuMouseUp.bind(this, props, column, index)})
 	    },
 
-	    handleShowMenuClick: function(props, column, index, event){
-	        event.stopPropagation()
+	    handleShowMenuMouseUp: function(props, column, index, event){
+	        event.nativeEvent.stopSort = true
 
-	        var dom = this.getDOMNode()
-	        var domRegion    = Region.from(dom)
-	        var targetRegion = Region.from(event.target)
-	        var offset = event.pageX - targetRegion.left
-
-	        var menuOffset = {
-	            left: event.pageX - domRegion.left - offset
-	        }
-
-	        if (index === props.columns.length - 1){
-	            offset = targetRegion.right - event.pageX
-	            menuOffset = {
-	                right: domRegion.right - event.pageX - offset
-	            }
-	        }
-
-	        this.showMenu(column, menuOffset, event)
+	        this.showMenu(column, event)
 	    },
 
-	    showMenu: function(column, offset, event){
+	    showMenu: function(column, event){
 
 	        var menuItem = function(column){
 	            return {
@@ -1370,7 +1968,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    result
 	        }
 
-	        this.props.showColumnMenu(menu.bind(this, event.target), column.name, offset, event)
+	        this.props.showMenu(menu.bind(this, event.target), {
+	            menuColumn: column.name
+	        })
+	    },
+
+	    showFilterMenu: function(column, event){
+
+	        function menu(eventTarget, props){
+
+	            var defaultFactory = this.props.filterMenuFactory
+	            var factory = column.filterMenuFactory || defaultFactory
+
+	            props.columns = ['component']
+	            props.column = column
+	            props.alignTo = eventTarget
+	            props.alignPositions = [
+	                'tl-bl',
+	                'tr-br',
+	                'bl-tl',
+	                'br-tr'
+	            ]
+	            props.style = {
+	                position: 'absolute'
+	            }
+
+	            var result = factory(props)
+
+	            return result === undefined?
+	                        defaultFactory(props):
+	                        result
+	        }
+
+	        this.props.showMenu(menu.bind(this, event.target), {
+	            menuColumn: column.name
+	        })
 	    },
 
 	    toggleColumn: function(column){
@@ -1393,12 +2025,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 
-	    handleFilterClick: function(column, event){
-	        event.stopPropagation()
+	    handleFilterMouseUp: function(column, event){
+	        event.nativeEvent.stopSort = true
+
+	        this.showFilterMenu(column, event)
+	        // event.stopPropagation()
 	    },
 
 	    handleMouseUp: function(column, event){
 	        if (this.state.dragging){
+	            return
+	        }
+
+	        if (event && event.nativeEvent && event.nativeEvent.stopSort){
 	            return
 	        }
 
@@ -1468,148 +2107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	function slice(data, props){
-
-	    if (!props.virtualRendering){
-	        return data
-	    }
-
-	    return data.slice(
-	            props.startIndex,
-	            props.startIndex + props.renderCount
-	        )
-	}
-
-	module.exports = slice
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/** @jsx React.DOM */'use strict';
-
-	var React = __webpack_require__(1)
-	var renderMenu = __webpack_require__(19)
-	var renderRow  = __webpack_require__(20)
-	var tableStyle  = __webpack_require__(21)
-	var slice  = __webpack_require__(9)
-
-	function getData(props){
-
-	    if (!props.virtualRendering){
-	        return props.data
-	    }
-
-	    return slice(props.data, props)
-	}
-
-	module.exports = function(props, rows){
-
-	    rows = rows || getData(props).map(function(data, index){
-	        return renderRow(props, data, index + props.startIndex)
-	    })
-
-	    return React.createElement("div", {ref: "table", className: "z-table", style: tableStyle(props)}, 
-	        rows, 
-	        renderMenu(props)
-	    )
-	}
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/** @jsx React.DOM */'use strict';
-
-	var React = __webpack_require__(1)
-
-	var Row         = __webpack_require__(23)
-	var Cell        = __webpack_require__(22)
-	var CellFactory = React.createFactory(Cell)
-
-	var renderRow = __webpack_require__(20)
-
-	function renderData(props, data, depth){
-
-	    return data.map(function(data, index){
-
-	        return renderRow(props, data, index, function(config){
-	            config.cellFactory = function(cellProps){
-	                if (cellProps.index === 0){
-	                    cellProps.innerStyle = {
-	                        paddingLeft: depth * props.groupNestingWidth
-	                    }
-	                }
-
-	                return CellFactory(cellProps)
-	            }
-
-	            config.className += ' z-grouped'
-
-	            return config
-	        })
-	    })
-	}
-
-	function renderGroupRow(props, groupData){
-
-	    var style = {
-	        paddingLeft: (groupData.depth - 1)* props.groupNestingWidth
-	    }
-
-	    var cellStyle = {
-	        minWidth: props.totalColumnWidth,
-	        maxWidth: props.totalColumnWidth
-	    }
-
-	    return React.createElement(Row, {className: "z-group-row", key: 'group-'+groupData.valuePath, rowHeight: props.rowHeight}, 
-	        React.createElement(Cell, {
-	            className: "z-group-cell", 
-	            textPadding: props.cellPadding, 
-	            innerStyle: style, 
-	            text: groupData.value, 
-	            style: cellStyle}
-	        )
-	    )
-	}
-
-	function renderGroup(props, groupData){
-
-	    var result = [renderGroupRow(props, groupData)]
-
-	    if (groupData && groupData.leaf){
-	        result.push.apply(result, renderData(props, groupData.data, groupData.depth))
-	    } else {
-	        groupData.keys.forEach(function(key){
-	            var items = renderGroup(props, groupData.data[key])
-	            result.push.apply(result, items)
-	        })
-	    }
-
-	    return result
-	}
-
-	function renderGroups(props, groupsData){
-	    var result = []
-
-	    groupsData.keys.map(function(key){
-	        result.push.apply(result, renderGroup(props, groupsData.data[key]))
-	    })
-
-	    return result
-	}
-
-	module.exports = function(props, groupData){
-	    return renderGroups(props, groupData)
-	}
-
-/***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1641,20 +2139,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(27)
+	module.exports = __webpack_require__(29)
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React  = __webpack_require__(1)
-	var assign = __webpack_require__(31)
-	var Loader = __webpack_require__(30)
+	var assign = __webpack_require__(47)
+	var Loader = __webpack_require__(46)
 
 	module.exports = React.createClass({
 
@@ -1702,7 +2200,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1724,7 +2222,156 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = findIndexBy
 
 /***/ },
-/* 16 */
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */'use strict';
+
+	module.exports = function renderMenu(props){
+	    if (!props.menu){
+	        return
+	    }
+
+	    return props.menu({
+	        className : 'z-header-menu-column',
+	        gridColumns: props.allColumns
+	    })
+	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */'use strict';
+
+	var assign = __webpack_require__(14)
+
+	var Row        = __webpack_require__(25)
+	var RowFactory = React.createFactory(Row)
+
+	/**
+	 * Render a datagrid row
+	 *
+	 * @param  {Object}   props The props from which to build row props
+	 * @param  {Object}   data The data object that backs this row
+	 * @param  {Number}   index The index in the grid of the row to be rendered
+	 * @param  {Function} [fn] A function that can be used to modify built row props
+	 *
+	 * If props.rowFactory is specified, it will be used to build the ReactElement
+	 * corresponding to this row. In case it returns undefined, the default RowFactory will be used
+	 * (this case occurs when the rowFactory was specified just to modify the row props)
+	 *
+	 * @return {ReactElement}
+	 */
+	module.exports = function renderRow(props, data, index, fn){
+	    var factory  = props.rowFactory || RowFactory
+	    var key      = data[props.idProperty]
+
+	    var selected = false
+
+	    if (typeof props.selected == 'object' && props.selected){
+	        selected = !!props.selected[key]
+	    } else if (props.selected){
+	        selected = key === props.selected
+	    }
+
+	    var config = {
+	        className: index % 2 === 0? 'z-even': 'z-odd',
+	        selected : selected,
+
+	        key      : key,
+	        data     : data,
+	        index    : index,
+
+	        cellFactory: props.cellFactory,
+	        renderCell : props.renderCell,
+	        renderText : props.renderText,
+	        cellPadding: props.cellPadding,
+	        rowHeight  : props.rowHeight,
+	        columns    : props.columns,
+
+	        rowContextMenu: props.rowContextMenu,
+	        showMenu: props.showMenu,
+
+	        _onClick: props.onRowClick
+	    }
+
+	    var style
+	    var rowStyle = props.rowStyle
+
+	    if (rowStyle){
+	        style = {}
+
+	        if (typeof rowStyle == 'function'){
+	            style = rowStyle(data, config)
+	        } else {
+	            assign(style, rowStyle)
+	        }
+
+	        config.style = style
+	    }
+
+	    var className = props.rowClassName
+
+	    if (typeof className == 'function'){
+	        className = className(data, config)
+	    }
+
+	    if (className){
+	        config.className = className
+	    }
+
+	    if (typeof fn == 'function'){
+	        config = fn(config)
+	    }
+
+	    var row = factory(config)
+
+	    if (row === undefined){
+	        row = RowFactory(config)
+	    }
+
+	    if (config.selected && this){
+	        this.selIndex = index
+	    }
+
+	    return row
+	}
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function(props){
+	    var scrollTop  = props.virtualRendering?
+	                        0:
+	                        props.scrollTop
+
+	    return {
+	        transform: 'translate3d(' + -props.scrollLeft + 'px, ' + -scrollTop + 'px, 0px)'
+	    }
+	}
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function(props, state){
+	    var selected = props.selected == null?
+	                        state.defaultSelected
+	                        :
+	                        props.selected
+
+	    return selected
+	}
+
+/***/ },
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1742,13 +2389,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 17 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region     = __webpack_require__(13)
-	var DragHelper = __webpack_require__(29)
+	var Region     = __webpack_require__(15)
+	var DragHelper = __webpack_require__(32)
 
 	function range(start, end){
 	    var res = []
@@ -1882,15 +2529,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 18 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region     = __webpack_require__(13)
-	var DragHelper = __webpack_require__(29)
+	var Region     = __webpack_require__(15)
+	var DragHelper = __webpack_require__(32)
 
-	var findIndexByName = __webpack_require__(6)
+	var findIndexByName = __webpack_require__(4)
 
 	module.exports = function(header, props, column, event){
 
@@ -1982,139 +2629,222 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 19 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */'use strict';
 
-	module.exports = function renderMenu(props){
-	    if (!props.menuColumn){
-	        return
-	    }
+	var React       = __webpack_require__(1)
+	var Region      = __webpack_require__(15)
+	var assign      = __webpack_require__(14)
+	var Cell        = __webpack_require__(26)
+	var CellFactory = React.createFactory(Cell)
+	var ReactMenu = __webpack_require__(30)
+	var ReactMenuFactory = React.createFactory(ReactMenu)
+	var prefixer  = __webpack_require__(48)
 
-	    var style  = {top: 0}
-	    var offset = props.menuOffset
+	module.exports = React.createClass({
 
-	    if (offset.left){
-	        style.left = offset.left + props.scrollLeft
-	    } else {
-	        style.right = offset.right - props.scrollLeft - props.scrollbarSize
-	    }
+	    displayName: 'ReactDataGrid.Row',
 
-	    return props.menu({
-	        style     : style,
-	        className : 'z-header-menu-column',
-	        gridColumns: props.allColumns
-	    })
-	}
+	    propTypes: {
+	        data   : React.PropTypes.object,
+	        columns: React.PropTypes.array,
+	        index  : React.PropTypes.number
+	    },
 
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
+	    getDefaultProps: function(){
 
-	/** @jsx React.DOM */'use strict';
+	        return {
+	            defaultClassName  : 'z-row',
+	            mouseOverClassName: 'z-over',
+	            selectedClassName : 'z-selected',
+	            defaultStyle      : prefixer({
+	                userSelect: 'none'
+	            })
+	        }
+	    },
 
-	var assign = __webpack_require__(12)
+	    getInitialState: function(){
+	        return {
+	            mouseOver: false
+	        }
+	    },
 
-	var Row        = __webpack_require__(23)
-	var RowFactory = React.createFactory(Row)
+	    render: function() {
+	        var props = this.prepareProps(this.props)
+	        var cells = props.children || props.columns
+	                                        .map(this.renderCell.bind(this, this.props))
 
-	/**
-	 * Render a datagrid row
-	 *
-	 * @param  {Object}   props The props from which to build row props
-	 * @param  {Object}   data The data object that backs this row
-	 * @param  {Number}   index The index in the grid of the row to be rendered
-	 * @param  {Function} [fn] A function that can be used to modify built row props
-	 *
-	 * If props.rowFactory is specified, it will be used to build the ReactElement
-	 * corresponding to this row. In case it returns undefined, the default RowFactory will be used
-	 * (this case occurs when the rowFactory was specified just to modify the row props)
-	 *
-	 * @return {ReactElement}
-	 */
-	module.exports = function renderRow(props, data, index, fn){
-	    var factory  = props.rowFactory || RowFactory
-	    var key      = data[props.idProperty]
+	        return React.createElement("div", React.__spread({},  props), cells)
+	    },
 
-	    var config = {
-	        className: index % 2 === 0? 'z-even': 'z-odd',
+	    prepareProps: function(thisProps){
+	        var props = assign({}, thisProps)
 
-	        key      : key,
-	        data     : data,
-	        index    : index,
+	        props.className = this.prepareClassName(props, this.state)
+	        props.style = this.prepareStyle(props)
 
-	        cellFactory: props.cellFactory,
-	        renderCell : props.renderCell,
-	        renderText : props.renderText,
-	        cellPadding: props.cellPadding,
-	        rowHeight  : props.rowHeight,
-	        columns    : props.columns
-	    }
+	        props.onMouseEnter = this.handleMouseEnter
+	        props.onMouseLeave = this.handleMouseLeave
+	        props.onContextMenu = this.handleContextMenu
+	        props.onClick = this.handleRowClick
 
-	    var style
-	    var rowStyle = props.rowStyle
+	        delete props.data
+	        delete props.cellPadding
 
-	    if (rowStyle){
-	        style = {}
+	        return props
+	    },
 
-	        if (typeof rowStyle == 'function'){
-	            style = rowStyle(data, config)
-	        } else {
-	            assign(style, rowStyle)
+	    handleRowClick: function(event){
+
+	        if (this.props.onClick){
+	            this.props.onClick(event)
 	        }
 
-	        config.style = style
+	        if (this.props._onClick){
+	            this.props._onClick(this.props, event)
+	        }
+	    },
+
+	    handleContextMenu: function(event){
+
+	        if (this.props.rowContextMenu){
+	            this.showMenu(event)
+	        }
+
+	        if (this.props.onContextMenu){
+	            this.props.onContextMenu(event)
+	        }
+	    },
+
+	    showMenu: function(event){
+	        var factory = this.props.rowContextMenu
+	        var alignTo = Region.from(event)
+
+	        var props = {
+	            style: {
+	                position: 'absolute'
+	            },
+	            rowProps: this.props,
+	            data    : this.props.data,
+	            alignTo : alignTo,
+	            alignPositions: [
+	                'tl-bl',
+	                'tr-br',
+	                'bl-tl',
+	                'br-tr'
+	            ],
+	            items: [
+	                {
+	                    label: 'stop'
+	                }
+	            ]
+	        }
+
+	        var menu = factory(props)
+
+	        if (menu === undefined){
+	            menu = ReactMenuFactory(props)
+	        }
+
+	        event.preventDefault()
+
+	        this.props.showMenu(function(){
+	            return menu
+	        })
+	    },
+
+	    handleMouseLeave: function(event){
+	        this.setState({
+	            mouseOver: false
+	        })
+
+	        if (this.props.onMouseLeave){
+	            this.props.onMouseLeave(event)
+	        }
+	    },
+
+	    handleMouseEnter: function(event){
+	        this.setState({
+	            mouseOver: true
+	        })
+
+	        if (this.props.onMouseEnter){
+	            this.props.onMouseEnter(event)
+	        }
+	    },
+
+	    renderCell: function(props, column, index){
+
+	        var text = props.data[column.name]
+
+	        var cellProps = {
+	            key        : column.name,
+	            name       : column.name,
+	            data       : props.data,
+	            columns    : props.columns,
+	            index      : index,
+	            rowIndex   : props.index,
+	            textPadding: props.cellPadding,
+	            renderCell : props.renderCell,
+	            renderText : props.renderText
+	        }
+
+	        if (typeof column.render == 'function'){
+	            text = column.render(text, props.data, cellProps)
+	        }
+
+	        cellProps.text = text
+
+	        var result
+
+	        if (props.cellFactory){
+	            result = props.cellFactory(cellProps)
+	        }
+
+	        if (result === undefined){
+	            result = CellFactory(cellProps)
+	        }
+
+	        return result
+	    },
+
+	    prepareClassName: function(props, state){
+	        var className = props.className || ''
+
+	        className += ' ' + props.defaultClassName
+
+	        if (state.mouseOver){
+	            className += ' ' + props.mouseOverClassName
+	        }
+
+	        if (props.selected){
+	            className += ' ' + props.selectedClassName
+	        }
+
+	        return className
+	    },
+
+	    prepareStyle: function(props){
+
+	        var style = assign({}, props.defaultStyle, props.style)
+
+	        style.height = props.rowHeight
+
+	        return style
 	    }
+	})
 
-	    var className = props.rowClassName
-
-	    if (typeof className == 'function'){
-	        className = className(data, config)
-	    }
-
-	    if (className){
-	        config.className = className
-	    }
-
-	    if (typeof fn == 'function'){
-	        config = fn(config)
-	    }
-
-	    var row = factory(config)
-
-	    if (row === undefined){
-	        row = RowFactory(config)
-	    }
-
-	    return row
-	}
 
 /***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = function(props){
-	    var scrollTop  = props.virtualRendering?
-	                        0:
-	                        props.scrollTop
-
-	    return {
-	        transform: 'translate3d(' + -props.scrollLeft + 'px, ' + -scrollTop + 'px, 0px)'
-	    }
-	}
-
-
-/***/ },
-/* 22 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */'use strict';
 
 	var React  = __webpack_require__(1)
-	var assign = __webpack_require__(12)
+	var assign = __webpack_require__(14)
 
 	function copyProps(target, source, list){
 
@@ -2199,162 +2929,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/** @jsx React.DOM */'use strict';
-
-	var React       = __webpack_require__(1)
-	var assign      = __webpack_require__(12)
-	var Cell        = __webpack_require__(22)
-	var CellFactory = React.createFactory(Cell)
-
-	module.exports = React.createClass({
-
-	    displayName: 'ReactDataGrid.Row',
-
-	    propTypes: {
-	        data   : React.PropTypes.object,
-	        columns: React.PropTypes.array,
-	        index  : React.PropTypes.number
-	    },
-
-	    getDefaultProps: function(){
-
-	        return {
-	            defaultClassName: 'z-row',
-	            mouseOverCls    : 'z-over',
-	            defaultStyle    : {}
-	        }
-	    },
-
-	    getInitialState: function(){
-	        return {
-	            mouseOver: false
-	        }
-	    },
-
-	    render: function() {
-	        var props = this.prepareProps(this.props)
-	        var cells = props.children || props.columns
-	                                        .map(this.renderCell.bind(this, this.props))
-
-	        return React.createElement("div", React.__spread({},  props), cells)
-	    },
-
-	    prepareProps: function(thisProps){
-	        var props = assign({}, thisProps)
-
-	        props.className = this.prepareClassName(props, this.state)
-	        props.style = this.prepareStyle(props)
-
-	        props.onMouseEnter = this.handleMouseEnter
-	        props.onMouseLeave = this.handleMouseLeave
-
-	        delete props.data
-	        delete props.cellPadding
-
-	        return props
-	    },
-
-	    handleMouseLeave: function(event){
-	        this.setState({
-	            mouseOver: false
-	        })
-
-	        if (this.props.onMouseLeave){
-	            this.props.onMouseLeave(event)
-	        }
-	    },
-
-	    handleMouseEnter: function(event){
-	        this.setState({
-	            mouseOver: true
-	        })
-
-	        if (this.props.onMouseEnter){
-	            this.props.onMouseEnter(event)
-	        }
-	    },
-
-	    renderCell: function(props, column, index){
-
-	        var text = props.data[column.name]
-
-	        var cellProps = {
-	            key        : column.name,
-	            name       : column.name,
-	            data       : props.data,
-	            columns    : props.columns,
-	            index      : index,
-	            rowIndex   : props.index,
-	            textPadding: props.cellPadding,
-	            renderCell : props.renderCell,
-	            renderText : props.renderText
-	        }
-
-	        if (typeof column.render == 'function'){
-	            text = column.render(text, props.data, cellProps)
-	        }
-
-	        cellProps.text = text
-
-	        var result
-
-	        if (props.cellFactory){
-	            result = props.cellFactory(cellProps)
-	        }
-
-	        if (result === undefined){
-	            result = CellFactory(cellProps)
-	        }
-
-	        return result
-	    },
-
-	    prepareClassName: function(props, state){
-	        var className = props.className || ''
-
-	        className += ' ' + props.defaultClassName
-
-	        if (state.mouseOver){
-	            className += ' ' + props.mouseOverCls
-	        }
-
-	        return className
-	    },
-
-	    prepareStyle: function(props){
-
-	        var style = assign({}, props.defaultStyle, props.style)
-
-	        style.height = props.rowHeight
-
-	        return style
-	    }
-	})
-
-
-/***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
-	    toLowerFirst     : __webpack_require__(35),
-	    toUpperFirst     : __webpack_require__(36),
-	    separate         : __webpack_require__(37),
-	    stripWhitespace  : __webpack_require__(38),
-	    compactWhitespace: __webpack_require__(39),
-	    camelize         : __webpack_require__(40),
-	    humanize         : __webpack_require__(41),
-	    hyphenate        : __webpack_require__(42),
-	    endsWith         : __webpack_require__(43),
+	    toLowerFirst     : __webpack_require__(36),
+	    toUpperFirst     : __webpack_require__(37),
+	    separate         : __webpack_require__(38),
+	    stripWhitespace  : __webpack_require__(39),
+	    compactWhitespace: __webpack_require__(40),
+	    camelize         : __webpack_require__(41),
+	    humanize         : __webpack_require__(42),
+	    hyphenate        : __webpack_require__(43),
+	    endsWith         : __webpack_require__(44),
 
-	    is: __webpack_require__(44)
+	    is: __webpack_require__(45)
 	}
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -2397,156 +2990,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
-
-	function objectToString(o) {
-	  return Object.prototype.toString.call(o);
-	}
-
-	// shim for Node's 'util' package
-	// DO NOT REMOVE THIS! It is required for compatibility with EnderJS (http://enderjs.com/).
-	var util = {
-	  isArray: function (ar) {
-	    return Array.isArray(ar) || (typeof ar === 'object' && objectToString(ar) === '[object Array]');
-	  },
-	  isDate: function (d) {
-	    return typeof d === 'object' && objectToString(d) === '[object Date]';
-	  },
-	  isRegExp: function (re) {
-	    return typeof re === 'object' && objectToString(re) === '[object RegExp]';
-	  },
-	  getRegExpFlags: function (re) {
-	    var flags = '';
-	    re.global && (flags += 'g');
-	    re.ignoreCase && (flags += 'i');
-	    re.multiline && (flags += 'm');
-	    return flags;
-	  }
-	};
-
-
-	if (true)
-	  module.exports = clone;
-
-	/**
-	 * Clones (copies) an Object using deep copying.
-	 *
-	 * This function supports circular references by default, but if you are certain
-	 * there are no circular references in your object, you can save some CPU time
-	 * by calling clone(obj, false).
-	 *
-	 * Caution: if `circular` is false and `parent` contains circular references,
-	 * your program may enter an infinite loop and crash.
-	 *
-	 * @param `parent` - the object to be cloned
-	 * @param `circular` - set to true if the object to be cloned may contain
-	 *    circular references. (optional - true by default)
-	 * @param `depth` - set to a number if the object is only to be cloned to
-	 *    a particular depth. (optional - defaults to Infinity)
-	 * @param `prototype` - sets the prototype to be used when cloning an object.
-	 *    (optional - defaults to parent prototype).
-	*/
-
-	function clone(parent, circular, depth, prototype) {
-	  // maintain two arrays for circular references, where corresponding parents
-	  // and children have the same index
-	  var allParents = [];
-	  var allChildren = [];
-
-	  var useBuffer = typeof Buffer != 'undefined';
-
-	  if (typeof circular == 'undefined')
-	    circular = true;
-
-	  if (typeof depth == 'undefined')
-	    depth = Infinity;
-
-	  // recurse this function so we don't reset allParents and allChildren
-	  function _clone(parent, depth) {
-	    // cloning null always returns null
-	    if (parent === null)
-	      return null;
-
-	    if (depth == 0)
-	      return parent;
-
-	    var child;
-	    if (typeof parent != 'object') {
-	      return parent;
-	    }
-
-	    if (util.isArray(parent)) {
-	      child = [];
-	    } else if (util.isRegExp(parent)) {
-	      child = new RegExp(parent.source, util.getRegExpFlags(parent));
-	      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-	    } else if (util.isDate(parent)) {
-	      child = new Date(parent.getTime());
-	    } else if (useBuffer && Buffer.isBuffer(parent)) {
-	      child = new Buffer(parent.length);
-	      parent.copy(child);
-	      return child;
-	    } else {
-	      if (typeof prototype == 'undefined') child = Object.create(Object.getPrototypeOf(parent));
-	      else child = Object.create(prototype);
-	    }
-
-	    if (circular) {
-	      var index = allParents.indexOf(parent);
-
-	      if (index != -1) {
-	        return allChildren[index];
-	      }
-	      allParents.push(parent);
-	      allChildren.push(child);
-	    }
-
-	    for (var i in parent) {
-	      child[i] = _clone(parent[i], depth - 1);
-	    }
-
-	    return child;
-	  }
-
-	  return _clone(parent, depth);
-	}
-
-	/**
-	 * Simple flat clone using prototype, accepts only objects, usefull for property
-	 * override on FLAT configuration object (no nested props).
-	 *
-	 * USE WITH CAUTION! This may not behave as you wish if you do not know how this
-	 * works.
-	 */
-	clone.clonePrototype = function(parent) {
-	  if (parent === null)
-	    return null;
-
-	  var c = function () {};
-	  c.prototype = parent;
-	  return new c();
-	};
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49).Buffer))
-
-/***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn    = __webpack_require__(25)
-	var newify    = __webpack_require__(45)
-	var copyUtils = __webpack_require__(46)
+	var hasOwn    = __webpack_require__(28)
+	var newify    = __webpack_require__(49)
+	var copyUtils = __webpack_require__(50)
 	var copyList  = copyUtils.copyList
 	var copy      = copyUtils.copy
-	var isObject  = __webpack_require__(47).object
-	var EventEmitter = __webpack_require__(48).EventEmitter
-	var inherits = __webpack_require__(32)
-	var VALIDATE = __webpack_require__(33)
+	var isObject  = __webpack_require__(51).object
+	var EventEmitter = __webpack_require__(52).EventEmitter
+	var inherits = __webpack_require__(33)
+	var VALIDATE = __webpack_require__(34)
 
 	/**
 	 * @class Region
@@ -3567,94 +4024,174 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	})
 
-	__webpack_require__(34)(REGION)
+	__webpack_require__(35)(REGION)
 
 	module.exports = REGION
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/** @jsx React.DOM */'use strict';
+	'use strict';
 
-	var React = __webpack_require__(1)
-	var F     = __webpack_require__(50)
-	var copy  = __webpack_require__(46).copy
+	var MenuClass = __webpack_require__(69)
 
-	function emptyFn(){}
+	var MenuItem      = __webpack_require__(72)
+	var MenuItemCell  = __webpack_require__(70)
+	var MenuSeparator = __webpack_require__(71)
 
-	module.exports = React.createClass({
+	MenuClass.Item      = MenuItem
+	MenuClass.Item.Cell = MenuItemCell
+	MenuClass.ItemCell  = MenuItemCell
+	MenuClass.Separator = MenuSeparator
 
-	    displayName: 'Menu',
-
-	    getDefaultProps: function(){
-
-	        return {
-	            defaultStyle: {
-	                border : '1px solid gray',
-	                display: 'inline-block'
-	            },
-	            rowStyle: {
-	                cursor: 'pointer'
-	            },
-	            columnStyle: {
-	                padding: 10
-	            },
-	            columns: ['label'],
-	            items: [
-	                {
-	                    label: 'New item',
-	                    fn: function(){}
-	                }
-	            ]
-	        }
-	    },
-
-	    render: function() {
-	        var props = copy(this.props)
-
-	        props.style = copy(props.style, this.props.defaultStyle)
-
-	        return (
-	            React.createElement("div", React.__spread({},  props), 
-	                React.createElement("table", null, 
-	                    React.createElement("tbody", null, 
-	                        this.props.items.map(this.renderItem, this)
-	                    )
-	                )
-	            )
-	        )
-	    },
-
-	    renderItem: function(item, index) {
-	        return (
-	            React.createElement("tr", {style: this.props.rowStyle, key: index, onClick: this.handleClick(item, index).bind(this)}, 
-	                this.props.columns.map(this.renderColumn(item), this)
-	            )
-	        )
-	    },
-
-	    renderColumn: F.curry(function(item, column) {
-	        return React.createElement("td", {style: this.props.columnStyle, key: column}, item[column])
-	    }),
-
-	    handleClick: F.curry(function(item, index, event) {
-	        event.stopPropagation()
-
-	        ;(item.fn || emptyFn)(item, event)
-	        ;(this.props.onClick || emptyFn)(item, index, event)
-	    })
-	})
+	module.exports = MenuClass
 
 /***/ },
-/* 29 */
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
+
+	function objectToString(o) {
+	  return Object.prototype.toString.call(o);
+	}
+
+	// shim for Node's 'util' package
+	// DO NOT REMOVE THIS! It is required for compatibility with EnderJS (http://enderjs.com/).
+	var util = {
+	  isArray: function (ar) {
+	    return Array.isArray(ar) || (typeof ar === 'object' && objectToString(ar) === '[object Array]');
+	  },
+	  isDate: function (d) {
+	    return typeof d === 'object' && objectToString(d) === '[object Date]';
+	  },
+	  isRegExp: function (re) {
+	    return typeof re === 'object' && objectToString(re) === '[object RegExp]';
+	  },
+	  getRegExpFlags: function (re) {
+	    var flags = '';
+	    re.global && (flags += 'g');
+	    re.ignoreCase && (flags += 'i');
+	    re.multiline && (flags += 'm');
+	    return flags;
+	  }
+	};
+
+
+	if (true)
+	  module.exports = clone;
+
+	/**
+	 * Clones (copies) an Object using deep copying.
+	 *
+	 * This function supports circular references by default, but if you are certain
+	 * there are no circular references in your object, you can save some CPU time
+	 * by calling clone(obj, false).
+	 *
+	 * Caution: if `circular` is false and `parent` contains circular references,
+	 * your program may enter an infinite loop and crash.
+	 *
+	 * @param `parent` - the object to be cloned
+	 * @param `circular` - set to true if the object to be cloned may contain
+	 *    circular references. (optional - true by default)
+	 * @param `depth` - set to a number if the object is only to be cloned to
+	 *    a particular depth. (optional - defaults to Infinity)
+	 * @param `prototype` - sets the prototype to be used when cloning an object.
+	 *    (optional - defaults to parent prototype).
+	*/
+
+	function clone(parent, circular, depth, prototype) {
+	  // maintain two arrays for circular references, where corresponding parents
+	  // and children have the same index
+	  var allParents = [];
+	  var allChildren = [];
+
+	  var useBuffer = typeof Buffer != 'undefined';
+
+	  if (typeof circular == 'undefined')
+	    circular = true;
+
+	  if (typeof depth == 'undefined')
+	    depth = Infinity;
+
+	  // recurse this function so we don't reset allParents and allChildren
+	  function _clone(parent, depth) {
+	    // cloning null always returns null
+	    if (parent === null)
+	      return null;
+
+	    if (depth == 0)
+	      return parent;
+
+	    var child;
+	    if (typeof parent != 'object') {
+	      return parent;
+	    }
+
+	    if (util.isArray(parent)) {
+	      child = [];
+	    } else if (util.isRegExp(parent)) {
+	      child = new RegExp(parent.source, util.getRegExpFlags(parent));
+	      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+	    } else if (util.isDate(parent)) {
+	      child = new Date(parent.getTime());
+	    } else if (useBuffer && Buffer.isBuffer(parent)) {
+	      child = new Buffer(parent.length);
+	      parent.copy(child);
+	      return child;
+	    } else {
+	      if (typeof prototype == 'undefined') child = Object.create(Object.getPrototypeOf(parent));
+	      else child = Object.create(prototype);
+	    }
+
+	    if (circular) {
+	      var index = allParents.indexOf(parent);
+
+	      if (index != -1) {
+	        return allChildren[index];
+	      }
+	      allParents.push(parent);
+	      allChildren.push(child);
+	    }
+
+	    for (var i in parent) {
+	      child[i] = _clone(parent[i], depth - 1);
+	    }
+
+	    return child;
+	  }
+
+	  return _clone(parent, depth);
+	}
+
+	/**
+	 * Simple flat clone using prototype, accepts only objects, usefull for property
+	 * override on FLAT configuration object (no nested props).
+	 *
+	 * USE WITH CAUTION! This may not behave as you wish if you do not know how this
+	 * works.
+	 */
+	clone.clonePrototype = function(parent) {
+	  if (parent === null)
+	    return null;
+
+	  var c = function () {};
+	  c.prototype = parent;
+	  return new c();
+	};
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53).Buffer))
+
+/***/ },
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var F      = __webpack_require__(56)
-	var copy   = __webpack_require__(46).copy
-	var Region = __webpack_require__(57)
+	var F      = __webpack_require__(59)
+	var copy   = __webpack_require__(50).copy
+	var Region = __webpack_require__(60)
 
 	var Helper = function(config){
 	    this.config = config
@@ -3826,105 +4363,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React  = __webpack_require__(1)
-	var assign = __webpack_require__(31)
-
-	module.exports = React.createClass({
-
-	    displayName: 'Loader',
-
-	    getDefaultProps: function(){
-	        return {
-	            defaultStyle: {
-	                margin: 'auto',
-	                position: 'absolute',
-	                top: 0,
-	                left: 0,
-	                bottom: 0,
-	                right: 0,
-	            },
-	            defaultClassName: 'loader',
-	            size: 40,
-	        }
-	    },
-
-	    render: function() {
-	        var props = assign({}, this.props)
-
-	        this.prepareStyle(props)
-
-	        props.className = props.className || ''
-	        props.className += ' ' + props.defaultClassName
-
-	        return React.DOM.div(props,
-	            React.createElement("div", {className: "loadbar loadbar-1"}),
-	            React.createElement("div", {className: "loadbar loadbar-2"}),
-	            React.createElement("div", {className: "loadbar loadbar-3"}),
-	            React.createElement("div", {className: "loadbar loadbar-4"}),
-	            React.createElement("div", {className: "loadbar loadbar-5"}),
-	            React.createElement("div", {className: "loadbar loadbar-6"}),
-	            React.createElement("div", {className: "loadbar loadbar-7"}),
-	            React.createElement("div", {className: "loadbar loadbar-8"}),
-	            React.createElement("div", {className: "loadbar loadbar-9"}),
-	            React.createElement("div", {className: "loadbar loadbar-10"}),
-	            React.createElement("div", {className: "loadbar loadbar-11"}),
-	            React.createElement("div", {className: "loadbar loadbar-12"})
-	        )
-	    },
-
-	    prepareStyle: function(props){
-
-	        var style = {}
-
-	        assign(style, props.defaultStyle)
-	        assign(style, props.style)
-
-	        style.width = props.size
-	        style.height = props.size
-
-	        props.style = style
-	    }
-	})
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	function ToObject(val) {
-		if (val == null) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var keys;
-		var to = ToObject(target);
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = arguments[s];
-			keys = Object.keys(Object(from));
-
-			for (var i = 0; i < keys.length; i++) {
-				to[keys[i]] = from[keys[i]];
-			}
-		}
-
-		return to;
-	};
-
-
-/***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3942,7 +4381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3974,13 +4413,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn   = __webpack_require__(25)
-	var VALIDATE = __webpack_require__(33)
+	var hasOwn   = __webpack_require__(28)
+	var VALIDATE = __webpack_require__(34)
 
 	module.exports = function(REGION){
 
@@ -4193,7 +4632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(str){
@@ -4203,7 +4642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -4215,7 +4654,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -4237,7 +4676,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var RE = /\s/g
@@ -4251,7 +4690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var RE = /\s+/g
@@ -4265,7 +4704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -4274,7 +4713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	       return letter ? letter.toUpperCase(): ''
 	   }
 
-	var hyphenRe = __webpack_require__(51)
+	var hyphenRe = __webpack_require__(54)
 
 	module.exports = function(str){
 	   return str?
@@ -4283,15 +4722,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var separate     = __webpack_require__(37)
-	var camelize     = __webpack_require__(40)
-	var toUpperFirst = __webpack_require__(36)
-	var hyphenRe     = __webpack_require__(51)
+	var separate     = __webpack_require__(38)
+	var camelize     = __webpack_require__(41)
+	var toUpperFirst = __webpack_require__(37)
+	var hyphenRe     = __webpack_require__(54)
 
 	function toLowerAndSpace(str, letter){
 	    return letter? ' ' + letter.toLowerCase(): ' '
@@ -4308,19 +4747,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var separate = __webpack_require__(37)
+	var separate = __webpack_require__(38)
 
 	module.exports = function(name){
 	   return separate(name).toLowerCase()
 	}
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -4345,29 +4784,209 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	    alphanum: __webpack_require__(52),
-	    match   : __webpack_require__(53),
-	    guid   : __webpack_require__(54),
-	    // email   : require('./email'),
-	    numeric   : __webpack_require__(55)
-	}
-
-/***/ },
 /* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getInstantiatorFunction = __webpack_require__(58)
+	module.exports = {
+	    alphanum: __webpack_require__(55),
+	    match   : __webpack_require__(56),
+	    guid   : __webpack_require__(57),
+	    // email   : require('./email'),
+	    numeric   : __webpack_require__(58)
+	}
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React  = __webpack_require__(1)
+	var assign = __webpack_require__(47)
+
+	module.exports = React.createClass({
+
+	    displayName: 'Loader',
+
+	    getDefaultProps: function(){
+	        return {
+	            defaultStyle: {
+	                margin: 'auto',
+	                position: 'absolute',
+	                top: 0,
+	                left: 0,
+	                bottom: 0,
+	                right: 0,
+	            },
+	            defaultClassName: 'loader',
+	            size: 40,
+	        }
+	    },
+
+	    render: function() {
+	        var props = assign({}, this.props)
+
+	        this.prepareStyle(props)
+
+	        props.className = props.className || ''
+	        props.className += ' ' + props.defaultClassName
+
+	        return React.DOM.div(props,
+	            React.createElement("div", {className: "loadbar loadbar-1"}),
+	            React.createElement("div", {className: "loadbar loadbar-2"}),
+	            React.createElement("div", {className: "loadbar loadbar-3"}),
+	            React.createElement("div", {className: "loadbar loadbar-4"}),
+	            React.createElement("div", {className: "loadbar loadbar-5"}),
+	            React.createElement("div", {className: "loadbar loadbar-6"}),
+	            React.createElement("div", {className: "loadbar loadbar-7"}),
+	            React.createElement("div", {className: "loadbar loadbar-8"}),
+	            React.createElement("div", {className: "loadbar loadbar-9"}),
+	            React.createElement("div", {className: "loadbar loadbar-10"}),
+	            React.createElement("div", {className: "loadbar loadbar-11"}),
+	            React.createElement("div", {className: "loadbar loadbar-12"})
+	        )
+	    },
+
+	    prepareStyle: function(props){
+
+	        var style = {}
+
+	        assign(style, props.defaultStyle)
+	        assign(style, props.style)
+
+	        style.width = props.size
+	        style.height = props.size
+
+	        props.style = style
+	    }
+	})
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = Object.keys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var el;
+
+	if(!!global.document){
+	  el = global.document.createElement('div');
+	}
+
+	var prefixes = ["ms", "Moz", "Webkit", "O"];
+	var properties = [
+	  'userSelect',
+	  'transform',
+	  'transition',
+	  'transformOrigin',
+	  'transformStyle',
+	  'transitionProperty',
+	  'transitionDuration',
+	  'transitionTimingFunction',
+	  'transitionDelay',
+	  'borderImage',
+	  'borderImageSlice',
+	  'boxShadow',
+	  'backgroundClip',
+	  'backfaceVisibility',
+	  'perspective',
+	  'perspectiveOrigin',
+	  'animation',
+	  'animationDuration',
+	  'animationName',
+	  'animationDelay',
+	  'animationDirection',
+	  'animationIterationCount',
+	  'animationTimingFunction',
+	  'animationPlayState',
+	  'animationFillMode',
+	  'appearance'
+	];
+
+	function GetVendorPrefix(property) {
+	  if(properties.indexOf(property) == -1 || !global.document || typeof el.style[property] !== 'undefined'){
+	    return property;
+	  }
+
+	  property = property[0].toUpperCase() + property.slice(1);
+	  var temp;
+
+	  for(var i = 0; i < prefixes.length; i++){
+	    temp = prefixes[i] + property;
+	    if(typeof el.style[temp] !== 'undefined'){
+	      prefixes = [prefixes[i]]; // we only need to check this one prefix from now on.
+	      return temp;
+	    }
+	  }
+	  return property[0].toLowerCase() + property.slice(1);
+	}
+
+
+	module.exports = (function(){
+	  var cache = {};
+	  return function(obj){
+	    if(!global.document){
+	      return obj;
+	    }
+
+	    var result = {};
+
+	    for(var key in obj){
+	      if(cache[key] === undefined){
+	        cache[key] = GetVendorPrefix(key);
+	      }
+	      result[cache[key]] = obj[key];
+	    }
+
+	    return result;
+	  };
+	})();
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getInstantiatorFunction = __webpack_require__(61)
 
 	module.exports = function(fn, args){
 		return getInstantiatorFunction(args.length)(fn, args)
 	}
 
 /***/ },
-/* 46 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(){
@@ -4391,7 +5010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copy: __webpack_require__(59),
+	        copy: __webpack_require__(62),
 
 	        /**
 	         * Copies all properties from source to destination, if the property does not exist into the destination
@@ -4404,7 +5023,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copyIf: __webpack_require__(60),
+	        copyIf: __webpack_require__(63),
 
 	        /**
 	         * Copies all properties from source to a new object, with the given value. This object is returned
@@ -4446,7 +5065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copyList: __webpack_require__(61),
+	        copyList: __webpack_require__(64),
 
 	        /**
 	         * Copies all properties named in the list, from source to destination, if the property does not exist into the destination
@@ -4460,7 +5079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copyListIf: __webpack_require__(62),
+	        copyListIf: __webpack_require__(65),
 
 	        /**
 	         * Copies all properties named in the namedKeys, from source to destination
@@ -4474,7 +5093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copyKeys: __webpack_require__(63),
+	        copyKeys: __webpack_require__(66),
 
 	        /**
 	         * Copies all properties named in the namedKeys, from source to destination,
@@ -4489,7 +5108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return {Object} destination
 	         */
-	        copyKeysIf: __webpack_require__(64),
+	        copyKeysIf: __webpack_require__(67),
 
 	        copyExceptKeys: function(source, destination, exceptKeys){
 	            destination = destination || {}
@@ -4568,13 +5187,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}()
 
 /***/ },
-/* 47 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(65)
+	module.exports = __webpack_require__(68)
 
 /***/ },
-/* 48 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -4881,7 +5500,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {/*!
@@ -4891,9 +5510,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @license  MIT
 	 */
 
-	var base64 = __webpack_require__(85)
-	var ieee754 = __webpack_require__(78)
-	var isArray = __webpack_require__(79)
+	var base64 = __webpack_require__(90)
+	var ieee754 = __webpack_require__(76)
+	var isArray = __webpack_require__(77)
 
 	exports.Buffer = Buffer
 	exports.SlowBuffer = Buffer
@@ -5235,7 +5854,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function utf16leWrite (buf, string, offset, length) {
-	  var charsWritten = blitBuffer(utf16leToBytes(string), buf, offset, length)
+	  var charsWritten = blitBuffer(utf16leToBytes(string), buf, offset, length, 2)
 	  return charsWritten
 	}
 
@@ -5919,7 +6538,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return base64.toByteArray(str)
 	}
 
-	function blitBuffer (src, dst, offset, length) {
+	function blitBuffer (src, dst, offset, length, unitSize) {
+	  if (unitSize) length -= length % unitSize;
 	  for (var i = 0; i < length; i++) {
 	    if ((i + offset >= dst.length) || (i >= src.length))
 	      break
@@ -5936,684 +6556,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(49).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53).Buffer))
 
 /***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
-
-	    var setImmediate = function(fn){
-	        setTimeout(fn, 0)
-	    }
-	    var clearImmediate = clearTimeout
-	    /**
-	     * Utility methods for working with functions.
-	     * These methods augment the Function prototype.
-	     *
-	     * Using {@link #before}
-	     *
-	     *      function log(m){
-	     *          console.log(m)
-	     *      }
-	     *
-	     *      var doLog = function (m){
-	     *          console.log('LOG ')
-	     *      }.before(log)
-	     *
-	     *      doLog('test')
-	     *      //will log
-	     *      //"LOG "
-	     *      //and then
-	     *      //"test"
-	     *
-	     *
-	     *
-	     * Using {@link #bindArgs}:
-	     *
-	     *      //returns the sum of all arguments
-	     *      function add(){
-	     *          var sum = 0
-	     *          [].from(arguments).forEach(function(n){
-	     *              sum += n
-	     *          })
-	     *
-	     *          return sum
-	     *      }
-	     *
-	     *      var add1 = add.bindArgs(1)
-	     *
-	     *      add1(2, 3) == 6
-	     *
-	     * Using {@link #lockArgs}:
-	     *
-	     *      function add(){
-	     *          var sum = 0
-	     *          [].from(arguments).forEach(function(n){
-	     *              sum += n
-	     *          })
-	     *
-	     *          return sum
-	     *      }
-	     *
-	     *      var add1_2   = add.lockArgs(1,2)
-	     *      var add1_2_3 = add.lockArgs(1,2,3)
-	     *
-	     *      add1_2(3,4)  == 3 //args are locked to only be 1 and 2
-	     *      add1_2_3(6)  == 6 //args are locked to only be 1, 2 and 3
-	     *
-	     *
-	     *
-	     * Using {@link #compose}:
-	     *
-	     *      function multiply(a,b){
-	     *          return a* b
-	     *      }
-	     *
-	     *      var multiply2 = multiply.curry()(2)
-	     *
-	     *      Function.compose(multiply2( add(5,6) )) == multiply2( add(5,6) )
-	     *
-	     *
-	     * @class Function
-	     */
-
-	    var SLICE = Array.prototype.slice
-
-	    var curry = __webpack_require__(66),
-
-	        findFn = function(fn, target, onFound){
-	            // if (typeof target.find == 'function'){
-	            //     return target.find(fn)
-	            // }
-
-	            onFound = typeof onFound == 'function'?
-	                        onFound:
-	                        function(found, key, target){
-	                            return found
-	                        }
-
-	            if (Array.isArray(target)){
-	                var i   = 0
-	                var len = target.length
-	                var it
-
-	                for(; i < len; i++){
-	                    it = target[i]
-	                    if (fn(it, i, target)){
-	                        return onFound(it, i, target)
-	                    }
-	                }
-
-	                return
-	            }
-
-	            if (typeof target == 'object'){
-	                var keys = Object.keys(target)
-	                var i = 0
-	                var len = keys.length
-	                var k
-	                var it
-
-	                for( ; i < len; i++){
-	                    k  = keys[i]
-	                    it = target[k]
-
-	                    if (fn(it, k, target)){
-	                        return onFound(it, k, target)
-	                    }
-	                }
-	            }
-	        },
-
-	        find = curry(findFn, 2),
-
-	        findIndex = curry(function(fn, target){
-	            return findFn(fn, target, function(it, i){
-	                return i
-	            })
-	        }),
-
-	        bindFunctionsOf = function(obj) {
-	            Object.keys(obj).forEach(function(k){
-	                if (typeof obj[k] == 'function'){
-	                    obj[k] = obj[k].bind(obj)
-	                }
-	            })
-
-	            return obj
-	        },
-
-	        /*
-	         * @param {Function...} an enumeration of functions, each consuming the result of the following function.
-	         *
-	         * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
-	         *
-	         * @return the result of the first function in the enumeration
-	         */
-	        compose = __webpack_require__(67),
-
-	        chain = __webpack_require__(68),
-
-	        once = __webpack_require__(69),
-
-	        bindArgsArray = __webpack_require__(70),
-
-	        bindArgs = __webpack_require__(71),
-
-	        lockArgsArray = __webpack_require__(72),
-
-	        lockArgs = __webpack_require__(73),
-
-	        skipArgs = function(fn, count){
-	            return function(){
-	                var args = SLICE.call(arguments, count || 0)
-
-	                return fn.apply(this, args)
-	            }
-	        },
-
-	        intercept = function(interceptedFn, interceptingFn, withStopArg){
-
-	            return function(){
-	                var args    = [].from(arguments),
-	                    stopArg = { stop: false }
-
-	                if (withStopArg){
-	                    args.push(stopArg)
-	                }
-
-	                var result = interceptingFn.apply(this, args)
-
-	                if (withStopArg){
-	                    if (stopArg.stop === true){
-	                        return result
-	                    }
-
-	                } else {
-	                    if (result === false){
-	                        return result
-	                    }
-	                }
-
-	                //the interception was not stopped
-	                return interceptedFn.apply(this, arguments)
-	            }
-
-	        },
-
-	        delay = function(fn, delay, scope){
-
-	            var delayIsNumber = delay * 1 == delay
-
-	            if (arguments.length == 2 && !delayIsNumber){
-	                scope = delay
-	                delay = 0
-	            } else {
-	                if (!delayIsNumber){
-	                    delay = 0
-	                }
-	            }
-
-	            return function(){
-	                var self = scope || this,
-	                    args = arguments
-
-	                if (delay < 0){
-	                    fn.apply(self, args)
-	                    return
-	                }
-
-	                if (delay || !setImmediate){
-	                    setTimeout(function(){
-	                        fn.apply(self, args)
-	                    }, delay)
-
-	                } else {
-	                    setImmediate(function(){
-	                        fn.apply(self, args)
-	                    })
-	                }
-	            }
-	        },
-
-	        defer = function(fn, scope){
-	            return delay(fn, 0, scope)
-	        },
-
-	        buffer = function(fn, delay, scope){
-
-	            var timeoutId = -1
-
-	            return function(){
-
-	                var self = scope || this,
-	                    args = arguments
-
-	                if (delay < 0){
-	                    fn.apply(self, args)
-	                    return
-	                }
-
-	                var withTimeout = delay || !setImmediate,
-	                    clearFn = withTimeout?
-	                                clearTimeout:
-	                                clearImmediate,
-	                    setFn   = withTimeout?
-	                                setTimeout:
-	                                setImmediate
-
-	                if (timeoutId !== -1){
-	                    clearFn(timeoutId)
-	                }
-
-	                timeoutId = setFn(function(){
-	                    fn.apply(self, args)
-	                    self = null
-	                }, delay)
-
-	            }
-
-	        },
-
-	        throttle = function(fn, delay, scope) {
-	            var timeoutId = -1,
-	                self,
-	                args
-
-	            return function () {
-
-	                self = scope || this
-	                args = arguments
-
-	                if (timeoutId !== -1) {
-	                    //the function was called once again in the delay interval
-	                } else {
-	                    timeoutId = setTimeout(function () {
-	                        fn.apply(self, args)
-
-	                        self = null
-	                        timeoutId = -1
-	                    }, delay)
-	                }
-
-	            }
-
-	        },
-
-	        spread = function(fn, delay, scope){
-
-	            var timeoutId       = -1
-	            var callCount       = 0
-	            var executeCount    = 0
-	            var nextArgs        = {}
-	            var increaseCounter = true
-	            var resultingFnUnbound
-	            var resultingFn
-
-	            resultingFn = resultingFnUnbound = function(){
-
-	                var args = arguments,
-	                    self = scope || this
-
-	                if (increaseCounter){
-	                    nextArgs[callCount++] = {args: args, scope: self}
-	                }
-
-	                if (timeoutId !== -1){
-	                    //the function was called once again in the delay interval
-	                } else {
-	                    timeoutId = setTimeout(function(){
-	                        fn.apply(self, args)
-
-	                        timeoutId = -1
-	                        executeCount++
-
-	                        if (callCount !== executeCount){
-	                            resultingFn = bindArgsArray(resultingFnUnbound, nextArgs[executeCount].args).bind(nextArgs[executeCount].scope)
-	                            delete nextArgs[executeCount]
-
-	                            increaseCounter = false
-	                            resultingFn.apply(self)
-	                            increaseCounter = true
-	                        } else {
-	                            nextArgs = {}
-	                        }
-	                    }, delay)
-	                }
-
-	            }
-
-	            return resultingFn
-	        },
-
-	        /*
-	         * @param {Array} args the array for which to create a cache key
-	         * @param {Number} [cacheParamNumber] the number of args to use for the cache key. Use this to limit the args that area actually used for the cache key
-	         */
-	        getCacheKey = function(args, cacheParamNumber){
-	            if (cacheParamNumber == null){
-	                cacheParamNumber = -1
-	            }
-
-	            var i        = 0,
-	                len      = Math.min(args.length, cacheParamNumber),
-	                cacheKey = [],
-	                it
-
-	            for ( ; i < len; i++){
-	                it = args[i]
-
-	                if (root.check.isPlainObject(it) || Array.isArray(it)){
-	                    cacheKey.push(JSON.stringify(it))
-	                } else {
-	                    cacheKey.push(String(it))
-	                }
-	            }
-
-	            return cacheKey.join(', ')
-	        },
-
-	        /*
-	         * @param {Function} fn - the function to cache results for
-	         * @param {Number} skipCacheParamNumber - the index of the boolean parameter that makes this function skip the caching and
-	         * actually return computed results.
-	         * @param {Function|String} cacheBucketMethod - a function or the name of a method on this object which makes caching distributed across multiple buckets.
-	         * If given, cached results will be searched into the cache corresponding to this bucket. If no result found, return computed result.
-	         *
-	         * For example this param is very useful when a function from a prototype is cached,
-	         * but we want to return the same cached results only for one object that inherits that proto, not for all objects. Thus, for example for Wes.Element,
-	         * we use the 'getId' cacheBucketMethod to indicate cached results for one object only.
-	         * @param {Function} [cacheKeyBuilder] A function to be used to compose the cache key
-	         *
-	         * @return {Function} a new function, which returns results from cache, if they are available, otherwise uses the given fn to compute the results.
-	         * This returned function has a 'clearCache' function attached, which clears the caching. If a parameter ( a bucket id) is  provided,
-	         * only clears the cache in the specified cache bucket.
-	         */
-	        cache = function(fn, config){
-	            config = config || {}
-
-	            var bucketCache = {},
-	                cache       = {},
-	                skipCacheParamNumber = config.skipCacheIndex,
-	                cacheBucketMethod    = config.cacheBucket,
-	                cacheKeyBuilder      = config.cacheKey,
-	                cacheArgsLength      = skipCacheParamNumber == null?
-	                                            fn.length:
-	                                            skipCacheParamNumber,
-	                cachingFn
-
-	            cachingFn = function(){
-	                var result,
-	                    skipCache = skipCacheParamNumber != null?
-	                                                arguments[skipCacheParamNumber] === true:
-	                                                false,
-	                    args = skipCache?
-	                                    SLICE.call(arguments, 0, cacheArgsLength):
-	                                    SLICE.call(arguments),
-
-	                    cacheBucketId = cacheBucketMethod != null?
-	                                        typeof cacheBucketMethod == 'function'?
-	                                            cacheBucketMethod():
-	                                            typeof this[cacheBucketMethod] == 'function'?
-	                                                this[cacheBucketMethod]():
-	                                                null
-	                                        :
-	                                        null,
-
-
-	                    cacheObject = cacheBucketId?
-	                                        bucketCache[cacheBucketId]:
-	                                        cache,
-
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(args, cacheArgsLength)
-
-	                if (cacheBucketId && !cacheObject){
-	                    cacheObject = bucketCache[cacheBucketId] = {}
-	                }
-
-	                if (skipCache || cacheObject[cacheKey] == null){
-	                    cacheObject[cacheKey] = result = fn.apply(this, args)
-	                } else {
-	                    result = cacheObject[cacheKey]
-	                }
-
-	                return result
-	            }
-
-	            /*
-	             * @param {String|Object|Number} [bucketId] the bucket for which to clear the cache. If none given, clears all the cache for this function.
-	             */
-	            cachingFn.clearCache = function(bucketId){
-	                if (bucketId){
-	                    delete bucketCache[String(bucketId)]
-	                } else {
-	                    cache = {}
-	                    bucketCache = {}
-	                }
-	            }
-
-	            /*
-	             *
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.getCache = function(cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                return cachingFn.getBucketCache(null, cacheArgs, cacheParamNumber, cacheKeyBuilder)
-	            }
-
-	            /*
-	             *
-	             * @param {String} bucketId The id of the cache bucket from which to retrieve the cached value
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.getBucketCache = function(bucketId, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                var cacheObject = cache,
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
-
-	                if (bucketId){
-	                    bucketId = String(bucketId);
-
-	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {}
-	                }
-
-	                return cacheObject[cacheKey]
-	            }
-
-	            /*
-	             *
-	             * @param {Object} value The value to set in the cache
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.setCache = function(value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                return cachingFn.setBucketCache(null, value, cacheArgs, cacheParamNumber, cacheKeyBuilder)
-	            }
-
-	            /*
-	             *
-	             * @param {String} bucketId The id of the cache bucket for which to set the cache value
-	             * @param {Object} value The value to set in the cache
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.setBucketCache = function(bucketId, value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-
-	                var cacheObject = cache,
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
-
-	                if (bucketId){
-	                    bucketId = String(bucketId)
-
-	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {};
-	                }
-
-	                return cacheObject[cacheKey] = value
-	            }
-
-	            return cachingFn
-	        }
-
-	module.exports = {
-
-	    map: __webpack_require__(74),
-
-	    dot: __webpack_require__(75),
-
-	    maxArgs: __webpack_require__(76),
-
-	    /**
-	     * @method compose
-	     *
-	     * Example:
-	     *
-	     *      zippy.Function.compose(c, b, a)
-	     *
-	     * See {@link Function#compose}
-	     */
-	    compose: compose,
-
-	    /**
-	     * See {@link Function#self}
-	     */
-	    self: function(fn){
-	        return fn
-	    },
-
-	    /**
-	     * See {@link Function#buffer}
-	     */
-	    buffer: buffer,
-
-	    /**
-	     * See {@link Function#delay}
-	     */
-	    delay: delay,
-
-	    /**
-	     * See {@link Function#defer}
-	     * @param {Function} fn
-	     * @param {Object} scope
-	     */
-	    defer:defer,
-
-	    /**
-	     * See {@link Function#skipArgs}
-	     * @param {Function} fn
-	     * @param {Number} [count=0] how many args to skip when calling the resulting function
-	     * @return {Function} The function that will call the original fn without the first count args.
-	     */
-	    skipArgs: skipArgs,
-
-	    /**
-	     * See {@link Function#intercept}
-	     */
-	    intercept: function(fn, interceptedFn, withStopArgs){
-	        return intercept(interceptedFn, fn, withStopArgs)
-	    },
-
-	    /**
-	     * See {@link Function#throttle}
-	     */
-	    throttle: throttle,
-
-	    /**
-	     * See {@link Function#spread}
-	     */
-	    spread: spread,
-
-	    /**
-	     * See {@link Function#chain}
-	     */
-	    chain: function(fn, where, mainFn){
-	        return chain(where, mainFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#before}
-	     */
-	    before: function(fn, otherFn){
-	        return chain('before', otherFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#after}
-	     */
-	    after: function(fn, otherFn){
-	        return chain('after', otherFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#curry}
-	     */
-	    curry: curry,
-
-	    /**
-	     * See {@link Function#once}
-	     */
-	    once: once,
-
-	    /**
-	     * See {@link Function#bindArgs}
-	     */
-	    bindArgs: bindArgs,
-
-	    /**
-	     * See {@link Function#bindArgsArray}
-	     */
-	    bindArgsArray: bindArgsArray,
-
-	    /**
-	     * See {@link Function#lockArgs}
-	     */
-	    lockArgs: lockArgs,
-
-	    /**
-	     * See {@link Function#lockArgsArray}
-	     */
-	    lockArgsArray: lockArgsArray,
-
-	    bindFunctionsOf: bindFunctionsOf,
-
-	    find: find,
-
-	    findIndex: findIndex,
-
-	    newify: __webpack_require__(77)
-	}
-
-/***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = /[-\s]+(.)?/g
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	module.exports = __webpack_require__(53)(/^[a-zA-Z0-9]+$/)
+	module.exports = __webpack_require__(56)(/^[a-zA-Z0-9]+$/)
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var F = __webpack_require__(83)
+	var F = __webpack_require__(59)
 
 	module.exports = F.curry(function(re, value){
 	    return !!re.test(value)
 	})
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -6628,15 +6600,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	module.exports = __webpack_require__(84).numeric
+	module.exports = __webpack_require__(51).numeric
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	    var setImmediate = function(fn){
@@ -6716,7 +6688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var SLICE = Array.prototype.slice
 
-	    var curry = __webpack_require__(86),
+	    var curry = __webpack_require__(78),
 
 	        findFn = function(fn, target, onFound){
 	            // if (typeof target.find == 'function'){
@@ -6787,19 +6759,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return the result of the first function in the enumeration
 	         */
-	        compose = __webpack_require__(87),
+	        compose = __webpack_require__(79),
 
-	        chain = __webpack_require__(88),
+	        chain = __webpack_require__(80),
 
-	        once = __webpack_require__(89),
+	        once = __webpack_require__(81),
 
-	        bindArgsArray = __webpack_require__(90),
+	        bindArgsArray = __webpack_require__(82),
 
-	        bindArgs = __webpack_require__(91),
+	        bindArgs = __webpack_require__(83),
 
-	        lockArgsArray = __webpack_require__(92),
+	        lockArgsArray = __webpack_require__(84),
 
-	        lockArgs = __webpack_require__(93),
+	        lockArgs = __webpack_require__(85),
 
 	        skipArgs = function(fn, count){
 	            return function(){
@@ -7157,11 +7129,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = {
 
-	    map: __webpack_require__(94),
+	    map: __webpack_require__(86),
 
-	    dot: __webpack_require__(95),
+	    dot: __webpack_require__(87),
 
-	    maxArgs: __webpack_require__(96),
+	    maxArgs: __webpack_require__(88),
 
 	    /**
 	     * @method compose
@@ -7280,21 +7252,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    findIndex: findIndex,
 
-	    newify: __webpack_require__(97)
+	    newify: __webpack_require__(89)
 	}
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region = __webpack_require__(110)
+	var Region = __webpack_require__(15)
 
-	__webpack_require__(80)
-	__webpack_require__(81)
+	__webpack_require__(73)
+	__webpack_require__(74)
 
-	var COMPUTE_ALIGN_REGION = __webpack_require__(82)
+	var COMPUTE_ALIGN_REGION = __webpack_require__(75)
 
 	/**
 	 * region-align module exposes methods for aligning {@link Element} and {@link Region} instances
@@ -7470,7 +7442,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Region
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(){
@@ -7503,7 +7475,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}()
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7538,7 +7510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7574,7 +7546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7618,7 +7590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7664,7 +7636,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 63 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7673,7 +7645,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var STR_OBJECT    = 'object'
 	var HAS_OWN       = Object.prototype.hasOwnProperty
 
-	var copyList = __webpack_require__(61)
+	var copyList = __webpack_require__(64)
 
 	/**
 	 * Copies all properties named in the namedKeys, from source to destination
@@ -7720,7 +7692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 64 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -7729,7 +7701,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var STR_OBJECT    = 'object'
 	var HAS_OWN       = Object.prototype.hasOwnProperty
 
-	var copyListIf = __webpack_require__(62)
+	var copyListIf = __webpack_require__(65)
 
 	/**
 	 * Copies all properties named in the namedKeys, from source to destination,
@@ -7785,197 +7757,906 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 65 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = {
-	    'numeric'  : __webpack_require__(98),
-	    'number'   : __webpack_require__(99),
-	    'int'      : __webpack_require__(100),
-	    'float'    : __webpack_require__(101),
-	    'string'   : __webpack_require__(102),
-	    'function' : __webpack_require__(103),
-	    'object'   : __webpack_require__(104),
-	    'arguments': __webpack_require__(105),
-	    'boolean'  : __webpack_require__(106),
-	    'date'     : __webpack_require__(107),
-	    'regexp'   : __webpack_require__(108),
-	    'array'    : __webpack_require__(109)
-	}
-
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function curry(fn, n){
-
-	    if (typeof n !== 'number'){
-	        n = fn.length
-	    }
-
-	    function getCurryClosure(prevArgs){
-
-	        function curryClosure() {
-
-	            var len  = arguments.length
-	            var args = [].concat(prevArgs)
-
-	            if (len){
-	                args.push.apply(args, arguments)
-	            }
-
-	            if (args.length < n){
-	                return getCurryClosure(args)
-	            }
-
-	            return fn.apply(this, args)
-	        }
-
-	        return curryClosure
-	    }
-
-	    return getCurryClosure([])
-	}
-
-	module.exports = curry
-
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function composeTwo(f, g) {
-	    return function () {
-	        return f(g.apply(this, arguments))
-	    }
-	}
-
-	/*
-	 * @param {Function...} an enumeration of functions, each consuming the result of the following function.
-	 *
-	 * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
-	 *
-	 * @return the result of the first function in the enumeration
-	 */
-	module.exports = function(){
-
-	    var args = arguments
-	    var len  = args.length
-	    var i    = 0
-	    var f    = args[0]
-
-	    while (++i < len) {
-	        f = composeTwo(f, args[i])
-	    }
-
-	    return f
-	}
-
-/***/ },
 /* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	function chain(where, fn, secondFn){
-
-	    return function(){
-	        if (where === 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        var result = fn.apply(this, arguments)
-
-	        if (where !== 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        return result
-	    }
+	module.exports = {
+	    'numeric'  : __webpack_require__(91),
+	    'number'   : __webpack_require__(92),
+	    'int'      : __webpack_require__(93),
+	    'float'    : __webpack_require__(94),
+	    'string'   : __webpack_require__(95),
+	    'function' : __webpack_require__(96),
+	    'object'   : __webpack_require__(97),
+	    'arguments': __webpack_require__(98),
+	    'boolean'  : __webpack_require__(99),
+	    'date'     : __webpack_require__(100),
+	    'regexp'   : __webpack_require__(101),
+	    'array'    : __webpack_require__(102)
 	}
-
-	module.exports = chain
 
 /***/ },
 /* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use once'
+	'use strict';
 
-	function once(fn, scope){
+	function emptyFn(){}
 
-	    var called
-	    var result
+	var React      = __webpack_require__(1)
+	var assign     = __webpack_require__(112)
+	var Region     = __webpack_require__(116)
+	var inTriangle = __webpack_require__(113)
 
-	    return function(){
-	        if (called){
-	            return result
+	var getConstrainRegion = __webpack_require__(111)
+	var getItemStyleProps = __webpack_require__(104)
+	var renderSubMenu     = __webpack_require__(105)
+	var renderChildren    = __webpack_require__(106)
+	var prepareItem       = __webpack_require__(107)
+
+	var propTypes = __webpack_require__(108)
+	var ScrollContainer = __webpack_require__(109)
+
+	var MenuClass = React.createClass({
+
+	    displayName: 'Menu',
+
+	    propTypes: propTypes,
+
+	    getDefaultProps: function(){
+
+	        return {
+	            isMenu: true,
+	            enableScroll: true,
+	            constrainTo: true,
+	            defaultStyle: {
+	                border  : '1px solid gray',
+	                display : 'inline-block',
+	                position: 'relative'
+	            },
+	            defaultSubMenuStyle: {
+	                position: 'absolute'
+	            },
+	            scrollerProps: {
+	            },
+	            columns: ['label'],
+	            items: null,
+	            visible: true,
+	            subMenuConstrainMargin: 10,
+
+	            defaultItemStyle: {},
+	            itemStyle: {},
+	            defaultItemOverStyle: {},
+	            itemOverStyle: {},
+	            defaultItemDisabledStyle: {},
+	            itemDisabledStyle: {},
+	            defaultItemExpandedStyle: {},
+	            itemExpandedStyle: {},
+
+	            defaultCellStyle: {},
+	            cellStyle: {},
+
+	            stopClickPropagation: true
+	        }
+	    },
+
+	    getInitialState: function() {
+	        return {
+	            mouseOver: false
+	        }
+	    },
+
+	    componentDidMount: function() {
+	        ;(this.props.onMount || emptyFn)(this)
+
+	        if ((this.props.constrainTo || this.props.alignTo) && !this.props.subMenu){
+	            setTimeout(function(){
+
+	                if (!this.isMounted()){
+	                    return
+	                }
+	                var props = this.props
+
+	                var scrollRegion = Region.from(this.refs.scrollContainer.getDOMNode())
+	                var domNode      = this.getDOMNode()
+	                var domRegion    = Region.from(domNode)
+	                var paddingSize  = domRegion.height
+
+	                var actualHeight = scrollRegion.height + paddingSize
+	                //get clientHeight of this dom node, so as to account for padding
+
+	                //build the actual region of the menu
+	                var actualRegion = Region({
+	                    left  : domRegion.left,
+	                    right : domRegion.right,
+
+	                    top   : domRegion.top,
+	                    bottom: domRegion.top + actualHeight
+	                })
+
+	                var constrainRegion = props.constrainTo?
+	                                        getConstrainRegion(props.constrainTo):
+	                                        null
+
+	                var newState
+
+	                if (props.alignTo){
+	                    var parentRegion = Region.from(domNode.parentNode)
+	                    var alignRegion = Region.from(props.alignTo)
+
+	                    actualRegion.alignTo(alignRegion, props.alignPositions, {
+	                        offset: props.alignOffset,
+	                        constrain: constrainRegion
+	                    })
+
+	                    var newTop = actualRegion.top - parentRegion.top
+	                    var newLeft = actualRegion.left - parentRegion.left
+
+	                    newState = {
+	                        style: {
+	                            left: newLeft,
+	                            top : newTop
+	                        }
+	                    }
+	                }
+
+	                if (constrainRegion){
+	                    newState = newState || {}
+
+	                    if (actualRegion.bottom > constrainRegion.bottom){
+	                        newState.maxHeight = constrainRegion.bottom - actualRegion.top - paddingSize
+	                    }
+	                }
+
+	                newState && this.setState(newState)
+	            }.bind(this), 0)
+	        }
+	    },
+
+	    prepareProps: function(thisProps, state) {
+	        var props = {}
+
+	        assign(props, this.props)
+
+	        props.style     = this.prepareStyle(props, state)
+	        props.className = this.prepareClassName(props)
+
+	        props.itemStyleProps = getItemStyleProps(props, state)
+	        props.children  = this.prepareChildren(props, state)
+
+	        props.scrollerProps = this.prepareScrollerProps(props)
+
+	        return props
+	    },
+
+	    prepareScrollerProps: function(props) {
+	        return assign({}, props.scrollerProps)
+	    },
+
+	    prepareChildren: function(props, state){
+
+	        var children = props.children
+
+	        if (props.items){
+	            children = props.items.map(this.prepareItem.bind(this, props, state))
 	        }
 
-	        called = true
+	        return children
+	    },
 
-	        return result = fn.apply(scope || this, arguments)
+	    prepareItem: prepareItem,
+
+	    prepareClassName: function(props) {
+	        var className = props.className || ''
+
+	        className += ' z-menu'
+
+	        return className
+	    },
+
+	    prepareStyle: function(props, state) {
+	        var subMenuStyle = props.subMenu?
+	                            props.defaultSubMenuStyle:
+	                            null
+
+	        var style = assign({}, props.defaultStyle, subMenuStyle, props.style)
+
+	        if (!props.visible){
+	            style.display = 'none'
+	        }
+
+	        if (props.absolute){
+	            style.position = 'absolute'
+	        }
+
+	        if (props.at){
+	            var isArray = Array.isArray(props.at)
+	            var coords = {
+	                left: isArray?
+	                        props.at[0]:
+	                        props.at.left === undefined?
+	                            props.at.x || props.at.pageX:
+	                            props.at.left,
+
+	                top: isArray?
+	                        props.at[1]:
+	                        props.at.top === undefined?
+	                            props.at.y || props.at.pageY:
+	                            props.at.top
+	            }
+
+	            assign(style, coords)
+	        }
+
+	        if (state.style){
+	            assign(style, state.style)
+	        }
+
+	        if (!this.isMounted() && (props.constrainTo || props.alignTo) && !props.subMenu){
+	            //when a top menu is initially rendered (and should be constrained or has alignTo)
+	            //we show it hidden initially, so we can safely constrain and/or align it
+	            style.visibility = 'hidden'
+	            style.maxHeight  = 0
+	            style.overflow   = 'hidden'
+	        }
+
+	        return style
+	    },
+
+	    /////////////// RENDERING LOGIC
+
+	    renderSubMenu: renderSubMenu,
+
+	    render: function() {
+	        var state = this.state
+	        var props = this.prepareProps(this.props, state)
+
+	        var menu     = this.renderSubMenu(props, state)
+	        var children = this.renderChildren(props, state)
+
+	        return (
+	            React.createElement("div", React.__spread({},  props), 
+	                menu, 
+	                React.createElement(ScrollContainer, {
+	                    onMouseEnter: this.handleMouseEnter, 
+	                    onMouseLeave: this.handleMouseLeave, 
+	                    scrollerProps: props.scrollerProps, 
+	                    ref: "scrollContainer", enableScroll: props.enableScroll, maxHeight: state.maxHeight || props.maxHeight}, 
+	                    React.createElement("table", {ref: "table"}, 
+	                        React.createElement("tbody", null, 
+	                            children
+	                        )
+	                    )
+	                )
+	            )
+	        )
+	    },
+
+	    renderChildren: renderChildren,
+
+	    ////////////////////////// BEHAVIOUR LOGIC
+
+	    handleMouseEnter: function() {
+	        this.setState({
+	            mouseInside: true
+	        })
+
+	        this.onActivate()
+	    },
+
+	    handleMouseLeave: function() {
+	        this.setState({
+	            mouseInside: false
+	        })
+
+	        if (!this.state.menu && !this.state.nextItem){
+	        // if (!this.state.nextItem){
+	            this.onInactivate()
+	        }
+	    },
+
+	    onActivate: function() {
+	        if (!this.state.activated){
+	            // console.log('activate')
+	            this.setState({
+	                activated: true
+	            })
+
+	            ;(this.props.onActivate || emptyFn)()
+	        }
+	    },
+
+	    onInactivate: function() {
+	        if (this.state.activated){
+
+	            this.setState({
+	                activated: false
+	            })
+
+	            // console.log('inactivate')
+	            ;(this.props.onInactivate || emptyFn)()
+	        }
+	    },
+
+	    //we also need mouseOverSubMenu: Boolean
+	    //since when from a submenu we move back to a parent menu, we may move
+	    //to a different menu item than the one that triggered the submenu
+	    //so we should display another submenu
+	    handleSubMenuMouseEnter: function() {
+	        this.setState({
+	            mouseOverSubMenu: true
+	        })
+	    },
+
+	    handleSubMenuMouseLeave: function() {
+	        this.setState({
+	            mouseOverSubMenu: false
+	        })
+	    },
+
+	    isSubMenuActive: function() {
+	        return this.state.subMenuActive
+	    },
+
+	    onSubMenuActivate: function() {
+	        this.setState({
+	            subMenuActive: true
+	        })
+	    },
+
+	    onSubMenuInactivate: function() {
+	        var ts = +new Date()
+
+	        var nextItem      = this.state.nextItem
+	        var nextTimestamp = this.state.nextTimestamp || 0
+
+	        this.setState({
+	            subMenuActive: false,
+	            timestamp       : ts
+	        }, function(){
+
+	            setTimeout(function(){
+	                if (ts != this.state.timestamp || (nextItem && (ts - nextTimestamp < 100))){
+	                    //a menu show has occured in the mean-time,
+	                    //so skip hiding the menu
+	                    this.setItem(this.state.nextItem, this.state.nextOffset)
+	                    return
+	                }
+
+	                if (!this.isSubMenuActive()){
+	                    this.setItem()
+	                }
+	            }.bind(this), 10)
+
+	        })
+
+	    },
+
+	    removeMouseMoveListener: function() {
+	        if (this.onWindowMouseMove){
+	            window.removeEventListener('mousemove', this.onWindowMouseMove)
+	            this.onWindowMouseMove = null
+	        }
+	    },
+
+	    onMenuItemMouseOut: function(itemProps, leaveOffset) {
+	        if (this.state.menu){
+	            this.setupCheck(leaveOffset)
+	        }
+	    },
+
+	    /**
+	     * Called when mouseout happens on the item for which there is a submenu displayed
+	     */
+	    onMenuItemMouseOver: function(itemProps, menuOffset, entryPoint) {
+
+	        if (!this.isMounted()){
+	            return
+	        }
+
+	        var menu = itemProps.menu
+	        var ts   = +new Date()
+
+	        if (!menu){
+	            return
+	        }
+
+	        if (!this.state.menu){
+	            //there is no menu visible, so it's safe to show the menu
+	            this.setItem(itemProps, menuOffset)
+	        } else {
+	            //there is a menu visible, from the previous item that had mouse over
+	            //so we should queue this item's menu as the next menu to be shown
+	            this.setNextItem(itemProps, menuOffset)
+	        }
+	    },
+
+	    setupCheck: function(offset){
+	        if (!this.isMounted()){
+	            return
+	        }
+
+	        var tolerance = 5
+
+	        var domNode    = this.getDOMNode()
+	        var menuNode   = domNode.querySelector('.z-menu')
+
+	        if (!menuNode){
+	            return
+	        }
+
+	        var menuRegion = Region.from(menuNode)
+
+	        var x1 = menuRegion.left
+	        var y1 = menuRegion.top// - tolerance
+
+	        var x2 = menuRegion.left
+	        var y2 = menuRegion.bottom// + tolerance
+
+	        if (this.subMenuPosition == 'left'){
+	            x1 = menuRegion.right
+	            x2 = menuRegion.right
+	        }
+
+	        var x3 = offset.x + (this.subMenuPosition == 'left'? tolerance: -tolerance)
+	        var y3 = offset.y
+
+	        var triangle = [
+	            [x1, y1],
+	            [x2, y2],
+	            [x3, y3]
+	        ]
+
+	        this.removeMouseMoveListener()
+
+	        this.onWindowMouseMove = function(event){
+
+	            var point = [event.pageX, event.pageY]
+
+	            if (!inTriangle(point, triangle)){
+
+	                this.removeMouseMoveListener()
+
+	                if (!this.state.mouseOverSubMenu){
+	                    //the mouse is not over a sub menu item
+	                    //
+	                    //so we show a menu of a sibling item, or hide the menu
+	                    //if no sibling item visited
+	                    this.setItem(this.state.nextItem, this.state.nextOffset)
+	                }
+	            }
+	        }.bind(this)
+
+	        window.addEventListener('mousemove', this.onWindowMouseMove)
+	    },
+
+	    setNextItem: function(itemProps, menuOffset) {
+
+	        var ts = +new Date()
+
+	        this.setState({
+	            timestamp        : ts,
+
+	            nextItem     : itemProps,
+	            nextOffset   : menuOffset,
+	            nextTimestamp: +new Date()
+	        })
+	    },
+
+	    setItem: function(itemProps, offset) {
+
+	        var menu = itemProps?
+	                        itemProps.menu:
+	                        null
+
+	        // if (!menu){
+	        //     return
+	        // }
+
+	        this.removeMouseMoveListener()
+
+	        if (!this.isMounted()){
+	            return
+	        }
+
+	        if (!menu && !this.state.mouseInside){
+	            this.onInactivate()
+	        }
+
+	        this.setState({
+	            itemProps    : itemProps,
+
+	            menu         : menu,
+	            menuOffset   : offset,
+	            timestamp    : +new Date(),
+
+	            nextItem     : null,
+	            nextOffset   : null,
+	            nextTimestamp: null
+	        })
+	    },
+
+	    onMenuItemClick: function(props, index, event) {
+	        var stopped = event.isPropagationStopped()
+
+	        props.stopClickPropagation && event.stopPropagation()
+
+	        if (!stopped){
+	            ;(this.props.onClick || emptyFn)(event, props, index)
+	        }
 	    }
-	}
+	})
 
-	module.exports = once
+	module.exports = MenuClass
 
 /***/ },
 /* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
 
-	var SLICE = Array.prototype.slice
+	var React  = __webpack_require__(1)
+	var assign =__webpack_require__(112)
+	var arrowStyle =__webpack_require__(115)
 
-	module.exports = function(fn, args){
-	    return function(){
-	        var thisArgs = SLICE.call(args || [])
+	function expanderStyle(){
+	    var style = arrowStyle('right', {
+	        width: 8,
+	        height: 4
+	    })
 
-	        if (arguments.length){
-	            thisArgs.push.apply(thisArgs, arguments)
+	    style.display = 'inline-block'
+
+	    return style
+	}
+
+	var MenuItemCell = React.createClass({
+
+	    displayName: 'ReactMenuItemCell',
+
+	    getDefaultProps: function() {
+	        return {
+	            defaultStyle: {
+	                padding: 10,
+	                whiteSpace: 'nowrap'
+	            }
+	        }
+	    },
+
+	    render: function() {
+	        var props    = this.prepareProps(this.props)
+	        var children = props.children
+
+	        if (props.expander){
+	            children = props.expander === true? '›': props.expander
 	        }
 
-	        return fn.apply(this, thisArgs)
+	        return (
+	            React.createElement("td", React.__spread({},  props), 
+	                children
+	            )
+	        )
+	    },
+
+	    prepareProps: function(thisProps) {
+	        var props = {}
+
+	        assign(props, thisProps)
+
+	        props.style = this.prepareStyle(props)
+	        // if (props.onMouseOver){
+	        //     debugger
+	        // }
+
+	        return props
+	    },
+
+	    prepareStyle: function(props) {
+	        var style = {}
+
+	        assign(style, props.defaultStyle, props.style)
+
+	        return style
 	    }
-	}
+	})
+
+	module.exports = MenuItemCell
 
 /***/ },
 /* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
 
-	var SLICE = Array.prototype.slice
-	var bindArgsArray = __webpack_require__(70)
+	var React  = __webpack_require__(1)
+	var assign = __webpack_require__(112)
 
-	module.exports = function(fn){
-	    return bindArgsArray(fn, SLICE.call(arguments,1))
-	}
+	var emptyFn = function(){}
+
+	module.exports = React.createClass({
+
+	    displayName: 'ReactMenuSeparator',
+
+	    getDefaultProps: function() {
+	        return {
+	            defaultStyle: {
+	                cursor: 'auto'
+	            },
+	            border: '1px solid gray'
+	        }
+	    },
+
+	    render: function() {
+	        var props = this.prepareProps(this.props)
+
+	        return React.createElement("tr", React.__spread({},  props), React.createElement("td", {colSpan: 10}))
+	    },
+
+	    prepareProps: function(thisProps) {
+	        var props = {}
+
+	        assign(props, thisProps)
+
+	        props.style = this.prepareStyle(props)
+	        props.className = this.prepareClassName(props)
+
+	        return props
+	    },
+
+	    prepareClassName: function(props) {
+	        var className = props.className || ''
+
+	        className += ' menu-separator'
+
+	        return className
+	    },
+
+	    prepareStyle: function(props) {
+	        var style = {}
+
+	        assign(style, props.defaultStyle, {
+	            borderTop: props.border
+	        }, props.style)
+
+	        return style
+	    }
+	})
 
 /***/ },
 /* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
 
-	var SLICE = Array.prototype.slice
+	var React  = __webpack_require__(1)
+	var assign = __webpack_require__(112)
+	var Region = __webpack_require__(116)
+	var selectParent = __webpack_require__(114)
 
-	module.exports = function(fn, args){
+	var prepareChildren = __webpack_require__(110)
+	var Menu = __webpack_require__(69)
+	var MenuItemCell = __webpack_require__(70)
 
-	    return function(){
-	        if (!Array.isArray(args)){
-	            args = SLICE.call(args || [])
+	var emptyFn = function(){}
+
+	var MenuItem = React.createClass({
+
+	    displayName: 'ReactMenuItem',
+
+	    getInitialState: function() {
+	        return {}
+	    },
+
+	    getDefaultProps: function() {
+	        return {
+	            isMenuItem: true,
+	            defaultStyle: {
+	                cursor: 'pointer',
+	                background: 'white'
+	            },
+	            defaultOverStyle: {
+	                background: '#d7e7ff'
+	            },
+	            defaultActiveStyle: {
+	                background: 'rgb(187, 212, 251)'
+	            },
+	            defaultExpandedStyle: {
+	                background: 'rgb(230, 240, 255)'
+	            },
+	            defaultDisabledStyle: {
+	                color: 'gray',
+	                cursor: 'default'
+	            },
+	            expander: '›'
+	        }
+	    },
+
+	    render: function() {
+	        var props = this.prepareProps(this.props, this.state)
+
+	        return React.createElement("tr", React.__spread({},  props))
+	    },
+
+	    prepareProps: function(thisProps, state) {
+	        var props = {}
+
+	        assign(props, thisProps)
+
+	        props.mouseOver = !!state.mouseOver
+	        props.active    = !!state.active
+	        props.disabled    = !!props.disabled
+
+	        props.style     = this.prepareStyle(props)
+	        props.className = this.prepareClassName(props)
+
+	        props.children  = this.prepareChildren(props)
+
+	        props.onClick      = this.handleClick
+	        props.onMouseEnter = this.handleMouseEnter.bind(this, props)
+	        props.onMouseLeave = this.handleMouseLeave.bind(this, props)
+	        props.onMouseDown  = this.handleMouseDown
+	        props.onMouseMove  = this.handleMouseMove
+
+	        return props
+	    },
+
+	    handleClick: function(event) {
+
+	        var props = this.props
+
+	        if (props.disabled){
+	            event.stopPropagation()
+	            return
 	        }
 
-	        return fn.apply(this, args)
+	        ;(props.onClick || props.fn || emptyFn)(props, props.index, event)
+	    },
+
+	    handleMouseMove: function(event){
+
+	    },
+
+	    handleMouseDown: function(event) {
+	        // event.preventDefault()
+
+	        var mouseUpListener = function(){
+	            this.setState({
+	                active: false
+	            })
+	            window.removeEventListener('mouseup', mouseUpListener)
+	        }.bind(this)
+
+	        window.addEventListener('mouseup', mouseUpListener)
+
+	        this.setState({
+	            active: true
+	        })
+	    },
+
+	    showMenu: function(menu, props) {
+
+	        props.showMenu(menu, offset)
+	    },
+
+	    handleMouseEnter: function(props, event) {
+
+	        if (props.disabled){
+	            return
+	        }
+
+	        var offset = {
+	            x: event.pageX,
+	            y: event.pageY
+	        }
+
+	        this.setState({
+	            mouseOver: true
+	        })
+
+	        if (props.onMenuItemMouseOver){
+
+	            var menuOffset
+
+	            if (props.menu){
+	                var menuRegion = Region.from(selectParent('.z-menu', this.getDOMNode()))
+	                var thisRegion = Region.from(this.getDOMNode())
+
+	                menuOffset = {
+	                    // pageX : thisRegion.left,
+	                    // pageY : thisRegion.top,
+
+	                    left  : thisRegion.left - menuRegion.left,
+	                    top   : thisRegion.top  - menuRegion.top,
+	                    width : thisRegion.width,
+	                    height: thisRegion.height
+	                }
+	            }
+
+	            props.onMenuItemMouseOver(props, menuOffset, offset)
+	        }
+	    },
+
+	    handleMouseLeave: function(props, event) {
+
+	        if (props.disabled){
+	            return
+	        }
+
+	        var offset = {
+	            x: event.pageX,
+	            y: event.pageY
+	        }
+
+	        if (this.isMounted()){
+	            this.setState({
+	                active: false,
+	                mouseOver: false
+	            })
+	        }
+
+	        if (props.onMenuItemMouseOut){
+	            props.onMenuItemMouseOut(props, offset)
+	        }
+	    },
+
+	    prepareChildren: prepareChildren,
+
+	    prepareClassName: function(props) {
+	        var className = props.className || ''
+
+	        className += ' menu-row'
+
+	        if (props.disabled){
+	            className += ' disabled ' + (props.disabledClassName || '')
+	        } else {
+
+	            if (props.mouseOver){
+	                className += ' over ' + (props.overClassName || '')
+	            }
+
+	            if (props.active){
+	                className += ' active ' + (props.activeClassName || '')
+	            }
+
+	            if (props.expanded){
+	                className += ' expanded ' + (props.expandedClassName || '')
+	            }
+	        }
+
+	        return className
+	    },
+
+	    prepareStyle: function(props) {
+	        var style = {}
+
+	        assign(style, props.defaultStyle, props.style)
+
+	        if (props.disabled){
+
+	            assign(style, props.defaultDisabledStyle, props.disabledStyle)
+
+	        } else {
+
+	            if (props.expanded){
+	                assign(style, props.defaultExpandedStyle, props.expandedStyle)
+	            }
+
+	            if (props.mouseOver){
+	                assign(style, props.defaultOverStyle, props.overStyle)
+	            }
+
+	            if (props.active){
+	                assign(style, props.defaultActiveStyle, props.activeStyle)
+	            }
+	        }
+
+	        return style
 	    }
-	}
+	})
+
+	module.exports = MenuItem
 
 /***/ },
 /* 73 */
@@ -7983,201 +8664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict'
 
-	var SLICE = Array.prototype.slice
-	var lockArgsArray = __webpack_require__(72)
-
-	module.exports = function(fn){
-	    return lockArgsArray(fn, SLICE.call(arguments, 1))
-	}
-
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var curry = __webpack_require__(66)
-
-	module.exports = curry(function(fn, value){
-	    return value != undefined && typeof value.map?
-	            value.map(fn):
-	            fn(value)
-	})
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var curry = __webpack_require__(66)
-
-	module.exports = curry(function(prop, value){
-	    return value != undefined? value[prop]: undefined
-	})
-
-/***/ },
-/* 76 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var curry = __webpack_require__(66)
-
-	module.exports = function(fn, count){
-	    return function(){
-	        return fn.apply(this, SLICE.call(arguments, 0, count))
-	    }
-	}
-
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var newify = __webpack_require__(112)
-	var curry  = __webpack_require__(66)
-
-	module.exports = curry(newify)
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-	  var e, m,
-	      eLen = nBytes * 8 - mLen - 1,
-	      eMax = (1 << eLen) - 1,
-	      eBias = eMax >> 1,
-	      nBits = -7,
-	      i = isLE ? (nBytes - 1) : 0,
-	      d = isLE ? -1 : 1,
-	      s = buffer[offset + i];
-
-	  i += d;
-
-	  e = s & ((1 << (-nBits)) - 1);
-	  s >>= (-nBits);
-	  nBits += eLen;
-	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-	  m = e & ((1 << (-nBits)) - 1);
-	  e >>= (-nBits);
-	  nBits += mLen;
-	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-	  if (e === 0) {
-	    e = 1 - eBias;
-	  } else if (e === eMax) {
-	    return m ? NaN : ((s ? -1 : 1) * Infinity);
-	  } else {
-	    m = m + Math.pow(2, mLen);
-	    e = e - eBias;
-	  }
-	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-	};
-
-	exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-	  var e, m, c,
-	      eLen = nBytes * 8 - mLen - 1,
-	      eMax = (1 << eLen) - 1,
-	      eBias = eMax >> 1,
-	      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-	      i = isLE ? 0 : (nBytes - 1),
-	      d = isLE ? 1 : -1,
-	      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-	  value = Math.abs(value);
-
-	  if (isNaN(value) || value === Infinity) {
-	    m = isNaN(value) ? 1 : 0;
-	    e = eMax;
-	  } else {
-	    e = Math.floor(Math.log(value) / Math.LN2);
-	    if (value * (c = Math.pow(2, -e)) < 1) {
-	      e--;
-	      c *= 2;
-	    }
-	    if (e + eBias >= 1) {
-	      value += rt / c;
-	    } else {
-	      value += rt * Math.pow(2, 1 - eBias);
-	    }
-	    if (value * c >= 2) {
-	      e++;
-	      c /= 2;
-	    }
-
-	    if (e + eBias >= eMax) {
-	      m = 0;
-	      e = eMax;
-	    } else if (e + eBias >= 1) {
-	      m = (value * c - 1) * Math.pow(2, mLen);
-	      e = e + eBias;
-	    } else {
-	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-	      e = 0;
-	    }
-	  }
-
-	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-	  e = (e << mLen) | m;
-	  eLen += mLen;
-	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-	  buffer[offset + i - d] |= s * 128;
-	};
-
-
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	/**
-	 * isArray
-	 */
-
-	var isArray = Array.isArray;
-
-	/**
-	 * toString
-	 */
-
-	var str = Object.prototype.toString;
-
-	/**
-	 * Whether or not the given `val`
-	 * is an array.
-	 *
-	 * example:
-	 *
-	 *        isArray([]);
-	 *        // > true
-	 *        isArray(arguments);
-	 *        // > false
-	 *        isArray('');
-	 *        // > false
-	 *
-	 * @param {mixed} val
-	 * @return {bool}
-	 */
-
-	module.exports = isArray || function (val) {
-	  return !! val && '[object Array]' == str.call(val);
-	};
-
-
-/***/ },
-/* 80 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var Region = __webpack_require__(110)
+	var Region = __webpack_require__(15)
 
 	/**
 	 * @static
@@ -8293,12 +8780,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 81 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region = __webpack_require__(110)
+	var Region = __webpack_require__(15)
 
 	/**
 	 *
@@ -8335,14 +8822,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 82 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var ALIGN_TO_NORMALIZED = __webpack_require__(111)
+	var ALIGN_TO_NORMALIZED = __webpack_require__(103)
 
-	var Region = __webpack_require__(110)
+	var Region = __webpack_require__(15)
 
 	/**
 	 * @localdoc Given source and target regions, and the given alignments required, returns a region that is the resulting allignment.
@@ -8416,661 +8903,373 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = COMPUTE_ALIGN_REGION
 
 /***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports.read = function(buffer, offset, isLE, mLen, nBytes) {
+	  var e, m,
+	      eLen = nBytes * 8 - mLen - 1,
+	      eMax = (1 << eLen) - 1,
+	      eBias = eMax >> 1,
+	      nBits = -7,
+	      i = isLE ? (nBytes - 1) : 0,
+	      d = isLE ? -1 : 1,
+	      s = buffer[offset + i];
+
+	  i += d;
+
+	  e = s & ((1 << (-nBits)) - 1);
+	  s >>= (-nBits);
+	  nBits += eLen;
+	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+	  m = e & ((1 << (-nBits)) - 1);
+	  e >>= (-nBits);
+	  nBits += mLen;
+	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+	  if (e === 0) {
+	    e = 1 - eBias;
+	  } else if (e === eMax) {
+	    return m ? NaN : ((s ? -1 : 1) * Infinity);
+	  } else {
+	    m = m + Math.pow(2, mLen);
+	    e = e - eBias;
+	  }
+	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+	};
+
+	exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+	  var e, m, c,
+	      eLen = nBytes * 8 - mLen - 1,
+	      eMax = (1 << eLen) - 1,
+	      eBias = eMax >> 1,
+	      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+	      i = isLE ? 0 : (nBytes - 1),
+	      d = isLE ? 1 : -1,
+	      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+	  value = Math.abs(value);
+
+	  if (isNaN(value) || value === Infinity) {
+	    m = isNaN(value) ? 1 : 0;
+	    e = eMax;
+	  } else {
+	    e = Math.floor(Math.log(value) / Math.LN2);
+	    if (value * (c = Math.pow(2, -e)) < 1) {
+	      e--;
+	      c *= 2;
+	    }
+	    if (e + eBias >= 1) {
+	      value += rt / c;
+	    } else {
+	      value += rt * Math.pow(2, 1 - eBias);
+	    }
+	    if (value * c >= 2) {
+	      e++;
+	      c /= 2;
+	    }
+
+	    if (e + eBias >= eMax) {
+	      m = 0;
+	      e = eMax;
+	    } else if (e + eBias >= 1) {
+	      m = (value * c - 1) * Math.pow(2, mLen);
+	      e = e + eBias;
+	    } else {
+	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+	      e = 0;
+	    }
+	  }
+
+	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+	  e = (e << mLen) | m;
+	  eLen += mLen;
+	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+	  buffer[offset + i - d] |= s * 128;
+	};
+
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/**
+	 * isArray
+	 */
+
+	var isArray = Array.isArray;
+
+	/**
+	 * toString
+	 */
+
+	var str = Object.prototype.toString;
+
+	/**
+	 * Whether or not the given `val`
+	 * is an array.
+	 *
+	 * example:
+	 *
+	 *        isArray([]);
+	 *        // > true
+	 *        isArray(arguments);
+	 *        // > false
+	 *        isArray('');
+	 *        // > false
+	 *
+	 * @param {mixed} val
+	 * @return {bool}
+	 */
+
+	module.exports = isArray || function (val) {
+	  return !! val && '[object Array]' == str.call(val);
+	};
+
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	function curry(fn, n){
+
+	    if (typeof n !== 'number'){
+	        n = fn.length
+	    }
+
+	    function getCurryClosure(prevArgs){
+
+	        function curryClosure() {
+
+	            var len  = arguments.length
+	            var args = [].concat(prevArgs)
+
+	            if (len){
+	                args.push.apply(args, arguments)
+	            }
+
+	            if (args.length < n){
+	                return getCurryClosure(args)
+	            }
+
+	            return fn.apply(this, args)
+	        }
+
+	        return curryClosure
+	    }
+
+	    return getCurryClosure([])
+	}
+
+	module.exports = curry
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	function composeTwo(f, g) {
+	    return function () {
+	        return f(g.apply(this, arguments))
+	    }
+	}
+
+	/*
+	 * @param {Function...} an enumeration of functions, each consuming the result of the following function.
+	 *
+	 * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
+	 *
+	 * @return the result of the first function in the enumeration
+	 */
+	module.exports = function(){
+
+	    var args = arguments
+	    var len  = args.length
+	    var i    = 0
+	    var f    = args[0]
+
+	    while (++i < len) {
+	        f = composeTwo(f, args[i])
+	    }
+
+	    return f
+	}
+
+/***/ },
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	function chain(where, fn, secondFn){
+
+	    return function(){
+	        if (where === 'before'){
+	            secondFn.apply(this, arguments)
+	        }
+
+	        var result = fn.apply(this, arguments)
+
+	        if (where !== 'before'){
+	            secondFn.apply(this, arguments)
+	        }
+
+	        return result
+	    }
+	}
+
+	module.exports = chain
+
+/***/ },
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use once'
+
+	function once(fn, scope){
+
+	    var called
+	    var result
+
+	    return function(){
+	        if (called){
+	            return result
+	        }
+
+	        called = true
+
+	        return result = fn.apply(scope || this, arguments)
+	    }
+	}
+
+	module.exports = once
+
+/***/ },
+/* 82 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+
+	module.exports = function(fn, args){
+	    return function(){
+	        var thisArgs = SLICE.call(args || [])
+
+	        if (arguments.length){
+	            thisArgs.push.apply(thisArgs, arguments)
+	        }
+
+	        return fn.apply(this, thisArgs)
+	    }
+	}
+
+/***/ },
 /* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
-	    var setImmediate = function(fn){
-	        setTimeout(fn, 0)
-	    }
-	    var clearImmediate = clearTimeout
-	    /**
-	     * Utility methods for working with functions.
-	     * These methods augment the Function prototype.
-	     *
-	     * Using {@link #before}
-	     *
-	     *      function log(m){
-	     *          console.log(m)
-	     *      }
-	     *
-	     *      var doLog = function (m){
-	     *          console.log('LOG ')
-	     *      }.before(log)
-	     *
-	     *      doLog('test')
-	     *      //will log
-	     *      //"LOG "
-	     *      //and then
-	     *      //"test"
-	     *
-	     *
-	     *
-	     * Using {@link #bindArgs}:
-	     *
-	     *      //returns the sum of all arguments
-	     *      function add(){
-	     *          var sum = 0
-	     *          [].from(arguments).forEach(function(n){
-	     *              sum += n
-	     *          })
-	     *
-	     *          return sum
-	     *      }
-	     *
-	     *      var add1 = add.bindArgs(1)
-	     *
-	     *      add1(2, 3) == 6
-	     *
-	     * Using {@link #lockArgs}:
-	     *
-	     *      function add(){
-	     *          var sum = 0
-	     *          [].from(arguments).forEach(function(n){
-	     *              sum += n
-	     *          })
-	     *
-	     *          return sum
-	     *      }
-	     *
-	     *      var add1_2   = add.lockArgs(1,2)
-	     *      var add1_2_3 = add.lockArgs(1,2,3)
-	     *
-	     *      add1_2(3,4)  == 3 //args are locked to only be 1 and 2
-	     *      add1_2_3(6)  == 6 //args are locked to only be 1, 2 and 3
-	     *
-	     *
-	     *
-	     * Using {@link #compose}:
-	     *
-	     *      function multiply(a,b){
-	     *          return a* b
-	     *      }
-	     *
-	     *      var multiply2 = multiply.curry()(2)
-	     *
-	     *      Function.compose(multiply2( add(5,6) )) == multiply2( add(5,6) )
-	     *
-	     *
-	     * @class Function
-	     */
+	'use strict'
 
-	    var SLICE = Array.prototype.slice
+	var SLICE = Array.prototype.slice
+	var bindArgsArray = __webpack_require__(82)
 
-	    var curry = __webpack_require__(114),
-
-	        findFn = function(fn, target, onFound){
-	            // if (typeof target.find == 'function'){
-	            //     return target.find(fn)
-	            // }
-
-	            onFound = typeof onFound == 'function'?
-	                        onFound:
-	                        function(found, key, target){
-	                            return found
-	                        }
-
-	            if (Array.isArray(target)){
-	                var i   = 0
-	                var len = target.length
-	                var it
-
-	                for(; i < len; i++){
-	                    it = target[i]
-	                    if (fn(it, i, target)){
-	                        return onFound(it, i, target)
-	                    }
-	                }
-
-	                return
-	            }
-
-	            if (typeof target == 'object'){
-	                var keys = Object.keys(target)
-	                var i = 0
-	                var len = keys.length
-	                var k
-	                var it
-
-	                for( ; i < len; i++){
-	                    k  = keys[i]
-	                    it = target[k]
-
-	                    if (fn(it, k, target)){
-	                        return onFound(it, k, target)
-	                    }
-	                }
-	            }
-	        },
-
-	        find = curry(findFn, 2),
-
-	        findIndex = curry(function(fn, target){
-	            return findFn(fn, target, function(it, i){
-	                return i
-	            })
-	        }),
-
-	        bindFunctionsOf = function(obj) {
-	            Object.keys(obj).forEach(function(k){
-	                if (typeof obj[k] == 'function'){
-	                    obj[k] = obj[k].bind(obj)
-	                }
-	            })
-
-	            return obj
-	        },
-
-	        /*
-	         * @param {Function...} an enumeration of functions, each consuming the result of the following function.
-	         *
-	         * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
-	         *
-	         * @return the result of the first function in the enumeration
-	         */
-	        compose = __webpack_require__(115),
-
-	        chain = __webpack_require__(116),
-
-	        once = __webpack_require__(117),
-
-	        bindArgsArray = __webpack_require__(118),
-
-	        bindArgs = __webpack_require__(119),
-
-	        lockArgsArray = __webpack_require__(120),
-
-	        lockArgs = __webpack_require__(121),
-
-	        skipArgs = function(fn, count){
-	            return function(){
-	                var args = SLICE.call(arguments, count || 0)
-
-	                return fn.apply(this, args)
-	            }
-	        },
-
-	        intercept = function(interceptedFn, interceptingFn, withStopArg){
-
-	            return function(){
-	                var args    = [].from(arguments),
-	                    stopArg = { stop: false }
-
-	                if (withStopArg){
-	                    args.push(stopArg)
-	                }
-
-	                var result = interceptingFn.apply(this, args)
-
-	                if (withStopArg){
-	                    if (stopArg.stop === true){
-	                        return result
-	                    }
-
-	                } else {
-	                    if (result === false){
-	                        return result
-	                    }
-	                }
-
-	                //the interception was not stopped
-	                return interceptedFn.apply(this, arguments)
-	            }
-
-	        },
-
-	        delay = function(fn, delay, scope){
-
-	            var delayIsNumber = delay * 1 == delay
-
-	            if (arguments.length == 2 && !delayIsNumber){
-	                scope = delay
-	                delay = 0
-	            } else {
-	                if (!delayIsNumber){
-	                    delay = 0
-	                }
-	            }
-
-	            return function(){
-	                var self = scope || this,
-	                    args = arguments
-
-	                if (delay < 0){
-	                    fn.apply(self, args)
-	                    return
-	                }
-
-	                if (delay || !setImmediate){
-	                    setTimeout(function(){
-	                        fn.apply(self, args)
-	                    }, delay)
-
-	                } else {
-	                    setImmediate(function(){
-	                        fn.apply(self, args)
-	                    })
-	                }
-	            }
-	        },
-
-	        defer = function(fn, scope){
-	            return delay(fn, 0, scope)
-	        },
-
-	        buffer = function(fn, delay, scope){
-
-	            var timeoutId = -1
-
-	            return function(){
-
-	                var self = scope || this,
-	                    args = arguments
-
-	                if (delay < 0){
-	                    fn.apply(self, args)
-	                    return
-	                }
-
-	                var withTimeout = delay || !setImmediate,
-	                    clearFn = withTimeout?
-	                                clearTimeout:
-	                                clearImmediate,
-	                    setFn   = withTimeout?
-	                                setTimeout:
-	                                setImmediate
-
-	                if (timeoutId !== -1){
-	                    clearFn(timeoutId)
-	                }
-
-	                timeoutId = setFn(function(){
-	                    fn.apply(self, args)
-	                    self = null
-	                }, delay)
-
-	            }
-
-	        },
-
-	        throttle = function(fn, delay, scope) {
-	            var timeoutId = -1,
-	                self,
-	                args
-
-	            return function () {
-
-	                self = scope || this
-	                args = arguments
-
-	                if (timeoutId !== -1) {
-	                    //the function was called once again in the delay interval
-	                } else {
-	                    timeoutId = setTimeout(function () {
-	                        fn.apply(self, args)
-
-	                        self = null
-	                        timeoutId = -1
-	                    }, delay)
-	                }
-
-	            }
-
-	        },
-
-	        spread = function(fn, delay, scope){
-
-	            var timeoutId       = -1
-	            var callCount       = 0
-	            var executeCount    = 0
-	            var nextArgs        = {}
-	            var increaseCounter = true
-	            var resultingFnUnbound
-	            var resultingFn
-
-	            resultingFn = resultingFnUnbound = function(){
-
-	                var args = arguments,
-	                    self = scope || this
-
-	                if (increaseCounter){
-	                    nextArgs[callCount++] = {args: args, scope: self}
-	                }
-
-	                if (timeoutId !== -1){
-	                    //the function was called once again in the delay interval
-	                } else {
-	                    timeoutId = setTimeout(function(){
-	                        fn.apply(self, args)
-
-	                        timeoutId = -1
-	                        executeCount++
-
-	                        if (callCount !== executeCount){
-	                            resultingFn = bindArgsArray(resultingFnUnbound, nextArgs[executeCount].args).bind(nextArgs[executeCount].scope)
-	                            delete nextArgs[executeCount]
-
-	                            increaseCounter = false
-	                            resultingFn.apply(self)
-	                            increaseCounter = true
-	                        } else {
-	                            nextArgs = {}
-	                        }
-	                    }, delay)
-	                }
-
-	            }
-
-	            return resultingFn
-	        },
-
-	        /*
-	         * @param {Array} args the array for which to create a cache key
-	         * @param {Number} [cacheParamNumber] the number of args to use for the cache key. Use this to limit the args that area actually used for the cache key
-	         */
-	        getCacheKey = function(args, cacheParamNumber){
-	            if (cacheParamNumber == null){
-	                cacheParamNumber = -1
-	            }
-
-	            var i        = 0,
-	                len      = Math.min(args.length, cacheParamNumber),
-	                cacheKey = [],
-	                it
-
-	            for ( ; i < len; i++){
-	                it = args[i]
-
-	                if (root.check.isPlainObject(it) || Array.isArray(it)){
-	                    cacheKey.push(JSON.stringify(it))
-	                } else {
-	                    cacheKey.push(String(it))
-	                }
-	            }
-
-	            return cacheKey.join(', ')
-	        },
-
-	        /*
-	         * @param {Function} fn - the function to cache results for
-	         * @param {Number} skipCacheParamNumber - the index of the boolean parameter that makes this function skip the caching and
-	         * actually return computed results.
-	         * @param {Function|String} cacheBucketMethod - a function or the name of a method on this object which makes caching distributed across multiple buckets.
-	         * If given, cached results will be searched into the cache corresponding to this bucket. If no result found, return computed result.
-	         *
-	         * For example this param is very useful when a function from a prototype is cached,
-	         * but we want to return the same cached results only for one object that inherits that proto, not for all objects. Thus, for example for Wes.Element,
-	         * we use the 'getId' cacheBucketMethod to indicate cached results for one object only.
-	         * @param {Function} [cacheKeyBuilder] A function to be used to compose the cache key
-	         *
-	         * @return {Function} a new function, which returns results from cache, if they are available, otherwise uses the given fn to compute the results.
-	         * This returned function has a 'clearCache' function attached, which clears the caching. If a parameter ( a bucket id) is  provided,
-	         * only clears the cache in the specified cache bucket.
-	         */
-	        cache = function(fn, config){
-	            config = config || {}
-
-	            var bucketCache = {},
-	                cache       = {},
-	                skipCacheParamNumber = config.skipCacheIndex,
-	                cacheBucketMethod    = config.cacheBucket,
-	                cacheKeyBuilder      = config.cacheKey,
-	                cacheArgsLength      = skipCacheParamNumber == null?
-	                                            fn.length:
-	                                            skipCacheParamNumber,
-	                cachingFn
-
-	            cachingFn = function(){
-	                var result,
-	                    skipCache = skipCacheParamNumber != null?
-	                                                arguments[skipCacheParamNumber] === true:
-	                                                false,
-	                    args = skipCache?
-	                                    SLICE.call(arguments, 0, cacheArgsLength):
-	                                    SLICE.call(arguments),
-
-	                    cacheBucketId = cacheBucketMethod != null?
-	                                        typeof cacheBucketMethod == 'function'?
-	                                            cacheBucketMethod():
-	                                            typeof this[cacheBucketMethod] == 'function'?
-	                                                this[cacheBucketMethod]():
-	                                                null
-	                                        :
-	                                        null,
-
-
-	                    cacheObject = cacheBucketId?
-	                                        bucketCache[cacheBucketId]:
-	                                        cache,
-
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(args, cacheArgsLength)
-
-	                if (cacheBucketId && !cacheObject){
-	                    cacheObject = bucketCache[cacheBucketId] = {}
-	                }
-
-	                if (skipCache || cacheObject[cacheKey] == null){
-	                    cacheObject[cacheKey] = result = fn.apply(this, args)
-	                } else {
-	                    result = cacheObject[cacheKey]
-	                }
-
-	                return result
-	            }
-
-	            /*
-	             * @param {String|Object|Number} [bucketId] the bucket for which to clear the cache. If none given, clears all the cache for this function.
-	             */
-	            cachingFn.clearCache = function(bucketId){
-	                if (bucketId){
-	                    delete bucketCache[String(bucketId)]
-	                } else {
-	                    cache = {}
-	                    bucketCache = {}
-	                }
-	            }
-
-	            /*
-	             *
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.getCache = function(cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                return cachingFn.getBucketCache(null, cacheArgs, cacheParamNumber, cacheKeyBuilder)
-	            }
-
-	            /*
-	             *
-	             * @param {String} bucketId The id of the cache bucket from which to retrieve the cached value
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.getBucketCache = function(bucketId, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                var cacheObject = cache,
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
-
-	                if (bucketId){
-	                    bucketId = String(bucketId);
-
-	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {}
-	                }
-
-	                return cacheObject[cacheKey]
-	            }
-
-	            /*
-	             *
-	             * @param {Object} value The value to set in the cache
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.setCache = function(value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-	                return cachingFn.setBucketCache(null, value, cacheArgs, cacheParamNumber, cacheKeyBuilder)
-	            }
-
-	            /*
-	             *
-	             * @param {String} bucketId The id of the cache bucket for which to set the cache value
-	             * @param {Object} value The value to set in the cache
-	             * @param {Array} cacheArgs The array of objects from which to create the cache key
-	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
-	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
-	             */
-	            cachingFn.setBucketCache = function(bucketId, value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
-
-	                var cacheObject = cache,
-	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
-
-	                if (bucketId){
-	                    bucketId = String(bucketId)
-
-	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {};
-	                }
-
-	                return cacheObject[cacheKey] = value
-	            }
-
-	            return cachingFn
-	        }
-
-	module.exports = {
-
-	    map: __webpack_require__(122),
-
-	    dot: __webpack_require__(123),
-
-	    maxArgs: __webpack_require__(124),
-
-	    /**
-	     * @method compose
-	     *
-	     * Example:
-	     *
-	     *      zippy.Function.compose(c, b, a)
-	     *
-	     * See {@link Function#compose}
-	     */
-	    compose: compose,
-
-	    /**
-	     * See {@link Function#self}
-	     */
-	    self: function(fn){
-	        return fn
-	    },
-
-	    /**
-	     * See {@link Function#buffer}
-	     */
-	    buffer: buffer,
-
-	    /**
-	     * See {@link Function#delay}
-	     */
-	    delay: delay,
-
-	    /**
-	     * See {@link Function#defer}
-	     * @param {Function} fn
-	     * @param {Object} scope
-	     */
-	    defer:defer,
-
-	    /**
-	     * See {@link Function#skipArgs}
-	     * @param {Function} fn
-	     * @param {Number} [count=0] how many args to skip when calling the resulting function
-	     * @return {Function} The function that will call the original fn without the first count args.
-	     */
-	    skipArgs: skipArgs,
-
-	    /**
-	     * See {@link Function#intercept}
-	     */
-	    intercept: function(fn, interceptedFn, withStopArgs){
-	        return intercept(interceptedFn, fn, withStopArgs)
-	    },
-
-	    /**
-	     * See {@link Function#throttle}
-	     */
-	    throttle: throttle,
-
-	    /**
-	     * See {@link Function#spread}
-	     */
-	    spread: spread,
-
-	    /**
-	     * See {@link Function#chain}
-	     */
-	    chain: function(fn, where, mainFn){
-	        return chain(where, mainFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#before}
-	     */
-	    before: function(fn, otherFn){
-	        return chain('before', otherFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#after}
-	     */
-	    after: function(fn, otherFn){
-	        return chain('after', otherFn, fn)
-	    },
-
-	    /**
-	     * See {@link Function#curry}
-	     */
-	    curry: curry,
-
-	    /**
-	     * See {@link Function#once}
-	     */
-	    once: once,
-
-	    /**
-	     * See {@link Function#bindArgs}
-	     */
-	    bindArgs: bindArgs,
-
-	    /**
-	     * See {@link Function#bindArgsArray}
-	     */
-	    bindArgsArray: bindArgsArray,
-
-	    /**
-	     * See {@link Function#lockArgs}
-	     */
-	    lockArgs: lockArgs,
-
-	    /**
-	     * See {@link Function#lockArgsArray}
-	     */
-	    lockArgsArray: lockArgsArray,
-
-	    bindFunctionsOf: bindFunctionsOf,
-
-	    find: find,
-
-	    findIndex: findIndex,
-
-	    newify: __webpack_require__(125)
+	module.exports = function(fn){
+	    return bindArgsArray(fn, SLICE.call(arguments,1))
 	}
 
 /***/ },
 /* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(113)
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+
+	module.exports = function(fn, args){
+
+	    return function(){
+	        if (!Array.isArray(args)){
+	            args = SLICE.call(args || [])
+	        }
+
+	        return fn.apply(this, args)
+	    }
+	}
 
 /***/ },
 /* 85 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+	var lockArgsArray = __webpack_require__(84)
+
+	module.exports = function(fn){
+	    return lockArgsArray(fn, SLICE.call(arguments, 1))
+	}
+
+/***/ },
+/* 86 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var curry = __webpack_require__(78)
+
+	module.exports = curry(function(fn, value){
+	    return value != undefined && typeof value.map?
+	            value.map(fn):
+	            fn(value)
+	})
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var curry = __webpack_require__(78)
+
+	module.exports = curry(function(prop, value){
+	    return value != undefined? value[prop]: undefined
+	})
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+	var curry = __webpack_require__(78)
+
+	module.exports = function(fn, count){
+	    return function(){
+	        return fn.apply(this, SLICE.call(arguments, 0, count))
+	    }
+	}
+
+/***/ },
+/* 89 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var newify = __webpack_require__(49)
+	var curry  = __webpack_require__(78)
+
+	module.exports = curry(newify)
+
+/***/ },
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -9196,244 +9395,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 86 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function curry(fn, n){
-
-	    if (typeof n !== 'number'){
-	        n = fn.length
-	    }
-
-	    function getCurryClosure(prevArgs){
-
-	        function curryClosure() {
-
-	            var len  = arguments.length
-	            var args = [].concat(prevArgs)
-
-	            if (len){
-	                args.push.apply(args, arguments)
-	            }
-
-	            if (args.length < n){
-	                return getCurryClosure(args)
-	            }
-
-	            return fn.apply(this, args)
-	        }
-
-	        return curryClosure
-	    }
-
-	    return getCurryClosure([])
-	}
-
-	module.exports = curry
-
-/***/ },
-/* 87 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function composeTwo(f, g) {
-	    return function () {
-	        return f(g.apply(this, arguments))
-	    }
-	}
-
-	/*
-	 * @param {Function...} an enumeration of functions, each consuming the result of the following function.
-	 *
-	 * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
-	 *
-	 * @return the result of the first function in the enumeration
-	 */
-	module.exports = function(){
-
-	    var args = arguments
-	    var len  = args.length
-	    var i    = 0
-	    var f    = args[0]
-
-	    while (++i < len) {
-	        f = composeTwo(f, args[i])
-	    }
-
-	    return f
-	}
-
-/***/ },
-/* 88 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function chain(where, fn, secondFn){
-
-	    return function(){
-	        if (where === 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        var result = fn.apply(this, arguments)
-
-	        if (where !== 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        return result
-	    }
-	}
-
-	module.exports = chain
-
-/***/ },
-/* 89 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use once'
-
-	function once(fn, scope){
-
-	    var called
-	    var result
-
-	    return function(){
-	        if (called){
-	            return result
-	        }
-
-	        called = true
-
-	        return result = fn.apply(scope || this, arguments)
-	    }
-	}
-
-	module.exports = once
-
-/***/ },
-/* 90 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-
-	module.exports = function(fn, args){
-	    return function(){
-	        var thisArgs = SLICE.call(args || [])
-
-	        if (arguments.length){
-	            thisArgs.push.apply(thisArgs, arguments)
-	        }
-
-	        return fn.apply(this, thisArgs)
-	    }
-	}
-
-/***/ },
 /* 91 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var bindArgsArray = __webpack_require__(90)
-
-	module.exports = function(fn){
-	    return bindArgsArray(fn, SLICE.call(arguments,1))
-	}
-
-/***/ },
-/* 92 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-
-	module.exports = function(fn, args){
-
-	    return function(){
-	        if (!Array.isArray(args)){
-	            args = SLICE.call(args || [])
-	        }
-
-	        return fn.apply(this, args)
-	    }
-	}
-
-/***/ },
-/* 93 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var lockArgsArray = __webpack_require__(92)
-
-	module.exports = function(fn){
-	    return lockArgsArray(fn, SLICE.call(arguments, 1))
-	}
-
-/***/ },
-/* 94 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var curry = __webpack_require__(86)
-
-	module.exports = curry(function(fn, value){
-	    return value != undefined && typeof value.map?
-	            value.map(fn):
-	            fn(value)
-	})
-
-/***/ },
-/* 95 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var curry = __webpack_require__(86)
-
-	module.exports = curry(function(prop, value){
-	    return value != undefined? value[prop]: undefined
-	})
-
-/***/ },
-/* 96 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var curry = __webpack_require__(86)
-
-	module.exports = function(fn, count){
-	    return function(){
-	        return fn.apply(this, SLICE.call(arguments, 0, count))
-	    }
-	}
-
-/***/ },
-/* 97 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var newify = __webpack_require__(126)
-	var curry  = __webpack_require__(86)
-
-	module.exports = curry(newify)
-
-/***/ },
-/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9443,7 +9405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 99 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9453,31 +9415,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 100 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(99)
+	var number = __webpack_require__(92)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 101 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(99)
+	var number = __webpack_require__(92)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseFloat(value, 10)) && !(value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 102 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9487,7 +9449,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 103 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9499,7 +9461,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 104 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9511,7 +9473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 105 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9523,7 +9485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 106 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9533,7 +9495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 107 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9545,7 +9507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 108 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9557,7 +9519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 109 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9567,18 +9529,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 110 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(127)
-
-/***/ },
-/* 111 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var Region = __webpack_require__(110)
+	var Region = __webpack_require__(15)
 
 	/**
 	 *
@@ -9755,41 +9711,1031 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ALIGN_TO_NORMALIZED
 
 /***/ },
+/* 104 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var assign = __webpack_require__(112)
+
+	module.exports = function(props, state){
+
+	    var itemStyle         = assign({}, props.defaultItemStyle, props.itemStyle)
+	    var itemOverStyle     = assign({}, props.defaultItemOverStyle, props.itemOverStyle)
+	    var itemActiveStyle   = assign({}, props.defaultItemActiveStyle, props.itemActiveStyle)
+	    var itemDisabledStyle = assign({}, props.defaultItemDisabledStyle, props.itemDisabledStyle)
+	    var itemExpandedStyle = assign({}, props.defaultItemExpandedStyle, props.itemExpandedStyle)
+	    var cellStyle     = assign({}, props.defaultCellStyle, props.cellStyle)
+
+	    return {
+	        itemStyle        : itemStyle,
+	        itemOverStyle    : itemOverStyle,
+	        itemActiveStyle  : itemActiveStyle,
+	        itemDisabledStyle: itemDisabledStyle,
+	        itemExpandedStyle: itemExpandedStyle,
+	        cellStyle        : cellStyle
+	    }
+	}
+
+/***/ },
+/* 105 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Region           = __webpack_require__(116)
+	var assign           = __webpack_require__(112)
+	var cloneWithProps   = __webpack_require__(123)
+	var getPositionStyle = __webpack_require__(117)
+
+	module.exports = function(props, state) {
+	    var menu = state.menu
+
+	    if (menu && this.isMounted()){
+
+	        var style = getPositionStyle.call(this, props, state)
+
+	        menu = cloneWithProps(menu, assign({
+	            ref          : 'subMenu',
+	            subMenu      : true,
+	            maxHeight    : state.subMenuMaxHeight,
+	            onActivate   : this.onSubMenuActivate,
+	            onInactivate : this.onSubMenuInactivate,
+	            scrollerProps: props.scrollerProps,
+	            constrainTo  : props.constrainTo,
+	            expander     : props.expander
+	        }, props.itemStyleProps))
+
+	        return React.createElement("div", {ref: "subMenuWrap", style: style, 
+	                onMouseEnter: this.handleSubMenuMouseEnter, 
+	                onMouseLeave: this.handleSubMenuMouseLeave
+	            }, menu)
+	    }
+	}
+
+/***/ },
+/* 106 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1)
+	var MenuItemCell = __webpack_require__(70)
+
+	var cloneWithProps = __webpack_require__(123)
+	var assign         = __webpack_require__(112)
+
+	function emptyFn(){}
+
+	module.exports = function(props, state) {
+
+	    var expandedIndex  = state.itemProps?
+	                            state.itemProps.index:
+	                            -1
+
+	    var children     = props.children
+	    var maxCellCount = 1
+	    var menuItems    = []
+
+	    React.Children.map(children, function(item){
+	        var itemProps = item.props
+
+	        menuItems.push(item)
+
+	        if (!itemProps || !itemProps.isMenuItem){
+	            return
+	        }
+
+	        var count = React.Children.count(itemProps.children)
+
+	        maxCellCount = Math.max(maxCellCount, count)
+	    })
+
+	    var itemStyleProps = props.itemStyleProps
+	    var i = -1
+	    var result = menuItems.map(function(item, index){
+	        var itemProps = item.props
+
+	        if (itemProps.isMenuItem){
+	            i++
+
+	            itemProps.onMenuItemMouseOver = this.onMenuItemMouseOver
+	            itemProps.onMenuItemMouseOut  = this.onMenuItemMouseOut
+	        }
+
+	        var children = React.Children.map(itemProps.children, function(c){ return c })
+	        var count    = React.Children.count(children)
+
+	        if (count < maxCellCount){
+	            children = children? [children]: []
+	        }
+
+	        while (count < maxCellCount){
+	            count++
+	            children.push(React.createElement(MenuItemCell, null))
+	        }
+
+	        var onClick = itemProps.onClick || emptyFn
+
+	        return cloneWithProps(item, assign({
+	            itemIndex: i,
+	            key      : index,
+	            index    : index,
+	            expanded : expandedIndex == index,
+	            children : children,
+	            expander : props.expander,
+	            onClick  : function(props, index, event){
+	                onClick.apply(null, arguments)
+	                this.onMenuItemClick(props, index, event)
+	            }.bind(this)
+	        }, {
+	            style        : itemStyleProps.itemStyle,
+	            overStyle    : itemStyleProps.itemOverStyle,
+	            activeStyle  : itemStyleProps.itemActiveStyle,
+	            disabledStyle: itemStyleProps.itemDisabledStyle,
+	            expandedStyle: itemStyleProps.itemExpandedStyle,
+	            cellStyle    : itemStyleProps.cellStyle
+	        }))
+
+	    }, this)
+
+	    return result
+	}
+
+/***/ },
+/* 107 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React  = __webpack_require__(1)
+	var assign = __webpack_require__(112)
+
+	var renderCells     = __webpack_require__(118)
+	var MenuItem        = __webpack_require__(72)
+	var MenuItemFactory = React.createFactory(MenuItem)
+	var MenuSeparator   = __webpack_require__(71)
+
+	module.exports = function(props, state, item, index) {
+
+	    var expandedIndex = state.itemProps?
+	                            state.itemProps.index:
+	                            -1
+
+	    if (item === '-'){
+	        return React.createElement(MenuSeparator, {key: index})
+	    }
+
+	    var className   = [props.itemClassName, item.cls, item.className]
+	                        .filter(function(x)  {return !!x;})
+	                        .join(' ')
+
+	    var itemProps = assign({
+	        className  : className,
+	        key        : index,
+	        data       : item,
+	        columns    : props.columns,
+	        expanded   : index === expandedIndex,
+	        disabled   : item.disabled,
+	        onClick    : item.onClick || item.fn
+	    }, props.itemStyleProps)
+
+	    itemProps.children = renderCells(itemProps)
+
+	    if (item.items){
+	        var Menu = __webpack_require__(69)
+	        itemProps.children.push(React.createElement(Menu, {items: item.items}))
+	    }
+
+	    return (props.itemFactory || MenuItemFactory)(itemProps)
+	}
+
+/***/ },
+/* 108 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1)
+
+	module.exports = {
+	    items      : React.PropTypes.array,
+	    columns    : React.PropTypes.array,
+	    onMount    : React.PropTypes.func,
+
+	    defaultRowActiveStyle: React.PropTypes.object,
+	    defaultRowOverStyle  : React.PropTypes.object,
+	    defaultRowStyle      : React.PropTypes.object,
+
+	    rowActiveStyle: React.PropTypes.object,
+	    rowOverStyle  : React.PropTypes.object,
+	    rowStyle      : React.PropTypes.object,
+
+	    cellStyle  : React.PropTypes.object
+	}
+
+/***/ },
+/* 109 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var assign   = __webpack_require__(112)
+	var Scroller = __webpack_require__(119)
+	var F        = __webpack_require__(124)
+	var buffer   = F.buffer
+
+	function stop(event){
+	    event.preventDefault()
+	    event.stopPropagation()
+	}
+
+	module.exports = React.createClass({
+
+	    displayName: 'ReactMenuScrollContainer',
+
+	    getInitialState: function(){
+	        return {
+	            adjustScroll: true,
+	            scrollPos: 0
+	        }
+	    },
+
+	    getDefaultProps: function() {
+	        return {
+	            scrollStep : 5,
+	            scrollSpeed: 50
+	        }
+	    },
+
+	    componentWillUnmount: function(){
+	        if (this.props.enableScroll){
+	            window.removeEventListener('resize', this.onResizeListener)
+	        }
+	    },
+
+	    componentDidMount: function(){
+	        if (this.props.enableScroll){
+	            setTimeout(function(){
+	                if (!this.isMounted()){
+	                    return
+	                }
+
+	                this.adjustScroll()
+
+	                window.addEventListener('resize', this.onResizeListener = buffer(this.onWindowResize, this.props.onWindowResizeBuffer, this))
+	            }.bind(this), 0)
+	        }
+	    },
+
+	    componentDidUpdate: function(){
+	        this.props.enableScroll && this.adjustScroll()
+	    },
+
+	    onWindowResize: function(){
+	        this.adjustScroll()
+	        this.doScroll(0)
+	    },
+
+	    render: function(){
+
+	        var props = this.props
+	        var children = props.children
+
+	        if (!props.enableScroll){
+	            return children
+	        }
+
+	        var scrollStyle = {
+	            position: 'relative'
+	        }
+
+	        if (this.state.scrollPos){
+	            scrollStyle.top = -this.state.scrollPos
+	        }
+
+	        var containerStyle = {
+	            position: 'relative',
+	            overflow: 'hidden'
+	        }
+
+	        if (props.maxHeight){
+	            containerStyle.maxHeight = props.maxHeight
+	        }
+
+	        return React.createElement("div", {
+	            onMouseEnter: props.onMouseEnter, 
+	            onMouseLeave: props.onMouseLeave, 
+	            className: "z-menu-scroll-container", 
+	            style: containerStyle
+	        }, 
+	            React.createElement("div", {ref: "tableWrap", style: scrollStyle}, 
+	                children
+	            ), 
+	            this.renderScroller(props, -1), 
+	            this.renderScroller(props, 1)
+	        )
+	    },
+
+	    renderScroller: function(props, direction) {
+
+	        var onMouseDown = direction == -1?
+	                            this.handleScrollTop:
+	                            this.handleScrollBottom
+
+	        var onDoubleClick = direction == -1?
+	                                this.handleScrollTopMax:
+	                                this.handleScrollBottomMax
+
+	        var visible = direction == -1?
+	                            this.state.hasTopScroll:
+	                            this.state.hasBottomScroll
+
+	        var scrollerProps = assign({}, props.scrollerProps, {
+	            visible    : visible,
+	            side       : direction == -1? 'top': 'bottom',
+	            onMouseDown: onMouseDown,
+	            onDoubleClick: onDoubleClick
+	        })
+
+	        return React.createElement(Scroller, React.__spread({},  scrollerProps))
+	    },
+
+	    adjustScroll: function(){
+	        if (!this.props.enableScroll){
+	            return
+	        }
+
+	        if (!this.state.adjustScroll){
+	            this.state.adjustScroll = true
+	            return
+	        }
+
+	        var availableHeight = this.getAvailableHeight()
+	        var tableHeight      = this.getCurrentTableHeight()
+
+	        var state = {
+	            adjustScroll  : false,
+	            hasTopScroll : false,
+	            hasBottomScroll: false
+	        }
+
+	        if (tableHeight > availableHeight){
+	            state.maxScrollPos    = tableHeight - availableHeight
+	            state.hasTopScroll    = this.state.scrollPos !== 0
+	            state.hasBottomScroll = this.state.scrollPos != state.maxScrollPos
+	        } else {
+	            state.maxScrollPos = 0
+	            state.scrollPos    = 0
+	        }
+
+	        this.setState(state)
+	    },
+
+	    getAvailableHeight: function() {
+	        return this.getAvailableSizeDOM().clientHeight
+	    },
+
+	    getAvailableSizeDOM: function() {
+	        return this.getDOMNode()
+	    },
+
+	    getCurrentTableHeight: function() {
+	        return this.getCurrentSizeDOM().clientHeight
+	    },
+
+	    getCurrentSizeDOM: function() {
+	        return this.refs.tableWrap.getDOMNode()
+	    },
+
+	    handleScrollTop: function(event){
+	        event.preventDefault()
+	        this.handleScroll(-1)
+	    },
+
+	    handleScrollBottom: function(event){
+	        event.preventDefault()
+	        this.handleScroll(1)
+	    },
+
+	    handleScrollTopMax: function(event){
+	        stop(event)
+	        this.handleScrollMax(-1)
+	    },
+
+	    handleScrollBottomMax: function(event){
+	        stop(event)
+	        this.handleScrollMax(1)
+	    },
+
+	    handleScrollMax: function(direction){
+	        var maxPos = direction == -1?
+	                        0:
+	                        this.state.maxScrollPos
+
+	        this.setScrollPosition(maxPos)
+	    },
+
+	    handleScroll: function(direction /*1 to bottom, -1 to up*/){
+	        var mouseUpListener = function(){
+	            this.stopScroll()
+	            window.removeEventListener('mouseup', mouseUpListener)
+	        }.bind(this)
+
+	        window.addEventListener('mouseup', mouseUpListener)
+
+	        this.scrollInterval = setInterval(this.doScroll.bind(this, direction), this.props.scrollSpeed)
+	    },
+
+	    doScroll: function(direction){
+	        this.setState({
+	            scrollDirection: direction
+	        })
+
+	        var newScrollPos = this.state.scrollPos + direction * this.props.scrollStep
+
+	        this.setScrollPosition(newScrollPos)
+	    },
+
+	    setScrollPosition: function(scrollPos){
+	        if (scrollPos > this.state.maxScrollPos){
+	            scrollPos = this.state.maxScrollPos
+	        }
+
+	        if (scrollPos < 0){
+	            scrollPos = 0
+	        }
+
+	        this.setState({
+	            scrollPos: scrollPos,
+	            scrolling : true
+	        })
+	    },
+
+	    stopScroll: function(){
+	        clearInterval(this.scrollInterval)
+
+	        this.setState({
+	            scrolling: false
+	        })
+	    }
+	})
+
+/***/ },
+/* 110 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Menu         = __webpack_require__(69)
+	var MenuItemCell = __webpack_require__(70)
+	var renderCell   = __webpack_require__(120)
+	var cloneWithProps = __webpack_require__(123)
+
+	module.exports = function(props) {
+
+	    var children = []
+	    var menu
+
+	    React.Children.forEach(props.children, function(child){
+	        if (child){
+	            if (child.props && child.props.isMenu){
+	                menu = cloneWithProps(child, {
+	                    ref: 'subMenu'
+	                })
+	                menu.props.subMenu = true
+	                return
+	            }
+
+	            if (typeof child != 'string'){
+	                child = cloneWithProps(child, {
+	                    style: props.cellStyle
+	                })
+	            }
+
+	            children.push(child)
+	        }
+	    })
+
+	    if (menu){
+	        props.menu = menu
+	        children.push(React.createElement(MenuItemCell, {expander: props.expander || true}))
+	    }
+
+	    return children
+	}
+
+/***/ },
+/* 111 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Region = __webpack_require__(116)
+	var selectParent = __webpack_require__(114)
+
+	module.exports = function(constrainTo){
+	    var constrainRegion
+
+	    if (constrainTo === true){
+	        constrainRegion = Region.getDocRegion()
+	    }
+
+	    if (!constrainRegion && typeof constrainTo === 'string'){
+	        var parent = selectParent(constrainTo, this.getDOMNode())
+	        constrainRegion = Region.from(parent)
+	    }
+
+	    if (!constrainRegion && typeof constrainTo === 'function'){
+	        constrainRegion = Region.from(constrainTo())
+	    }
+
+	    return constrainRegion
+	}
+
+/***/ },
 /* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getInstantiatorFunction = __webpack_require__(128)
+	'use strict';
 
-	module.exports = function(fn, args){
-		return getInstantiatorFunction(args.length)(fn, args)
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
 	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = Object.keys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
 
 /***/ },
 /* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	//http://www.blackpawn.com/texts/pointinpoly/
+	module.exports = function pointInTriangle(point, triangle) {
+	    //compute vectors & dot products
+	    var cx = point[0], cy = point[1],
+	        t0 = triangle[0], t1 = triangle[1], t2 = triangle[2],
+	        v0x = t2[0]-t0[0], v0y = t2[1]-t0[1],
+	        v1x = t1[0]-t0[0], v1y = t1[1]-t0[1],
+	        v2x = cx-t0[0], v2y = cy-t0[1],
+	        dot00 = v0x*v0x + v0y*v0y,
+	        dot01 = v0x*v1x + v0y*v1y,
+	        dot02 = v0x*v2x + v0y*v2y,
+	        dot11 = v1x*v1x + v1y*v1y,
+	        dot12 = v1x*v2x + v1y*v2y
 
-	module.exports = {
-	    'numeric'  : __webpack_require__(129),
-	    'number'   : __webpack_require__(130),
-	    'int'      : __webpack_require__(131),
-	    'float'    : __webpack_require__(132),
-	    'string'   : __webpack_require__(133),
-	    'function' : __webpack_require__(134),
-	    'object'   : __webpack_require__(135),
-	    'arguments': __webpack_require__(136),
-	    'boolean'  : __webpack_require__(137),
-	    'date'     : __webpack_require__(138),
-	    'regexp'   : __webpack_require__(139),
-	    'array'    : __webpack_require__(140)
+	    // Compute barycentric coordinates
+	    var b = (dot00 * dot11 - dot01 * dot01),
+	        inv = b === 0 ? 0 : (1 / b),
+	        u = (dot11*dot02 - dot01*dot12) * inv,
+	        v = (dot00*dot12 - dot01*dot02) * inv
+	    return u>=0 && v>=0 && (u+v < 1)
 	}
 
 /***/ },
 /* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
+
+	var curry   = __webpack_require__(121)
+	var matches = __webpack_require__(122)
+
+	module.exports = curry(function(selector, node){
+	    while (node = node.parentElement){
+	        if (matches.call(node, selector)){
+	            return node
+	        }
+	    }
+	})
+
+/***/ },
+/* 115 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function arrowStyle(side, config){
+
+	    var arrowSize   = config.size   || 8
+	    var arrowWidth  = config.width  || arrowSize
+	    var arrowHeight = config.height || arrowSize
+	    var arrowColor  = config.color  || 'black'
+	    var includePosition = config.includePosition
+
+	    var style
+
+	    if (side == 'up' || side == 'down'){
+
+	        style = {
+	            borderLeft : arrowWidth + 'px solid transparent',
+	            borderRight: arrowWidth + 'px solid transparent'
+	        }
+
+	        if (includePosition){
+	            style.marginTop = -Math.round(arrowHeight/2) + 'px'
+	            style.position  = 'relative'
+	            style.top       = '50%'
+	        }
+
+	        style[side === 'up'? 'borderBottom': 'borderTop'] = arrowHeight + 'px solid ' + arrowColor
+	    }
+
+	    if (side == 'left' || side == 'right'){
+
+	        style = {
+	            borderTop : arrowHeight + 'px solid transparent',
+	            borderBottom: arrowHeight + 'px solid transparent'
+	        }
+
+	        if (includePosition){
+	            style.marginLeft = -Math.round(arrowWidth/2) + 'px'
+	            style.position   = 'relative'
+	            style.left       = '50%'
+	        }
+
+	        style[side === 'left'? 'borderRight': 'borderLeft'] = arrowWidth + 'px solid ' + arrowColor
+	    }
+
+	    return style
+	}
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(125)
+
+/***/ },
+/* 117 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Region = __webpack_require__(116)
+	var assign = __webpack_require__(112)
+	var align  = __webpack_require__(126)
+
+	module.exports = function getPositionStyle(props, state){
+	    if (!state.menu || !this.isMounted()){
+	        this.prevMenuIndex = -1
+	        return
+	    }
+
+	    var offset = state.menuOffset
+	    var left   = offset.left + offset.width
+	    var top    = offset.top
+
+	    var menuIndex = state.itemProps.index
+	    var sameMenu = this.prevMenuIndex == menuIndex
+
+	    if (this.aligning && !sameMenu){
+	        this.aligning = false
+	    }
+
+	    this.prevMenuIndex = menuIndex
+
+	    var style = {
+	        position     : 'absolute',
+	        visibility   : 'hidden',
+	        overflow     : 'hidden',
+	        pointerEvents: 'none',
+	        left         : left,
+	        top          : top,
+	        zIndex       : 1
+	    }
+
+	    if (!this.aligning && !sameMenu){
+	        setTimeout(function(){
+
+	            if (!this.isMounted()){
+	                return
+	            }
+
+	            var thisRegion = Region.from(this.getDOMNode())
+	            var menuItemRegion = Region.from({
+	                left  : thisRegion.left,
+	                top   : thisRegion.top + offset.top,
+	                width : offset.width,
+	                height: offset.height
+	            })
+
+	            var subMenuMounted = this.refs.subMenu && this.refs.subMenu.isMounted()
+	            if (!subMenuMounted){
+	                return
+	            }
+
+	            var subMenuRegion = Region.from(this.refs.subMenu.refs.scrollContainer.getCurrentSizeDOM())
+
+	            var initialHeight = subMenuRegion.height
+
+	            var alignPos = align(props, subMenuRegion, /* alignTo */ menuItemRegion, props.constrainTo)
+
+	            var newHeight = subMenuRegion.height
+	            var maxHeight
+
+	            if (newHeight < initialHeight){
+	                maxHeight = newHeight - props.subMenuConstrainMargin
+	            }
+
+	            if (maxHeight && alignPos == -1 /* upwards*/){
+	                subMenuRegion.top = subMenuRegion.bottom - maxHeight
+	            }
+
+	            var newLeft = subMenuRegion.left - thisRegion.left
+	            var newTop  = subMenuRegion.top  - thisRegion.top
+
+	            if (Math.abs(newLeft - left) < 5){
+	                newLeft = left
+	            }
+
+	            if (Math.abs(newTop - top) < 5){
+	                newTop = top
+	            }
+
+	            this.subMenuPosition = newLeft < 0? 'left': 'right'
+
+	            this.alignOffset = {
+	                left: newLeft,
+	                top : newTop
+	            }
+	            this.aligning = true
+
+	            this.setState({
+	                subMenuMaxHeight: maxHeight
+	            })
+
+	        }.bind(this), 0)
+	    }
+
+	    if (sameMenu || (this.aligning && this.alignOffset)){
+	        assign(style, this.alignOffset)
+	        style.visibility = 'visible'
+	        delete style.pointerEvents
+	        delete style.overflow
+	    }
+
+	    this.aligning = false
+
+	    return style
+	}
+
+/***/ },
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var renderCell = __webpack_require__(120)
+
+	module.exports = function(props) {
+	    return props.columns.map(renderCell.bind(null, props))
+	}
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React         = __webpack_require__(1)
+	var assign        = __webpack_require__(112)
+	var getArrowStyle = __webpack_require__(115)
+
+	function emptyFn(){}
+
+	var SCROLLER_STYLE = {
+	    left      : 0,
+	    right     : 0,
+	    position  : 'absolute',
+	    cursor    : 'pointer',
+	    zIndex    : 1
+	}
+
+	function generateArrowStyle(props, state, overrideStyle){
+	    var style = assign({}, overrideStyle)
+
+	    var arrowConfig = {
+	        color: style.color || props.arrowColor
+	    }
+
+	    var offset = 4
+	    var width  = style.width  || props.arrowWidth  || props.arrowSize || (props.style.height - offset)
+	    var height = style.height || props.arrowHeight || props.arrowSize || (props.style.height - offset)
+
+	    arrowConfig.width  = width
+	    arrowConfig.height = height
+
+	    assign(style, getArrowStyle(props.side == 'top'? 'up':'down', arrowConfig))
+
+	    style.display = 'inline-block'
+	    style.position = 'absolute'
+
+	    style.left = '50%'
+	    style.marginLeft = -width
+
+	    style.top = '50%'
+	    style.marginTop = -height/2
+
+	    if (state.active){
+	        style.marginTop += props.side == 'top'? -1: 1
+	    }
+
+	    return style
+	}
+
+	var Scroller = React.createClass({displayName: "Scroller",
+
+	    display: 'ReactMenuScroller',
+
+	    getInitialState: function() {
+	        return {}
+	    },
+
+	    getDefaultProps: function(){
+	        return {
+	            height: 10,
+	            defaultStyle: {
+	                background : 'white'
+	            },
+	            defaultOverStyle: {},
+	            overStyle: {},
+
+	            defaultTopStyle: {
+	                borderBottom: '1px solid gray'
+	            },
+	            topStyle: {},
+	            defaultBottomStyle: {
+	                borderTop: '1px solid gray'
+	            },
+	            bottomStyle: {},
+
+	            arrowColor: 'gray',
+
+	            arrowStyle: {},
+	            defaultArrowStyle: {},
+	            defaultArrowOverStyle: {
+	                color: 'rgb(74, 74, 74)'
+	            },
+	            arrowOverStyle: {}
+	        }
+	    },
+
+	    handleMouseEnter: function() {
+	        this.setState({
+	            mouseOver: true
+	        })
+	    },
+
+	    handleMouseLeave: function() {
+	        this.setState({
+	            mouseOver: false
+	        })
+	    },
+
+	    handleMouseDown: function(event) {
+	        this.setState({
+	            active: true
+	        })
+
+	        ;(this.props.onMouseDown || emptyFn)(event)
+	    },
+
+	    handleMouseUp: function(event) {
+	        this.setState({
+	            active: false
+	        })
+
+	        ;(this.props.onMouseUp || emptyFn)(event)
+	    },
+
+	    render: function(){
+	        var props = assign({}, this.props, {
+	            onMouseEnter: this.handleMouseEnter,
+	            onMouseLeave: this.handleMouseLeave,
+
+	            onMouseDown: this.handleMouseDown,
+	            onMouseUp  : this.handleMouseUp
+	        })
+
+	        var state = this.state
+	        var side  = props.side
+
+	        props.className = this.prepareClassName(props, state)
+
+	        props.style = this.prepareStyle(props, state)
+
+	        var arrowStyle = this.prepareArrowStyle(props, state)
+
+	        return props.factory?
+	                    props.factory(props, side):
+	                    React.createElement("div", React.__spread({},  props), 
+	                        React.createElement("div", {style: arrowStyle})
+	                    )
+	    },
+
+	    prepareStyle: function(props, state) {
+	        var defaultOverStyle
+	        var overStyle
+
+	        if (state.mouseOver){
+	            overStyle        = props.overStyle
+	            defaultOverStyle = props.defaultOverStyle
+	        }
+
+	        var defaultSideStyle = props.side == 'top'?
+	                                props.defaultTopStyle:
+	                                props.defaultBottomStyle
+	        var sideStyle = props.side == 'top'?
+	                            props.topStyle:
+	                            props.bottomStyle
+
+	        var style = assign({}, SCROLLER_STYLE,
+	                            props.defaultStyle, defaultSideStyle, defaultOverStyle,
+	                            props.style, sideStyle, overStyle)
+
+	        style.height = style.height || props.height
+	        style[props.side] = 0
+	        if (!props.visible){
+	            style.display = 'none'
+	        }
+
+	        return style
+	    },
+
+	    prepareClassName: function(props, state) {
+	        //className
+	        var className = props.className || ''
+	        className += ' z-menu-scroller ' + props.side
+
+	        if (props.active && props.visible){
+	            className += ' active'
+	        }
+
+	        return className
+	    },
+
+	    prepareArrowStyle: function(props, state) {
+
+	        var defaultArrowOverStyle
+	        var arrowOverStyle
+
+	        if (state.mouseOver){
+	            defaultArrowOverStyle = props.defaultArrowOverStyle
+	            arrowOverStyle        = props.arrowOverStyle
+	        }
+
+	        var arrowStyle = assign({}, props.defaultArrowStyle, defaultArrowOverStyle, props.arrowStyle, arrowOverStyle)
+
+	        return generateArrowStyle(props, state, arrowStyle)
+	    },
+
+	    handleClick: function(event){
+	        event.stopPropagation
+	    }
+	})
+
+	module.exports = Scroller
+
+/***/ },
+/* 120 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var assign = __webpack_require__(112)
+	var MenuItemCell = __webpack_require__(70)
+
+	module.exports = function(props, column) {
+	    var style = assign({}, props.defaultCellStyle, props.cellStyle)
+
+	    return React.createElement(MenuItemCell, {style: style}, props.data[column])
+	}
+
+/***/ },
+/* 121 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	function curry(fn, n){
 
@@ -9824,229 +10770,761 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = curry
 
 /***/ },
-/* 115 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function composeTwo(f, g) {
-	    return function () {
-	        return f(g.apply(this, arguments))
-	    }
-	}
-
-	/*
-	 * @param {Function...} an enumeration of functions, each consuming the result of the following function.
-	 *
-	 * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
-	 *
-	 * @return the result of the first function in the enumeration
-	 */
-	module.exports = function(){
-
-	    var args = arguments
-	    var len  = args.length
-	    var i    = 0
-	    var f    = args[0]
-
-	    while (++i < len) {
-	        f = composeTwo(f, args[i])
-	    }
-
-	    return f
-	}
-
-/***/ },
-/* 116 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	function chain(where, fn, secondFn){
-
-	    return function(){
-	        if (where === 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        var result = fn.apply(this, arguments)
-
-	        if (where !== 'before'){
-	            secondFn.apply(this, arguments)
-	        }
-
-	        return result
-	    }
-	}
-
-	module.exports = chain
-
-/***/ },
-/* 117 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use once'
-
-	function once(fn, scope){
-
-	    var called
-	    var result
-
-	    return function(){
-	        if (called){
-	            return result
-	        }
-
-	        called = true
-
-	        return result = fn.apply(scope || this, arguments)
-	    }
-	}
-
-	module.exports = once
-
-/***/ },
-/* 118 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-
-	module.exports = function(fn, args){
-	    return function(){
-	        var thisArgs = SLICE.call(args || [])
-
-	        if (arguments.length){
-	            thisArgs.push.apply(thisArgs, arguments)
-	        }
-
-	        return fn.apply(this, thisArgs)
-	    }
-	}
-
-/***/ },
-/* 119 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var bindArgsArray = __webpack_require__(118)
-
-	module.exports = function(fn){
-	    return bindArgsArray(fn, SLICE.call(arguments,1))
-	}
-
-/***/ },
-/* 120 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-
-	module.exports = function(fn, args){
-
-	    return function(){
-	        if (!Array.isArray(args)){
-	            args = SLICE.call(args || [])
-	        }
-
-	        return fn.apply(this, args)
-	    }
-	}
-
-/***/ },
-/* 121 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var lockArgsArray = __webpack_require__(120)
-
-	module.exports = function(fn){
-	    return lockArgsArray(fn, SLICE.call(arguments, 1))
-	}
-
-/***/ },
 /* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
 
-	var curry = __webpack_require__(114)
+	var proto = Element.prototype
 
-	module.exports = curry(function(fn, value){
-	    return value != undefined && typeof value.map?
-	            value.map(fn):
-	            fn(value)
-	})
+	var nativeMatches = proto.matches ||
+	  proto.mozMatchesSelector ||
+	  proto.msMatchesSelector ||
+	  proto.oMatchesSelector ||
+	  proto.webkitMatchesSelector
+
+	module.exports = nativeMatches
+
 
 /***/ },
 /* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
+	'use strict';
+	var React    = __webpack_require__(1)
+	  , hasOwn   = Object.prototype.hasOwnProperty
+	  , version  = React.version.split('.').map(parseFloat)
+	  , RESERVED = {
+	      className:  resolve(joinClasses),
+	      children:   function(){},
+	      key:        function(){},
+	      ref:        function(){},
+	      style:      resolve(extend)
+	    };
 
-	var curry = __webpack_require__(114)
+	module.exports = function cloneWithProps(child, props) {
+	  var newProps = mergeProps(props, child.props);
 
-	module.exports = curry(function(prop, value){
-	    return value != undefined? value[prop]: undefined
-	})
+	  if (!hasOwn.call(newProps, 'children') && hasOwn.call(child.props, 'children'))
+	    newProps.children = child.props.children;
+
+	  // < 0.11
+	  if (version[0] === 0 && version[1] < 11)
+	    return child.constructor.ConvenienceConstructor(newProps);
+	  
+	  // 0.11
+	  if (version[0] === 0 && version[1] === 11)
+	    return child.constructor(newProps);
+
+	  // 0.12
+	  else if (version[0] === 0 && version[1] === 12){
+	    MockLegacyFactory.isReactLegacyFactory = true
+	    MockLegacyFactory.type = child.type
+	    return React.createElement(MockLegacyFactory, newProps);
+	  }
+
+	  // 0.13+
+	  return React.createElement(child.type, newProps);
+
+	  function MockLegacyFactory(){}
+	}
+
+	function mergeProps(currentProps, childProps) {
+	  var newProps = extend(currentProps), key
+
+	  for (key in childProps) {
+	    if (hasOwn.call(RESERVED, key) )
+	      RESERVED[key](newProps, childProps[key], key)
+
+	    else if ( !hasOwn.call(newProps, key) )
+	      newProps[key] = childProps[key];
+	  }
+	  return newProps
+	}
+
+	function resolve(fn){
+	  return function(src, value, key){
+	    if( !hasOwn.call(src, key)) src[key] = value
+	    else src[key] = fn(src[key], value)
+	  }
+	}
+
+	function joinClasses(a, b){
+	  if ( !a ) return b || ''
+	  return a + (b ? ' ' + b : '')
+	}
+
+	function extend() {
+	  var target = {};
+	  for (var i = 0; i < arguments.length; i++) 
+	    for (var key in arguments[i]) if (hasOwn.call(arguments[i], key)) 
+	      target[key] = arguments[i][key]   
+	  return target
+	}
 
 /***/ },
 /* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
-
-	var SLICE = Array.prototype.slice
-	var curry = __webpack_require__(114)
-
-	module.exports = function(fn, count){
-	    return function(){
-	        return fn.apply(this, SLICE.call(arguments, 0, count))
+	    var setImmediate = function(fn){
+	        setTimeout(fn, 0)
 	    }
+	    var clearImmediate = clearTimeout
+	    /**
+	     * Utility methods for working with functions.
+	     * These methods augment the Function prototype.
+	     *
+	     * Using {@link #before}
+	     *
+	     *      function log(m){
+	     *          console.log(m)
+	     *      }
+	     *
+	     *      var doLog = function (m){
+	     *          console.log('LOG ')
+	     *      }.before(log)
+	     *
+	     *      doLog('test')
+	     *      //will log
+	     *      //"LOG "
+	     *      //and then
+	     *      //"test"
+	     *
+	     *
+	     *
+	     * Using {@link #bindArgs}:
+	     *
+	     *      //returns the sum of all arguments
+	     *      function add(){
+	     *          var sum = 0
+	     *          [].from(arguments).forEach(function(n){
+	     *              sum += n
+	     *          })
+	     *
+	     *          return sum
+	     *      }
+	     *
+	     *      var add1 = add.bindArgs(1)
+	     *
+	     *      add1(2, 3) == 6
+	     *
+	     * Using {@link #lockArgs}:
+	     *
+	     *      function add(){
+	     *          var sum = 0
+	     *          [].from(arguments).forEach(function(n){
+	     *              sum += n
+	     *          })
+	     *
+	     *          return sum
+	     *      }
+	     *
+	     *      var add1_2   = add.lockArgs(1,2)
+	     *      var add1_2_3 = add.lockArgs(1,2,3)
+	     *
+	     *      add1_2(3,4)  == 3 //args are locked to only be 1 and 2
+	     *      add1_2_3(6)  == 6 //args are locked to only be 1, 2 and 3
+	     *
+	     *
+	     *
+	     * Using {@link #compose}:
+	     *
+	     *      function multiply(a,b){
+	     *          return a* b
+	     *      }
+	     *
+	     *      var multiply2 = multiply.curry()(2)
+	     *
+	     *      Function.compose(multiply2( add(5,6) )) == multiply2( add(5,6) )
+	     *
+	     *
+	     * @class Function
+	     */
+
+	    var SLICE = Array.prototype.slice
+
+	    var curry = __webpack_require__(131),
+
+	        findFn = function(fn, target, onFound){
+	            // if (typeof target.find == 'function'){
+	            //     return target.find(fn)
+	            // }
+
+	            onFound = typeof onFound == 'function'?
+	                        onFound:
+	                        function(found, key, target){
+	                            return found
+	                        }
+
+	            if (Array.isArray(target)){
+	                var i   = 0
+	                var len = target.length
+	                var it
+
+	                for(; i < len; i++){
+	                    it = target[i]
+	                    if (fn(it, i, target)){
+	                        return onFound(it, i, target)
+	                    }
+	                }
+
+	                return
+	            }
+
+	            if (typeof target == 'object'){
+	                var keys = Object.keys(target)
+	                var i = 0
+	                var len = keys.length
+	                var k
+	                var it
+
+	                for( ; i < len; i++){
+	                    k  = keys[i]
+	                    it = target[k]
+
+	                    if (fn(it, k, target)){
+	                        return onFound(it, k, target)
+	                    }
+	                }
+	            }
+	        },
+
+	        find = curry(findFn, 2),
+
+	        findIndex = curry(function(fn, target){
+	            return findFn(fn, target, function(it, i){
+	                return i
+	            })
+	        }),
+
+	        bindFunctionsOf = function(obj) {
+	            Object.keys(obj).forEach(function(k){
+	                if (typeof obj[k] == 'function'){
+	                    obj[k] = obj[k].bind(obj)
+	                }
+	            })
+
+	            return obj
+	        },
+
+	        /*
+	         * @param {Function...} an enumeration of functions, each consuming the result of the following function.
+	         *
+	         * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
+	         *
+	         * @return the result of the first function in the enumeration
+	         */
+	        compose = __webpack_require__(132),
+
+	        chain = __webpack_require__(133),
+
+	        once = __webpack_require__(134),
+
+	        bindArgsArray = __webpack_require__(135),
+
+	        bindArgs = __webpack_require__(136),
+
+	        lockArgsArray = __webpack_require__(137),
+
+	        lockArgs = __webpack_require__(138),
+
+	        skipArgs = function(fn, count){
+	            return function(){
+	                var args = SLICE.call(arguments, count || 0)
+
+	                return fn.apply(this, args)
+	            }
+	        },
+
+	        intercept = function(interceptedFn, interceptingFn, withStopArg){
+
+	            return function(){
+	                var args    = [].from(arguments),
+	                    stopArg = { stop: false }
+
+	                if (withStopArg){
+	                    args.push(stopArg)
+	                }
+
+	                var result = interceptingFn.apply(this, args)
+
+	                if (withStopArg){
+	                    if (stopArg.stop === true){
+	                        return result
+	                    }
+
+	                } else {
+	                    if (result === false){
+	                        return result
+	                    }
+	                }
+
+	                //the interception was not stopped
+	                return interceptedFn.apply(this, arguments)
+	            }
+
+	        },
+
+	        delay = function(fn, delay, scope){
+
+	            var delayIsNumber = delay * 1 == delay
+
+	            if (arguments.length == 2 && !delayIsNumber){
+	                scope = delay
+	                delay = 0
+	            } else {
+	                if (!delayIsNumber){
+	                    delay = 0
+	                }
+	            }
+
+	            return function(){
+	                var self = scope || this,
+	                    args = arguments
+
+	                if (delay < 0){
+	                    fn.apply(self, args)
+	                    return
+	                }
+
+	                if (delay || !setImmediate){
+	                    setTimeout(function(){
+	                        fn.apply(self, args)
+	                    }, delay)
+
+	                } else {
+	                    setImmediate(function(){
+	                        fn.apply(self, args)
+	                    })
+	                }
+	            }
+	        },
+
+	        defer = function(fn, scope){
+	            return delay(fn, 0, scope)
+	        },
+
+	        buffer = function(fn, delay, scope){
+
+	            var timeoutId = -1
+
+	            return function(){
+
+	                var self = scope || this,
+	                    args = arguments
+
+	                if (delay < 0){
+	                    fn.apply(self, args)
+	                    return
+	                }
+
+	                var withTimeout = delay || !setImmediate,
+	                    clearFn = withTimeout?
+	                                clearTimeout:
+	                                clearImmediate,
+	                    setFn   = withTimeout?
+	                                setTimeout:
+	                                setImmediate
+
+	                if (timeoutId !== -1){
+	                    clearFn(timeoutId)
+	                }
+
+	                timeoutId = setFn(function(){
+	                    fn.apply(self, args)
+	                    self = null
+	                }, delay)
+
+	            }
+
+	        },
+
+	        throttle = function(fn, delay, scope) {
+	            var timeoutId = -1,
+	                self,
+	                args
+
+	            return function () {
+
+	                self = scope || this
+	                args = arguments
+
+	                if (timeoutId !== -1) {
+	                    //the function was called once again in the delay interval
+	                } else {
+	                    timeoutId = setTimeout(function () {
+	                        fn.apply(self, args)
+
+	                        self = null
+	                        timeoutId = -1
+	                    }, delay)
+	                }
+
+	            }
+
+	        },
+
+	        spread = function(fn, delay, scope){
+
+	            var timeoutId       = -1
+	            var callCount       = 0
+	            var executeCount    = 0
+	            var nextArgs        = {}
+	            var increaseCounter = true
+	            var resultingFnUnbound
+	            var resultingFn
+
+	            resultingFn = resultingFnUnbound = function(){
+
+	                var args = arguments,
+	                    self = scope || this
+
+	                if (increaseCounter){
+	                    nextArgs[callCount++] = {args: args, scope: self}
+	                }
+
+	                if (timeoutId !== -1){
+	                    //the function was called once again in the delay interval
+	                } else {
+	                    timeoutId = setTimeout(function(){
+	                        fn.apply(self, args)
+
+	                        timeoutId = -1
+	                        executeCount++
+
+	                        if (callCount !== executeCount){
+	                            resultingFn = bindArgsArray(resultingFnUnbound, nextArgs[executeCount].args).bind(nextArgs[executeCount].scope)
+	                            delete nextArgs[executeCount]
+
+	                            increaseCounter = false
+	                            resultingFn.apply(self)
+	                            increaseCounter = true
+	                        } else {
+	                            nextArgs = {}
+	                        }
+	                    }, delay)
+	                }
+
+	            }
+
+	            return resultingFn
+	        },
+
+	        /*
+	         * @param {Array} args the array for which to create a cache key
+	         * @param {Number} [cacheParamNumber] the number of args to use for the cache key. Use this to limit the args that area actually used for the cache key
+	         */
+	        getCacheKey = function(args, cacheParamNumber){
+	            if (cacheParamNumber == null){
+	                cacheParamNumber = -1
+	            }
+
+	            var i        = 0,
+	                len      = Math.min(args.length, cacheParamNumber),
+	                cacheKey = [],
+	                it
+
+	            for ( ; i < len; i++){
+	                it = args[i]
+
+	                if (root.check.isPlainObject(it) || Array.isArray(it)){
+	                    cacheKey.push(JSON.stringify(it))
+	                } else {
+	                    cacheKey.push(String(it))
+	                }
+	            }
+
+	            return cacheKey.join(', ')
+	        },
+
+	        /*
+	         * @param {Function} fn - the function to cache results for
+	         * @param {Number} skipCacheParamNumber - the index of the boolean parameter that makes this function skip the caching and
+	         * actually return computed results.
+	         * @param {Function|String} cacheBucketMethod - a function or the name of a method on this object which makes caching distributed across multiple buckets.
+	         * If given, cached results will be searched into the cache corresponding to this bucket. If no result found, return computed result.
+	         *
+	         * For example this param is very useful when a function from a prototype is cached,
+	         * but we want to return the same cached results only for one object that inherits that proto, not for all objects. Thus, for example for Wes.Element,
+	         * we use the 'getId' cacheBucketMethod to indicate cached results for one object only.
+	         * @param {Function} [cacheKeyBuilder] A function to be used to compose the cache key
+	         *
+	         * @return {Function} a new function, which returns results from cache, if they are available, otherwise uses the given fn to compute the results.
+	         * This returned function has a 'clearCache' function attached, which clears the caching. If a parameter ( a bucket id) is  provided,
+	         * only clears the cache in the specified cache bucket.
+	         */
+	        cache = function(fn, config){
+	            config = config || {}
+
+	            var bucketCache = {},
+	                cache       = {},
+	                skipCacheParamNumber = config.skipCacheIndex,
+	                cacheBucketMethod    = config.cacheBucket,
+	                cacheKeyBuilder      = config.cacheKey,
+	                cacheArgsLength      = skipCacheParamNumber == null?
+	                                            fn.length:
+	                                            skipCacheParamNumber,
+	                cachingFn
+
+	            cachingFn = function(){
+	                var result,
+	                    skipCache = skipCacheParamNumber != null?
+	                                                arguments[skipCacheParamNumber] === true:
+	                                                false,
+	                    args = skipCache?
+	                                    SLICE.call(arguments, 0, cacheArgsLength):
+	                                    SLICE.call(arguments),
+
+	                    cacheBucketId = cacheBucketMethod != null?
+	                                        typeof cacheBucketMethod == 'function'?
+	                                            cacheBucketMethod():
+	                                            typeof this[cacheBucketMethod] == 'function'?
+	                                                this[cacheBucketMethod]():
+	                                                null
+	                                        :
+	                                        null,
+
+
+	                    cacheObject = cacheBucketId?
+	                                        bucketCache[cacheBucketId]:
+	                                        cache,
+
+	                    cacheKey = (cacheKeyBuilder || getCacheKey)(args, cacheArgsLength)
+
+	                if (cacheBucketId && !cacheObject){
+	                    cacheObject = bucketCache[cacheBucketId] = {}
+	                }
+
+	                if (skipCache || cacheObject[cacheKey] == null){
+	                    cacheObject[cacheKey] = result = fn.apply(this, args)
+	                } else {
+	                    result = cacheObject[cacheKey]
+	                }
+
+	                return result
+	            }
+
+	            /*
+	             * @param {String|Object|Number} [bucketId] the bucket for which to clear the cache. If none given, clears all the cache for this function.
+	             */
+	            cachingFn.clearCache = function(bucketId){
+	                if (bucketId){
+	                    delete bucketCache[String(bucketId)]
+	                } else {
+	                    cache = {}
+	                    bucketCache = {}
+	                }
+	            }
+
+	            /*
+	             *
+	             * @param {Array} cacheArgs The array of objects from which to create the cache key
+	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
+	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
+	             */
+	            cachingFn.getCache = function(cacheArgs, cacheParamNumber, cacheKeyBuilder){
+	                return cachingFn.getBucketCache(null, cacheArgs, cacheParamNumber, cacheKeyBuilder)
+	            }
+
+	            /*
+	             *
+	             * @param {String} bucketId The id of the cache bucket from which to retrieve the cached value
+	             * @param {Array} cacheArgs The array of objects from which to create the cache key
+	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
+	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
+	             */
+	            cachingFn.getBucketCache = function(bucketId, cacheArgs, cacheParamNumber, cacheKeyBuilder){
+	                var cacheObject = cache,
+	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
+
+	                if (bucketId){
+	                    bucketId = String(bucketId);
+
+	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {}
+	                }
+
+	                return cacheObject[cacheKey]
+	            }
+
+	            /*
+	             *
+	             * @param {Object} value The value to set in the cache
+	             * @param {Array} cacheArgs The array of objects from which to create the cache key
+	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
+	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
+	             */
+	            cachingFn.setCache = function(value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
+	                return cachingFn.setBucketCache(null, value, cacheArgs, cacheParamNumber, cacheKeyBuilder)
+	            }
+
+	            /*
+	             *
+	             * @param {String} bucketId The id of the cache bucket for which to set the cache value
+	             * @param {Object} value The value to set in the cache
+	             * @param {Array} cacheArgs The array of objects from which to create the cache key
+	             * @param {Number} [cacheParamNumber] A limit for the cache args that are actually used to compute the cache key.
+	             * @param {Function} [cacheKeyBuilder] The function to be used to compute the cache key from the given cacheArgs and cacheParamNumber
+	             */
+	            cachingFn.setBucketCache = function(bucketId, value, cacheArgs, cacheParamNumber, cacheKeyBuilder){
+
+	                var cacheObject = cache,
+	                    cacheKey = (cacheKeyBuilder || getCacheKey)(cacheArgs, cacheParamNumber)
+
+	                if (bucketId){
+	                    bucketId = String(bucketId)
+
+	                    cacheObject = bucketCache[bucketId] = bucketCache[bucketId] || {};
+	                }
+
+	                return cacheObject[cacheKey] = value
+	            }
+
+	            return cachingFn
+	        }
+
+	module.exports = {
+
+	    map: __webpack_require__(139),
+
+	    dot: __webpack_require__(140),
+
+	    maxArgs: __webpack_require__(141),
+
+	    /**
+	     * @method compose
+	     *
+	     * Example:
+	     *
+	     *      zippy.Function.compose(c, b, a)
+	     *
+	     * See {@link Function#compose}
+	     */
+	    compose: compose,
+
+	    /**
+	     * See {@link Function#self}
+	     */
+	    self: function(fn){
+	        return fn
+	    },
+
+	    /**
+	     * See {@link Function#buffer}
+	     */
+	    buffer: buffer,
+
+	    /**
+	     * See {@link Function#delay}
+	     */
+	    delay: delay,
+
+	    /**
+	     * See {@link Function#defer}
+	     * @param {Function} fn
+	     * @param {Object} scope
+	     */
+	    defer:defer,
+
+	    /**
+	     * See {@link Function#skipArgs}
+	     * @param {Function} fn
+	     * @param {Number} [count=0] how many args to skip when calling the resulting function
+	     * @return {Function} The function that will call the original fn without the first count args.
+	     */
+	    skipArgs: skipArgs,
+
+	    /**
+	     * See {@link Function#intercept}
+	     */
+	    intercept: function(fn, interceptedFn, withStopArgs){
+	        return intercept(interceptedFn, fn, withStopArgs)
+	    },
+
+	    /**
+	     * See {@link Function#throttle}
+	     */
+	    throttle: throttle,
+
+	    /**
+	     * See {@link Function#spread}
+	     */
+	    spread: spread,
+
+	    /**
+	     * See {@link Function#chain}
+	     */
+	    chain: function(fn, where, mainFn){
+	        return chain(where, mainFn, fn)
+	    },
+
+	    /**
+	     * See {@link Function#before}
+	     */
+	    before: function(fn, otherFn){
+	        return chain('before', otherFn, fn)
+	    },
+
+	    /**
+	     * See {@link Function#after}
+	     */
+	    after: function(fn, otherFn){
+	        return chain('after', otherFn, fn)
+	    },
+
+	    /**
+	     * See {@link Function#curry}
+	     */
+	    curry: curry,
+
+	    /**
+	     * See {@link Function#once}
+	     */
+	    once: once,
+
+	    /**
+	     * See {@link Function#bindArgs}
+	     */
+	    bindArgs: bindArgs,
+
+	    /**
+	     * See {@link Function#bindArgsArray}
+	     */
+	    bindArgsArray: bindArgsArray,
+
+	    /**
+	     * See {@link Function#lockArgs}
+	     */
+	    lockArgs: lockArgs,
+
+	    /**
+	     * See {@link Function#lockArgsArray}
+	     */
+	    lockArgsArray: lockArgsArray,
+
+	    bindFunctionsOf: bindFunctionsOf,
+
+	    find: find,
+
+	    findIndex: findIndex,
+
+	    newify: __webpack_require__(142)
 	}
 
 /***/ },
 /* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
-
-	var newify = __webpack_require__(145)
-	var curry  = __webpack_require__(114)
-
-	module.exports = curry(newify)
-
-/***/ },
-/* 126 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getInstantiatorFunction = __webpack_require__(141)
-
-	module.exports = function(fn, args){
-		return getInstantiatorFunction(args.length)(fn, args)
-	}
-
-/***/ },
-/* 127 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
-	var hasOwn    = __webpack_require__(146)
-	var newify    = __webpack_require__(147)
-	var copyUtils = __webpack_require__(46)
+	var hasOwn    = __webpack_require__(144)
+	var newify    = __webpack_require__(143)
+	var copyUtils = __webpack_require__(145)
 	var copyList  = copyUtils.copyList
 	var copy      = copyUtils.copy
-	var isObject  = __webpack_require__(148).object
-	var EventEmitter = __webpack_require__(48).EventEmitter
-	var inherits = __webpack_require__(142)
-	var VALIDATE = __webpack_require__(143)
+	var isObject  = __webpack_require__(146).object
+	var EventEmitter = __webpack_require__(127).EventEmitter
+	var inherits = __webpack_require__(128)
+	var VALIDATE = __webpack_require__(129)
 
 	/**
 	 * @class Region
@@ -10298,8 +11776,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getSize: function(){
 	        return {
-	            width  : this.getWidth(),
-	            height : this.getHeight()
+	            width  : this.width,
+	            height : this.height
 	        }
 	    },
 
@@ -10313,14 +11791,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {Region} this
 	     */
 	    setPosition: function(position){
-	        var width  = this.getWidth(),
-	            height = this.getHeight()
+	        var width  = this.width
+	        var height = this.height
 
-	        if (position.left){
+	        if (position.left != undefined){
 	            position.right  = position.left + width
 	        }
 
-	        if (position.top){
+	        if (position.top != undefined){
 	            position.bottom = position.top  + height
 	        }
 
@@ -10334,18 +11812,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {Region} this
 	     */
 	    setSize: function(size){
-	        if (size.height && size.width){
+	        if (size.height != undefined && size.width != undefined){
 	            return this.set({
 	                right  : this.left + size.width,
-	                bottom : this.top + size.height
+	                bottom : this.top  + size.height
 	            })
 	        }
 
-	        if (size.width){
+	        if (size.width != undefined){
 	            this.setWidth(size.width)
 	        }
 
-	        if (size.height){
+	        if (size.height != undefined){
 	            this.setHeight(size.height)
 	        }
 
@@ -10754,7 +12232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *  * 'cy' - See {@link #getPointYCenter}
 	     *  * 'b'  - See {@link #getPointBottom}
 	     *  * 'bc' - See {@link #getPointBottomCenter}
-	     *  * 'l'  - See {@link #getPointLeft}
+	     *  * 'l'  - See {@link #getPointLeft}F
 	     *  * 'lc' - See {@link #getPointLeftCenter}
 	     *  * 't'  - See {@link #getPointTop}
 	     *  * 'tc' - See {@link #getPointTopCenter}
@@ -11067,212 +12545,357 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	})
 
-	__webpack_require__(144)(REGION)
+	__webpack_require__(130)(REGION)
 
 	module.exports = REGION
 
 /***/ },
+/* 126 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Region = __webpack_require__(147)
+	var getConstrainRegion = __webpack_require__(111)
+
+	module.exports = function(props, subMenuRegion, targetAlignRegion, constrainTo){
+	    var constrainRegion = getConstrainRegion.call(this, constrainTo)
+
+	    if (!constrainRegion){
+	        return
+	    }
+
+
+
+	    if (typeof props.alignSubMenu === 'function'){
+	        props.alignSubMenu(subMenuRegion, targetAlignRegion, constrainRegion)
+	    } else {
+	        var pos = subMenuRegion.alignTo(targetAlignRegion, [
+	            //align to right
+	            'tl-tr','bl-br',
+
+	            //align to left
+	            'tr-tl', 'br-bl'
+	        ], { constrain: constrainRegion })
+
+	        return (pos == 'tl-tr' || pos == 'tr-tl')?
+	                    //align downwards
+	                    1:
+
+	                    //align upwards
+	                    -1
+	    }
+	}
+
+/***/ },
+/* 127 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	function EventEmitter() {
+	  this._events = this._events || {};
+	  this._maxListeners = this._maxListeners || undefined;
+	}
+	module.exports = EventEmitter;
+
+	// Backwards-compat with node 0.10.x
+	EventEmitter.EventEmitter = EventEmitter;
+
+	EventEmitter.prototype._events = undefined;
+	EventEmitter.prototype._maxListeners = undefined;
+
+	// By default EventEmitters will print a warning if more than 10 listeners are
+	// added to it. This is a useful default which helps finding memory leaks.
+	EventEmitter.defaultMaxListeners = 10;
+
+	// Obviously not all Emitters should be limited to 10. This function allows
+	// that to be increased. Set to zero for unlimited.
+	EventEmitter.prototype.setMaxListeners = function(n) {
+	  if (!isNumber(n) || n < 0 || isNaN(n))
+	    throw TypeError('n must be a positive number');
+	  this._maxListeners = n;
+	  return this;
+	};
+
+	EventEmitter.prototype.emit = function(type) {
+	  var er, handler, len, args, i, listeners;
+
+	  if (!this._events)
+	    this._events = {};
+
+	  // If there is no 'error' event listener then throw.
+	  if (type === 'error') {
+	    if (!this._events.error ||
+	        (isObject(this._events.error) && !this._events.error.length)) {
+	      er = arguments[1];
+	      if (er instanceof Error) {
+	        throw er; // Unhandled 'error' event
+	      }
+	      throw TypeError('Uncaught, unspecified "error" event.');
+	    }
+	  }
+
+	  handler = this._events[type];
+
+	  if (isUndefined(handler))
+	    return false;
+
+	  if (isFunction(handler)) {
+	    switch (arguments.length) {
+	      // fast cases
+	      case 1:
+	        handler.call(this);
+	        break;
+	      case 2:
+	        handler.call(this, arguments[1]);
+	        break;
+	      case 3:
+	        handler.call(this, arguments[1], arguments[2]);
+	        break;
+	      // slower
+	      default:
+	        len = arguments.length;
+	        args = new Array(len - 1);
+	        for (i = 1; i < len; i++)
+	          args[i - 1] = arguments[i];
+	        handler.apply(this, args);
+	    }
+	  } else if (isObject(handler)) {
+	    len = arguments.length;
+	    args = new Array(len - 1);
+	    for (i = 1; i < len; i++)
+	      args[i - 1] = arguments[i];
+
+	    listeners = handler.slice();
+	    len = listeners.length;
+	    for (i = 0; i < len; i++)
+	      listeners[i].apply(this, args);
+	  }
+
+	  return true;
+	};
+
+	EventEmitter.prototype.addListener = function(type, listener) {
+	  var m;
+
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  if (!this._events)
+	    this._events = {};
+
+	  // To avoid recursion in the case that type === "newListener"! Before
+	  // adding it to the listeners, first emit "newListener".
+	  if (this._events.newListener)
+	    this.emit('newListener', type,
+	              isFunction(listener.listener) ?
+	              listener.listener : listener);
+
+	  if (!this._events[type])
+	    // Optimize the case of one listener. Don't need the extra array object.
+	    this._events[type] = listener;
+	  else if (isObject(this._events[type]))
+	    // If we've already got an array, just append.
+	    this._events[type].push(listener);
+	  else
+	    // Adding the second element, need to change to array.
+	    this._events[type] = [this._events[type], listener];
+
+	  // Check for listener leak
+	  if (isObject(this._events[type]) && !this._events[type].warned) {
+	    var m;
+	    if (!isUndefined(this._maxListeners)) {
+	      m = this._maxListeners;
+	    } else {
+	      m = EventEmitter.defaultMaxListeners;
+	    }
+
+	    if (m && m > 0 && this._events[type].length > m) {
+	      this._events[type].warned = true;
+	      console.error('(node) warning: possible EventEmitter memory ' +
+	                    'leak detected. %d listeners added. ' +
+	                    'Use emitter.setMaxListeners() to increase limit.',
+	                    this._events[type].length);
+	      if (typeof console.trace === 'function') {
+	        // not supported in IE 10
+	        console.trace();
+	      }
+	    }
+	  }
+
+	  return this;
+	};
+
+	EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+	EventEmitter.prototype.once = function(type, listener) {
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  var fired = false;
+
+	  function g() {
+	    this.removeListener(type, g);
+
+	    if (!fired) {
+	      fired = true;
+	      listener.apply(this, arguments);
+	    }
+	  }
+
+	  g.listener = listener;
+	  this.on(type, g);
+
+	  return this;
+	};
+
+	// emits a 'removeListener' event iff the listener was removed
+	EventEmitter.prototype.removeListener = function(type, listener) {
+	  var list, position, length, i;
+
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  if (!this._events || !this._events[type])
+	    return this;
+
+	  list = this._events[type];
+	  length = list.length;
+	  position = -1;
+
+	  if (list === listener ||
+	      (isFunction(list.listener) && list.listener === listener)) {
+	    delete this._events[type];
+	    if (this._events.removeListener)
+	      this.emit('removeListener', type, listener);
+
+	  } else if (isObject(list)) {
+	    for (i = length; i-- > 0;) {
+	      if (list[i] === listener ||
+	          (list[i].listener && list[i].listener === listener)) {
+	        position = i;
+	        break;
+	      }
+	    }
+
+	    if (position < 0)
+	      return this;
+
+	    if (list.length === 1) {
+	      list.length = 0;
+	      delete this._events[type];
+	    } else {
+	      list.splice(position, 1);
+	    }
+
+	    if (this._events.removeListener)
+	      this.emit('removeListener', type, listener);
+	  }
+
+	  return this;
+	};
+
+	EventEmitter.prototype.removeAllListeners = function(type) {
+	  var key, listeners;
+
+	  if (!this._events)
+	    return this;
+
+	  // not listening for removeListener, no need to emit
+	  if (!this._events.removeListener) {
+	    if (arguments.length === 0)
+	      this._events = {};
+	    else if (this._events[type])
+	      delete this._events[type];
+	    return this;
+	  }
+
+	  // emit removeListener for all listeners on all events
+	  if (arguments.length === 0) {
+	    for (key in this._events) {
+	      if (key === 'removeListener') continue;
+	      this.removeAllListeners(key);
+	    }
+	    this.removeAllListeners('removeListener');
+	    this._events = {};
+	    return this;
+	  }
+
+	  listeners = this._events[type];
+
+	  if (isFunction(listeners)) {
+	    this.removeListener(type, listeners);
+	  } else {
+	    // LIFO order
+	    while (listeners.length)
+	      this.removeListener(type, listeners[listeners.length - 1]);
+	  }
+	  delete this._events[type];
+
+	  return this;
+	};
+
+	EventEmitter.prototype.listeners = function(type) {
+	  var ret;
+	  if (!this._events || !this._events[type])
+	    ret = [];
+	  else if (isFunction(this._events[type]))
+	    ret = [this._events[type]];
+	  else
+	    ret = this._events[type].slice();
+	  return ret;
+	};
+
+	EventEmitter.listenerCount = function(emitter, type) {
+	  var ret;
+	  if (!emitter._events || !emitter._events[type])
+	    ret = 0;
+	  else if (isFunction(emitter._events[type]))
+	    ret = 1;
+	  else
+	    ret = emitter._events[type].length;
+	  return ret;
+	};
+
+	function isFunction(arg) {
+	  return typeof arg === 'function';
+	}
+
+	function isNumber(arg) {
+	  return typeof arg === 'number';
+	}
+
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+
+	function isUndefined(arg) {
+	  return arg === void 0;
+	}
+
+
+/***/ },
 /* 128 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(){
-
-	    'use strict';
-
-	    var fns = {}
-
-	    return function(len){
-
-	        if ( ! fns [len ] ) {
-
-	            var args = []
-	            var i    = 0
-
-	            for (; i < len; i++ ) {
-	                args.push( 'a[' + i + ']')
-	            }
-
-	            fns[len] = new Function(
-	                            'c',
-	                            'a',
-	                            'return new c(' + args.join(',') + ')'
-	                        )
-	        }
-
-	        return fns[len]
-	    }
-
-	}()
-
-/***/ },
-/* 129 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = function(value){
-	    return !isNaN( parseFloat( value ) ) && isFinite( value )
-	}
-
-/***/ },
-/* 130 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = function(value){
-	    return typeof value === 'number' && isFinite(value)
-	}
-
-/***/ },
-/* 131 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var number = __webpack_require__(130)
-
-	module.exports = function(value){
-	    return number(value) && (value === parseInt(value, 10))
-	}
-
-/***/ },
-/* 132 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var number = __webpack_require__(130)
-
-	module.exports = function(value){
-	    return number(value) && (value === parseFloat(value, 10)) && !(value === parseInt(value, 10))
-	}
-
-/***/ },
-/* 133 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = function(value){
-	    return typeof value == 'string'
-	}
-
-/***/ },
-/* 134 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var objectToString = Object.prototype.toString
-
-	module.exports = function(value){
-	    return objectToString.apply(value) === '[object Function]'
-	}
-
-/***/ },
-/* 135 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var objectToString = Object.prototype.toString
-
-	module.exports = function(value){
-	    return objectToString.apply(value) === '[object Object]'
-	}
-
-/***/ },
-/* 136 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var objectToString = Object.prototype.toString
-
-	module.exports = function(value){
-	    return objectToString.apply(value) === '[object Arguments]' || !!value.callee
-	}
-
-/***/ },
-/* 137 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = function(value){
-	    return typeof value == 'boolean'
-	}
-
-/***/ },
-/* 138 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var objectToString = Object.prototype.toString
-
-	module.exports = function(value){
-	    return objectToString.apply(value) === '[object Date]'
-	}
-
-/***/ },
-/* 139 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	var objectToString = Object.prototype.toString
-
-	module.exports = function(value){
-	    return objectToString.apply(value) === '[object RegExp]'
-	}
-
-/***/ },
-/* 140 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = function(value){
-	    return Array.isArray(value)
-	}
-
-/***/ },
-/* 141 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(){
-
-	    'use strict';
-
-	    var fns = {}
-
-	    return function(len){
-
-	        if ( ! fns [len ] ) {
-
-	            var args = []
-	            var i    = 0
-
-	            for (; i < len; i++ ) {
-	                args.push( 'a[' + i + ']')
-	            }
-
-	            fns[len] = new Function(
-	                            'c',
-	                            'a',
-	                            'return new c(' + args.join(',') + ')'
-	                        )
-	        }
-
-	        return fns[len]
-	    }
-
-	}()
-
-/***/ },
-/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11290,7 +12913,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 143 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11322,13 +12945,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 144 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn   = __webpack_require__(146)
-	var VALIDATE = __webpack_require__(143)
+	var hasOwn   = __webpack_require__(144)
+	var VALIDATE = __webpack_require__(129)
 
 	module.exports = function(REGION){
 
@@ -11386,7 +13009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return reg
 	            }
 
-	            if (typeof document){
+	            if (typeof document != 'undefined'){
 	                if (typeof HTMLElement != 'undefined' && reg instanceof HTMLElement){
 	                    return REGION.fromDOM(reg)
 	                }
@@ -11541,17 +13164,254 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 145 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getInstantiatorFunction = __webpack_require__(149)
+	'use strict'
+
+	function curry(fn, n){
+
+	    if (typeof n !== 'number'){
+	        n = fn.length
+	    }
+
+	    function getCurryClosure(prevArgs){
+
+	        function curryClosure() {
+
+	            var len  = arguments.length
+	            var args = [].concat(prevArgs)
+
+	            if (len){
+	                args.push.apply(args, arguments)
+	            }
+
+	            if (args.length < n){
+	                return getCurryClosure(args)
+	            }
+
+	            return fn.apply(this, args)
+	        }
+
+	        return curryClosure
+	    }
+
+	    return getCurryClosure([])
+	}
+
+	module.exports = curry
+
+/***/ },
+/* 132 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	function composeTwo(f, g) {
+	    return function () {
+	        return f(g.apply(this, arguments))
+	    }
+	}
+
+	/*
+	 * @param {Function...} an enumeration of functions, each consuming the result of the following function.
+	 *
+	 * For example: compose(c, b, a)(1,4) == c(b(a(1,4)))
+	 *
+	 * @return the result of the first function in the enumeration
+	 */
+	module.exports = function(){
+
+	    var args = arguments
+	    var len  = args.length
+	    var i    = 0
+	    var f    = args[0]
+
+	    while (++i < len) {
+	        f = composeTwo(f, args[i])
+	    }
+
+	    return f
+	}
+
+/***/ },
+/* 133 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	function chain(where, fn, secondFn){
+
+	    return function(){
+	        if (where === 'before'){
+	            secondFn.apply(this, arguments)
+	        }
+
+	        var result = fn.apply(this, arguments)
+
+	        if (where !== 'before'){
+	            secondFn.apply(this, arguments)
+	        }
+
+	        return result
+	    }
+	}
+
+	module.exports = chain
+
+/***/ },
+/* 134 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use once'
+
+	function once(fn, scope){
+
+	    var called
+	    var result
+
+	    return function(){
+	        if (called){
+	            return result
+	        }
+
+	        called = true
+
+	        return result = fn.apply(scope || this, arguments)
+	    }
+	}
+
+	module.exports = once
+
+/***/ },
+/* 135 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+
+	module.exports = function(fn, args){
+	    return function(){
+	        var thisArgs = SLICE.call(args || [])
+
+	        if (arguments.length){
+	            thisArgs.push.apply(thisArgs, arguments)
+	        }
+
+	        return fn.apply(this, thisArgs)
+	    }
+	}
+
+/***/ },
+/* 136 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+	var bindArgsArray = __webpack_require__(135)
+
+	module.exports = function(fn){
+	    return bindArgsArray(fn, SLICE.call(arguments,1))
+	}
+
+/***/ },
+/* 137 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+
+	module.exports = function(fn, args){
+
+	    return function(){
+	        if (!Array.isArray(args)){
+	            args = SLICE.call(args || [])
+	        }
+
+	        return fn.apply(this, args)
+	    }
+	}
+
+/***/ },
+/* 138 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+	var lockArgsArray = __webpack_require__(137)
+
+	module.exports = function(fn){
+	    return lockArgsArray(fn, SLICE.call(arguments, 1))
+	}
+
+/***/ },
+/* 139 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var curry = __webpack_require__(131)
+
+	module.exports = curry(function(fn, value){
+	    return value != undefined && typeof value.map?
+	            value.map(fn):
+	            fn(value)
+	})
+
+/***/ },
+/* 140 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var curry = __webpack_require__(131)
+
+	module.exports = curry(function(prop, value){
+	    return value != undefined? value[prop]: undefined
+	})
+
+/***/ },
+/* 141 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var SLICE = Array.prototype.slice
+	var curry = __webpack_require__(131)
+
+	module.exports = function(fn, count){
+	    return function(){
+	        return fn.apply(this, SLICE.call(arguments, 0, count))
+	    }
+	}
+
+/***/ },
+/* 142 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var newify = __webpack_require__(143)
+	var curry  = __webpack_require__(131)
+
+	module.exports = curry(newify)
+
+/***/ },
+/* 143 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getInstantiatorFunction = __webpack_require__(148)
 
 	module.exports = function(fn, args){
 		return getInstantiatorFunction(args.length)(fn, args)
 	}
 
 /***/ },
-/* 146 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11594,86 +13454,501 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
+/* 145 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(){
+
+	    'use strict'
+
+	    var HAS_OWN       = Object.prototype.hasOwnProperty,
+	        STR_OBJECT    = 'object',
+	        STR_UNDEFINED = 'undefined'
+
+	    return {
+
+	        /**
+	         * Copies all properties from source to destination
+	         *
+	         *      copy({name: 'jon',age:5}, this);
+	         *      // => this will have the 'name' and 'age' properties set to 'jon' and 5 respectively
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         *
+	         * @return {Object} destination
+	         */
+	        copy: __webpack_require__(149),
+
+	        /**
+	         * Copies all properties from source to destination, if the property does not exist into the destination
+	         *
+	         *      copyIf({name: 'jon',age:5}, {age:7})
+	         *      // => { name: 'jon', age: 7}
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         *
+	         * @return {Object} destination
+	         */
+	        copyIf: __webpack_require__(150),
+
+	        /**
+	         * Copies all properties from source to a new object, with the given value. This object is returned
+	         *
+	         *      copyAs({name: 'jon',age:5})
+	         *      // => the resulting object will have the 'name' and 'age' properties set to 1
+	         *
+	         * @param {Object} source
+	         * @param {Object/Number/String} [value=1]
+	         *
+	         * @return {Object} destination
+	         */
+	        copyAs: function(source, value){
+
+	            var destination = {}
+
+	            value = value || 1
+
+	            if (source != null && typeof source === STR_OBJECT ){
+
+	                for (var i in source) if ( HAS_OWN.call(source, i) ) {
+	                    destination[i] = value
+	                }
+
+	            }
+
+	            return destination
+	        },
+
+	        /**
+	         * Copies all properties named in the list, from source to destination
+	         *
+	         *      copyList({name: 'jon',age:5, year: 2006}, {}, ['name','age'])
+	         *      // => {name: 'jon', age: 5}
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         * @param {Array} list the array with the names of the properties to copy
+	         *
+	         * @return {Object} destination
+	         */
+	        copyList: __webpack_require__(151),
+
+	        /**
+	         * Copies all properties named in the list, from source to destination, if the property does not exist into the destination
+	         *
+	         *      copyListIf({name: 'jon',age:5, year: 2006}, {age: 10}, ['name','age'])
+	         *      // => {name: 'jon', age: 10}
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         * @param {Array} list the array with the names of the properties to copy
+	         *
+	         * @return {Object} destination
+	         */
+	        copyListIf: __webpack_require__(152),
+
+	        /**
+	         * Copies all properties named in the namedKeys, from source to destination
+	         *
+	         *      copyKeys({name: 'jon',age:5, year: 2006, date: '2010/05/12'}, {}, {name:1 ,age: true, year: 'theYear'})
+	         *      // => {name: 'jon', age: 5, theYear: 2006}
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         * @param {Object} namedKeys an object with keys denoting the properties to be copied
+	         *
+	         * @return {Object} destination
+	         */
+	        copyKeys: __webpack_require__(153),
+
+	        /**
+	         * Copies all properties named in the namedKeys, from source to destination,
+	         * but only if the property does not already exist in the destination object
+	         *
+	         *      copyKeysIf({name: 'jon',age:5, year: 2006}, {aname: 'test'}, {name:'aname' ,age: true})
+	         *      // => {aname: 'test', age: 5}
+	         *
+	         * @param {Object} source
+	         * @param {Object} destination
+	         * @param {Object} namedKeys an object with keys denoting the properties to be copied
+	         *
+	         * @return {Object} destination
+	         */
+	        copyKeysIf: __webpack_require__(154),
+
+	        copyExceptKeys: function(source, destination, exceptKeys){
+	            destination = destination || {}
+	            exceptKeys  = exceptKeys  || {}
+
+	            if (source != null && typeof source === STR_OBJECT ){
+
+	                for (var i in source) if ( HAS_OWN.call(source, i) && !HAS_OWN.call(exceptKeys, i) ) {
+
+	                    destination[i] = source[i]
+	                }
+
+	            }
+
+	            return destination
+	        },
+
+	        /**
+	         * Copies the named keys from source to destination.
+	         * For the keys that are functions, copies the functions bound to the source
+	         *
+	         * @param  {Object} source      The source object
+	         * @param  {Object} destination The target object
+	         * @param  {Object} namedKeys   An object with the names of the keys to copy The values from the keys in this object
+	         *                              need to be either numbers or booleans if you want to copy the property under the same name,
+	         *                              or a string if you want to copy the property under a different name
+	         * @return {Object}             Returns the destination object
+	         */
+	        bindCopyKeys: function(source, destination, namedKeys){
+	            if (arguments.length == 2){
+	                namedKeys = destination
+	                destination = null
+	            }
+
+	            destination = destination || {}
+
+	            if (
+	                       source != null && typeof source    === STR_OBJECT &&
+	                    namedKeys != null && typeof namedKeys === STR_OBJECT
+	                ) {
+
+
+	                var typeOfNamedProperty,
+	                    namedPropertyValue,
+
+	                    typeOfSourceProperty,
+	                    propValue
+
+
+	                for(var propName in namedKeys) if (HAS_OWN.call(namedKeys, propName)) {
+
+	                    namedPropertyValue = namedKeys[propName]
+	                    typeOfNamedProperty = typeof namedPropertyValue
+
+	                    propValue = source[propName]
+	                    typeOfSourceProperty = typeof propValue
+
+
+	                    if ( typeOfSourceProperty !== STR_UNDEFINED ) {
+
+	                        destination[
+	                            typeOfNamedProperty == 'string'?
+	                                            namedPropertyValue :
+	                                            propName
+	                            ] = typeOfSourceProperty == 'function' ?
+	                                            propValue.bind(source):
+	                                            propValue
+	                    }
+	                }
+	            }
+
+	            return destination
+	        }
+	    }
+
+	}()
+
+/***/ },
+/* 146 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(155)
+
+/***/ },
 /* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getInstantiatorFunction = __webpack_require__(150)
+	'use strict';
 
-	module.exports = function(fn, args){
-		return getInstantiatorFunction(args.length)(fn, args)
+	var Region = __webpack_require__(116)
+
+	__webpack_require__(156)
+	__webpack_require__(157)
+
+	var COMPUTE_ALIGN_REGION = __webpack_require__(158)
+
+	/**
+	 * region-align module exposes methods for aligning {@link Element} and {@link Region} instances
+	 *
+	 * The #alignTo method aligns this to the target element/region using the specified positions. See #alignTo for a graphical example.
+	 *
+	 *
+	 *      var div = Element.select('div.first')
+	 *
+	 *      div.alignTo(Element.select('body') , 'br-br')
+	 *
+	 *      //aligns the div to be in the bottom-right corner of the body
+	 *
+	 * Other useful methods
+	 *
+	 *  * {@link #alignRegions} - aligns a given source region to a target region
+	 *  * {@link #COMPUTE_ALIGN_REGION} - given a source region and a target region, and alignment positions, returns a clone of the source region, but aligned to satisfy the given alignments
+	 */
+
+
+	/**
+	 * Aligns sourceRegion to targetRegion. It modifies the sourceRegion in order to perform the correct alignment.
+	 * See #COMPUTE_ALIGN_REGION for details and examples.
+	 *
+	 * This method calls #COMPUTE_ALIGN_REGION passing to it all its arguments. The #COMPUTE_ALIGN_REGION method returns a region that is properly aligned.
+	 * If this returned region position/size differs from sourceRegion, then the sourceRegion is modified to be an exact copy of the aligned region.
+	 *
+	 * @inheritdoc #COMPUTE_ALIGN_REGION
+	 * @return {String} the position used for alignment
+	 */
+	Region.alignRegions = function(sourceRegion, targetRegion, positions, config){
+
+	    var result        = COMPUTE_ALIGN_REGION(sourceRegion, targetRegion, positions, config)
+	    var alignedRegion = result.region
+
+	    if ( !alignedRegion.equals(sourceRegion) ) {
+	        sourceRegion.setRegion(alignedRegion)
+	    }
+
+	    return result.position
+
 	}
+
+	    /**
+	     *
+	     * The #alignTo method aligns this to the given target region, using the specified alignment position(s).
+	     * You can also specify a constrain for the alignment.
+	     *
+	     * Example
+	     *
+	     *      BIG
+	     *      ________________________
+	     *      |  _______              |
+	     *      | |       |             |
+	     *      | |   A   |             |
+	     *      | |       |      _____  |
+	     *      | |_______|     |     | |
+	     *      |               |  B  | |
+	     *      |               |     | |
+	     *      |_______________|_____|_|
+	     *
+	     * Assume the *BIG* outside rectangle is our constrain region, and you want to align the *A* rectangle
+	     * to the *B* rectangle. Ideally, you'll want their tops to be aligned, and *A* to be placed at the right side of *B*
+	     *
+	     *
+	     *      //so we would align them using
+	     *
+	     *      A.alignTo(B, 'tl-tr', { constrain: BIG })
+	     *
+	     * But this would result in
+	     *
+	     *       BIG
+	     *      ________________________
+	     *      |                       |
+	     *      |                       |
+	     *      |                       |
+	     *      |                _____ _|_____
+	     *      |               |     | .     |
+	     *      |               |  B  | . A   |
+	     *      |               |     | .     |
+	     *      |_______________|_____|_._____|
+	     *
+	     *
+	     * Which is not what we want. So we specify an array of options to try
+	     *
+	     *      A.alignTo(B, ['tl-tr', 'tr-tl'], { constrain: BIG })
+	     *
+	     * So by this we mean: try to align A(top,left) with B(top,right) and stick to the BIG constrain. If this is not possible,
+	     * try the next option: align A(top,right) with B(top,left)
+	     *
+	     * So this is what we end up with
+	     *
+	     *      BIG
+	     *      ________________________
+	     *      |                       |
+	     *      |                       |
+	     *      |                       |
+	     *      |        _______ _____  |
+	     *      |       |       |     | |
+	     *      |       |   A   |  B  | |
+	     *      |       |       |     | |
+	     *      |_______|_______|_____|_|
+	     *
+	     *
+	     * Which is a lot better!
+	     *
+	     * @param {Element/Region} target The target to which to align this alignable.
+	     *
+	     * @param {String[]/String} positions The positions for the alignment.
+	     *
+	     * Example:
+	     *
+	     *      'br-tl'
+	     *      ['br-tl','br-tr','cx-tc']
+	     *
+	     * This method will try to align using the first position. But if there is a constrain region, that position might not satisfy the constrain.
+	     * If this is the case, the next positions will be tried. If one of them satifies the constrain, it will be used for aligning and it will be returned from this method.
+	     *
+	     * If no position matches the contrain, the one with the largest intersection of the source region with the constrain will be used, and this alignable will be resized to fit the constrain region.
+	     *
+	     * @param {Object} config A config object with other configuration for this method
+	     *
+	     * @param {Array[]/Object[]/Object} config.offset The offset to use for aligning. If more that one offset is specified, then offset at a given index is used with the position at the same index.
+	     *
+	     * An offset can have the following form:
+	     *
+	     *      [left_offset, top_offset]
+	     *      {left: left_offset, top: top_offset}
+	     *      {x: left_offset, y: top_offset}
+	     *
+	     * You can pass one offset or an array of offsets. In case you pass just one offset,
+	     * it cannot have the array form, so you cannot call
+	     *
+	     *      this.alignTo(target, positions, [10, 20])
+	     *
+	     * If you do, it will not be considered. Instead, please use
+	     *
+	     *      this.alignTo(target, positions, {x: 10, y: 20})
+	     *
+	     * Or
+	     *
+	     *      this.alignTo(target, positions, [[10, 20]] )
+	     *
+	     * @param {Boolean/Element/Region} config.constrain If boolean, target will be constrained to the document region, otherwise,
+	     * getRegion will be called on this argument to determine the region we need to constrain to.
+	     *
+	     * @param {Boolean/Object} config.sync Either boolean or an object with {width, height}. If it is boolean,
+	     * both width and height will be synced. If directions are specified, will only sync the direction which is specified as true
+	     *
+	     * @return {String}
+	     *
+	     */
+	Region.prototype.alignTo = function(target, positions, config){
+
+	    config = config || {}
+
+	    var sourceRegion = this
+	    var targetRegion = Region.from(target)
+
+	    var result = COMPUTE_ALIGN_REGION(sourceRegion, targetRegion, positions, config)
+	    var resultRegion = result.region
+
+	    if (!resultRegion.equalsSize(sourceRegion)){
+	        this.setSize(resultRegion.getSize())
+	    }
+	    if (!resultRegion.equalsPosition(sourceRegion)){
+	        this.setPosition(resultRegion.getPosition(), { absolute: !!config.absolute })
+	    }
+
+	    return result.position
+	}
+
+	module.exports = Region
 
 /***/ },
 /* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(151)
+	module.exports = function(){
+
+	    'use strict';
+
+	    var fns = {}
+
+	    return function(len){
+
+	        if ( ! fns [len ] ) {
+
+	            var args = []
+	            var i    = 0
+
+	            for (; i < len; i++ ) {
+	                args.push( 'a[' + i + ']')
+	            }
+
+	            fns[len] = new Function(
+	                            'c',
+	                            'a',
+	                            'return new c(' + args.join(',') + ')'
+	                        )
+	        }
+
+	        return fns[len]
+	    }
+
+	}()
 
 /***/ },
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function(){
+	'use strict'
 
-	    'use strict';
+	var HAS_OWN       = Object.prototype.hasOwnProperty
+	var STR_OBJECT    = 'object'
 
-	    var fns = {}
+	/**
+	 * Copies all properties from source to destination
+	 *
+	 *      copy({name: 'jon',age:5}, this);
+	 *      // => this will have the 'name' and 'age' properties set to 'jon' and 5 respectively
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination){
 
-	    return function(len){
+	    destination = destination || {}
 
-	        if ( ! fns [len ] ) {
+	    if (source != null && typeof source === STR_OBJECT ){
 
-	            var args = []
-	            var i    = 0
-
-	            for (; i < len; i++ ) {
-	                args.push( 'a[' + i + ']')
-	            }
-
-	            fns[len] = new Function(
-	                            'c',
-	                            'a',
-	                            'return new c(' + args.join(',') + ')'
-	                        )
+	        for (var i in source) if ( HAS_OWN.call(source, i) ) {
+	            destination[i] = source[i]
 	        }
 
-	        return fns[len]
 	    }
 
-	}()
+	    return destination
+	}
 
 /***/ },
 /* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function(){
+	'use strict'
 
-	    'use strict';
+	var HAS_OWN       = Object.prototype.hasOwnProperty
+	var STR_OBJECT    = 'object'
+	var STR_UNDEFINED = 'undefined'
 
-	    var fns = {}
+	/**
+	 * Copies all properties from source to destination, if the property does not exist into the destination
+	 *
+	 *      copyIf({name: 'jon',age:5}, {age:7})
+	 *      // => { name: 'jon', age: 7}
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination){
+	    destination = destination || {}
 
-	    return function(len){
+	    if (source != null && typeof source === STR_OBJECT){
 
-	        if ( ! fns [len ] ) {
+	        for (var i in source) if ( HAS_OWN.call(source, i) && (typeof destination[i] === STR_UNDEFINED) ) {
 
-	            var args = []
-	            var i    = 0
+	            destination[i] = source[i]
 
-	            for (; i < len; i++ ) {
-	                args.push( 'a[' + i + ']')
-	            }
-
-	            fns[len] = new Function(
-	                            'c',
-	                            'a',
-	                            'return new c(' + args.join(',') + ')'
-	                        )
 	        }
-
-	        return fns[len]
 	    }
 
-	}()
+	    return destination
+	}
 
 /***/ },
 /* 151 */
@@ -11681,23 +13956,478 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict'
 
-	module.exports = {
-	    'numeric'  : __webpack_require__(152),
-	    'number'   : __webpack_require__(153),
-	    'int'      : __webpack_require__(154),
-	    'float'    : __webpack_require__(155),
-	    'string'   : __webpack_require__(156),
-	    'function' : __webpack_require__(157),
-	    'object'   : __webpack_require__(158),
-	    'arguments': __webpack_require__(159),
-	    'boolean'  : __webpack_require__(160),
-	    'date'     : __webpack_require__(161),
-	    'regexp'   : __webpack_require__(162),
-	    'array'    : __webpack_require__(163)
+	var STR_UNDEFINED = 'undefined'
+
+	/**
+	 * Copies all properties named in the list, from source to destination
+	 *
+	 *      copyList({name: 'jon',age:5, year: 2006}, {}, ['name','age'])
+	 *      // => {name: 'jon', age: 5}
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 * @param {Array} list the array with the names of the properties to copy
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination, list){
+	    if (arguments.length < 3){
+	        list = destination
+	        destination = null
+	    }
+
+	    destination = destination || {}
+	    list        = list || Object.keys(source)
+
+	    var i   = 0
+	    var len = list.length
+	    var propName
+
+	    for ( ; i < len; i++ ){
+	        propName = list[i]
+
+	        if ( typeof source[propName] !== STR_UNDEFINED ) {
+	            destination[list[i]] = source[list[i]]
+	        }
+	    }
+
+	    return destination
 	}
 
 /***/ },
 /* 152 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var STR_UNDEFINED = 'undefined'
+
+	/**
+	 * Copies all properties named in the list, from source to destination, if the property does not exist into the destination
+	 *
+	 *      copyListIf({name: 'jon',age:5, year: 2006}, {age: 10}, ['name','age'])
+	 *      // => {name: 'jon', age: 10}
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 * @param {Array} list the array with the names of the properties to copy
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination, list){
+	    if (arguments.length < 3){
+	        list = destination
+	        destination = null
+	    }
+
+	    destination = destination || {}
+	    list        = list || Object.keys(source)
+
+	    var i   = 0
+	    var len = list.length
+	    var propName
+
+	    for ( ; i < len ; i++ ){
+	        propName = list[i]
+	        if (
+	                (typeof source[propName]      !== STR_UNDEFINED) &&
+	                (typeof destination[propName] === STR_UNDEFINED)
+	            ){
+	            destination[propName] = source[propName]
+	        }
+	    }
+
+	    return destination
+	}
+
+/***/ },
+/* 153 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var STR_UNDEFINED = 'undefined'
+	var STR_OBJECT    = 'object'
+	var HAS_OWN       = Object.prototype.hasOwnProperty
+
+	var copyList = __webpack_require__(151)
+
+	/**
+	 * Copies all properties named in the namedKeys, from source to destination
+	 *
+	 *      copyKeys({name: 'jon',age:5, year: 2006, date: '2010/05/12'}, {}, {name:1 ,age: true, year: 'theYear'})
+	 *      // => {name: 'jon', age: 5, theYear: 2006}
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 * @param {Object} namedKeys an object with keys denoting the properties to be copied
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination, namedKeys){
+	    if (arguments.length < 3 ){
+	        namedKeys = destination
+	        destination = null
+	    }
+
+	    destination = destination || {}
+
+	    if (!namedKeys || Array.isArray(namedKeys)){
+	        return copyList(source, destination, namedKeys)
+	    }
+
+	    if (
+	           source != null && typeof source    === STR_OBJECT &&
+	        namedKeys != null && typeof namedKeys === STR_OBJECT
+	    ) {
+	        var typeOfNamedProperty
+	        var namedPropertyValue
+
+	        for  (var propName in namedKeys) if ( HAS_OWN.call(namedKeys, propName) ) {
+	            namedPropertyValue  = namedKeys[propName]
+	            typeOfNamedProperty = typeof namedPropertyValue
+
+	            if (typeof source[propName] !== STR_UNDEFINED){
+	                destination[typeOfNamedProperty == 'string'? namedPropertyValue : propName] = source[propName]
+	            }
+	        }
+	    }
+
+	    return destination
+	}
+
+/***/ },
+/* 154 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var STR_UNDEFINED = 'undefined'
+	var STR_OBJECT    = 'object'
+	var HAS_OWN       = Object.prototype.hasOwnProperty
+
+	var copyListIf = __webpack_require__(152)
+
+	/**
+	 * Copies all properties named in the namedKeys, from source to destination,
+	 * but only if the property does not already exist in the destination object
+	 *
+	 *      copyKeysIf({name: 'jon',age:5, year: 2006}, {aname: 'test'}, {name:'aname' ,age: true})
+	 *      // => {aname: 'test', age: 5}
+	 *
+	 * @param {Object} source
+	 * @param {Object} destination
+	 * @param {Object} namedKeys an object with keys denoting the properties to be copied
+	 *
+	 * @return {Object} destination
+	 */
+	module.exports = function(source, destination, namedKeys){
+	    if (arguments.length < 3 ){
+	        namedKeys = destination
+	        destination = null
+	    }
+
+	    destination = destination || {}
+
+	    if (!namedKeys || Array.isArray(namedKeys)){
+	        return copyListIf(source, destination, namedKeys)
+	    }
+
+	    if (
+	               source != null && typeof source    === STR_OBJECT &&
+	            namedKeys != null && typeof namedKeys === STR_OBJECT
+	        ) {
+
+	            var typeOfNamedProperty
+	            var namedPropertyValue
+	            var newPropertyName
+
+	            for (var propName in namedKeys) if ( HAS_OWN.call(namedKeys, propName) ) {
+
+	                namedPropertyValue  = namedKeys[propName]
+	                typeOfNamedProperty = typeof namedPropertyValue
+	                newPropertyName     = typeOfNamedProperty == 'string'? namedPropertyValue : propName
+
+	                if (
+	                        typeof      source[propName]        !== STR_UNDEFINED &&
+	                        typeof destination[newPropertyName] === STR_UNDEFINED
+	                    ) {
+	                    destination[newPropertyName] = source[propName]
+	                }
+
+	            }
+	        }
+
+	    return destination
+	}
+
+/***/ },
+/* 155 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	module.exports = {
+	    'numeric'  : __webpack_require__(159),
+	    'number'   : __webpack_require__(160),
+	    'int'      : __webpack_require__(161),
+	    'float'    : __webpack_require__(162),
+	    'string'   : __webpack_require__(163),
+	    'function' : __webpack_require__(164),
+	    'object'   : __webpack_require__(165),
+	    'arguments': __webpack_require__(166),
+	    'boolean'  : __webpack_require__(167),
+	    'date'     : __webpack_require__(168),
+	    'regexp'   : __webpack_require__(169),
+	    'array'    : __webpack_require__(170)
+	}
+
+/***/ },
+/* 156 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var Region = __webpack_require__(116)
+
+	/**
+	 * @static
+	 * Aligns the source region to the target region, so as to correspond to the given alignment.
+	 *
+	 * NOTE that this method makes changes on the sourceRegion in order for it to be aligned as specified.
+	 *
+	 * @param {Region} sourceRegion
+	 * @param {Region} targetRegion
+	 *
+	 * @param {String} align A string with 2 valid align positions, eg: 'tr-bl'.
+	 * For valid positions, see {@link Region#getPoint}
+	 *
+	 * Having 2 regions, we need to be able to align them as we wish:
+	 *
+	 * for example, if we have
+	 *
+	 *       source    target
+	 *       ________________
+	 *       ____
+	 *      |    |     ________
+	 *      |____|    |        |
+	 *                |        |
+	 *                |________|
+	 *
+	 * and we align 't-t', we get:
+	 *
+	 *       source    target
+	 *       _________________
+	 *
+	 *       ____      ________
+	 *      |    |    |        |
+	 *      |____|    |        |
+	 *                |________|
+	 *
+	 *  In this case, the source was moved down to be aligned to the top of the target
+	 *
+	 *
+	 * and if we align 'tc-tc' we get
+	 *
+	 *       source     target
+	 *       __________________
+	 *
+	 *                 ________
+	 *                | |    | |
+	 *                | |____| |
+	 *                |________|
+	 *
+	 *  Since the source was moved to have the top-center point to be the same with target top-center
+	 *
+	 *
+	 *
+	 * @return {RegionClass} The Region class
+	 */
+	Region.align = function(sourceRegion, targetRegion, align){
+
+	    targetRegion = Region.from(targetRegion)
+
+	    align = (align || 'c-c').split('-')
+
+	    //<debug>
+	    if (align.length != 2){
+	        console.warn('Incorrect region alignment! The align parameter need to be in the form \'br-c\', that is, a - separated string!', align)
+	    }
+	    //</debug>
+
+	    return Region.alignToPoint(sourceRegion, targetRegion.getPoint(align[1]), align[0])
+	}
+
+	/**
+	 * Modifies the given region to be aligned to the point, as specified by anchor
+	 *
+	 * @param {Region} region The region to align to the point
+	 * @param {Object} point The point to be used as a reference
+	 * @param {Number} point.x
+	 * @param {Number} point.y
+	 * @param {String} anchor The position where to anchor the region to the point. See {@link #getPoint} for available options/
+	 *
+	 * @return {Region} the given region
+	 */
+	Region.alignToPoint = function(region, point, anchor){
+
+	    region = Region.from(region)
+
+	    var sourcePoint = region.getPoint(anchor)
+	    var count       = 0
+	    var shiftObj    = {}
+
+	    if (
+	            sourcePoint.x != null &&
+	            point.x != null
+	        ){
+
+	            count++
+	            shiftObj.left = point.x - sourcePoint.x
+	    }
+
+	    if (
+	            sourcePoint.y != null &&
+	            point.y != null
+	        ){
+	            count++
+	            shiftObj.top = point.y - sourcePoint.y
+	    }
+
+	    if (count){
+
+	        region.shift(shiftObj)
+
+	    }
+
+	    return region
+	}
+
+/***/ },
+/* 157 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Region = __webpack_require__(116)
+
+	/**
+	 *
+	 * Aligns this region to the given region
+	 * @param {Region} region
+	 * @param {String} alignPositions For available positions, see {@link #getPoint}
+	 *
+	 *     eg: 'tr-bl'
+	 *
+	 * @return this
+	 */
+	Region.prototype.alignToRegion = function(region, alignPositions){
+	    Region.align(this, region, alignPositions)
+
+	    return this
+	}
+
+	/**
+	 * Aligns this region to the given point, in the anchor position
+	 * @param {Object} point eg: {x: 20, y: 600}
+	 * @param {Number} point.x
+	 * @param {Number} point.y
+	 *
+	 * @param {String} anchor For available positions, see {@link #getPoint}
+	 *
+	 *     eg: 'bl'
+	 *
+	 * @return this
+	 */
+	 Region.prototype.alignToPoint = function(point, anchor){
+	    Region.alignToPoint(this, point, anchor)
+
+	    return this
+	}
+
+/***/ },
+/* 158 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var ALIGN_TO_NORMALIZED = __webpack_require__(171)
+
+	var Region = __webpack_require__(116)
+
+	/**
+	 * @localdoc Given source and target regions, and the given alignments required, returns a region that is the resulting allignment.
+	 * Does not modify the sourceRegion.
+	 *
+	 * Example
+	 *
+	 *      var sourceRegion = zippy.getInstance({
+	 *          alias  : 'z.region',
+	 *          top    : 10,
+	 *          left   : 10,
+	 *          bottom : 40,
+	 *          right  : 100
+	 *      })
+	 *
+	 *      var targetRegion = zippy.getInstance({
+	 *          alias  : 'z.region',
+	 *          top    : 10,
+	 *          left   : 10,
+	 *          bottom : 40,
+	 *          right  : 100
+	 *      })
+	 *      //has top-left at (10,10)
+	 *      //and bottom-right at (40, 100)
+	 *
+	 *      var alignRegion = alignable.COMPUTE_ALIGN_REGION(sourceRegion, targetRegion, 'tl-br')
+	 *
+	 *      //alignRegion will be a clone of sourceRegion, but will have the
+	 *      //top-left corner aligned with bottom-right of targetRegion
+	 *
+	 *      alignRegion.get() // => { top: 40, left: 100, bottom: 70, right: 190 }
+	 *
+	 * @param  {Region} sourceRegion The source region to align to targetRegion
+	 * @param  {Region} targetRegion The target region to which to align the sourceRegion
+	 * @param  {String/String[]} positions    A string ( delimited by "-" characters ) or an array of strings with the position to try, in the order of their priority.
+	 * See Region#getPoint for a list of available positions. They can be combined in any way.
+	 * @param  {Object} config      A config object with other configuration for the alignment
+	 * @param  {Object/Object[]} config.offset      Optional offsets. Either an object or an array with a different offset for each position
+	 * @param  {Element/Region/Boolean} config.constrain  The constrain to region or element. If the boolean true, Region.getDocRegion() will be used
+	 * @param  {Object/Boolean} config.sync   A boolean object that indicates whether to sync sourceRegion and targetRegion sizes (width/height or both). Can be
+	 *
+	 *  * true - in order to sync both width and height
+	 *  * { width: true }  - to only sync width
+	 *  * { height: true } - to only sync height
+	 *  * { size: true }   - to sync both width and height
+	 *
+	 * @return {Object} an object with the following keys:
+	 *
+	 *  * position - the position where the alignment was made. One of the given positions
+	 *  * region   - the region where the alignment is in place
+	 *  * positionChanged - boolean value indicating if the position of the returned region is different from the position of sourceRegion
+	 *  * widthChanged    - boolean value indicating if the width of the returned region is different from the width of sourceRegion
+	 *  * heightChanged   - boolean value indicating if the height of the returned region is different from the height of sourceRegion
+	 */
+	function COMPUTE_ALIGN_REGION(sourceRegion, targetRegion, positions, config){
+	    sourceRegion = Region.from(sourceRegion)
+
+	    var sourceClone = sourceRegion.clone()
+	    var position    = ALIGN_TO_NORMALIZED(sourceClone, targetRegion, positions, config)
+
+	    return {
+	        position        : position,
+	        region          : sourceClone,
+	        widthChanged    : sourceClone.getWidth() != sourceRegion.getWidth(),
+	        heightChanged   : sourceClone.getHeight() != sourceRegion.getHeight(),
+	        positionChanged : sourceClone.equalsPosition(sourceRegion)
+	    }
+	}
+
+
+	module.exports = COMPUTE_ALIGN_REGION
+
+/***/ },
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11707,7 +14437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 153 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11717,31 +14447,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 154 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(153)
+	var number = __webpack_require__(160)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 155 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(153)
+	var number = __webpack_require__(160)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseFloat(value, 10)) && !(value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 156 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11751,7 +14481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 157 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11763,7 +14493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 158 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11775,7 +14505,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 159 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11787,7 +14517,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 160 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11797,7 +14527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 161 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11809,7 +14539,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 162 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11821,7 +14551,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 163 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11829,6 +14559,188 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = function(value){
 	    return Array.isArray(value)
 	}
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var Region = __webpack_require__(116)
+
+	/**
+	 *
+	 * This method is trying to align the sourceRegion to the targetRegion, given the alignment positions
+	 * and the offsets. It only modifies the sourceRegion
+	 *
+	 * This is all well and easy, but if there is a constrainTo region, the algorithm has to take it into account.
+	 * In this case, it works as follows.
+	 *
+	 *  * start with the first alignment position. Aligns the region, adds the offset and then check for the constraint.
+	 *  * if the constraint condition is ok, return the position.
+	 *  * otherwise, remember the intersection area, if the regions are intersecting.
+	 *  * then go to the next specified align position, and so on, computing the maximum intersection area.
+	 *
+	 * If no alignment fits the constrainRegion, the sourceRegion will be resized to match it,
+	 * using the position with the maximum intersection area.
+	 *
+	 * Since we have computed the index of the position with the max intersection area, take that position,
+	 * and align the sourceRegion accordingly. Then resize the sourceRegion to the intersection, and reposition
+	 * it again, since resizing it might have destroyed the alignment.
+	 *
+	 * Return the position.
+	 *
+	 * @param {Region} sourceRegion
+	 * @param {Region} targetRegion
+	 * @param {String[]} positions
+	 * @param {Object} config
+	 * @param {Array} config.offset
+	 * @param {Region} config.constrain
+	 * @param {Boolean/Object} config.sync
+	 *
+	 * @return {String/Undefined} the chosen position for the alignment, or undefined if no position found
+	 */
+	function ALIGN_TO_NORMALIZED(sourceRegion, targetRegion, positions, config){
+
+	    targetRegion = Region.from(targetRegion)
+
+	    config = config  || {}
+
+	    var constrainTo = config.constrain,
+	        syncOption  = config.sync,
+	        offsets     = config.offset || [],
+	        syncWidth   = false,
+	        syncHeight  = false,
+	        sourceClone = sourceRegion.clone()
+
+	    /*
+	     * Prepare the method arguments: positions, offsets, constrain and sync options
+	     */
+	    if (!Array.isArray(positions)){
+	        positions = positions? [positions]: []
+	    }
+
+	    if (!Array.isArray(offsets)){
+	        offsets = offsets? [offsets]: []
+	    }
+
+	    if (constrainTo){
+	        constrainTo = constrainTo === true?
+	                                Region.getDocRegion():
+	                                constrainTo.getRegion()
+	    }
+
+	    if (syncOption){
+
+	        if (syncOption.size){
+	            syncWidth  = true
+	            syncHeight = true
+	        } else {
+	            syncWidth  = syncOption === true?
+	                            true:
+	                            syncOption.width || false
+
+	            syncHeight = syncOption === true?
+	                            true:
+	                            syncOption.height || false
+	        }
+	    }
+
+	    if (syncWidth){
+	        sourceClone.setWidth(targetRegion.getWidth())
+	    }
+	    if (syncHeight){
+	        sourceClone.setHeight(targetRegion.getHeight())
+
+	    }
+
+	    var offset,
+	        i = 0,
+	        len = positions.length,
+	        pos,
+	        intersection,
+	        itArea,
+	        maxArea = -1,
+	        maxAreaIndex = -1
+
+	    for (; i < len; i++){
+	        pos     = positions[i]
+	        offset  = offsets[i]
+
+	        sourceClone.alignToRegion(targetRegion, pos)
+
+	        if (offset){
+	            if (!Array.isArray(offset)){
+	                offset = offsets[i] = [offset.x || offset.left, offset.y || offset.top]
+	            }
+
+	            sourceClone.shift({
+	                left: offset[0],
+	                top : offset[1]
+	            })
+	        }
+
+	        //the source region is already aligned in the correct position
+
+	        if (constrainTo){
+	            //if we have a constrain region, test for the constrain
+	            intersection = sourceClone.getIntersection(constrainTo)
+
+	            if ( intersection && intersection.equals(sourceClone) ) {
+	                //constrain respected, so return (the aligned position)
+
+	                sourceRegion.set(sourceClone)
+	                return pos
+	            } else {
+
+	                //the constrain was not respected, so continue trying
+	                if (intersection && ((itArea = intersection.getArea()) > maxArea)){
+	                    maxArea      = itArea
+	                    maxAreaIndex = i
+	                }
+	            }
+
+	        } else {
+	            sourceRegion.set(sourceClone)
+	            return pos
+	        }
+	    }
+
+	    //no alignment respected the constraints
+	    if (~maxAreaIndex){
+	        pos     = positions[maxAreaIndex]
+	        offset  = offsets[maxAreaIndex]
+
+	        sourceClone.alignToRegion(targetRegion, pos)
+
+	        if (offset){
+	            sourceClone.shift({
+	                left: offset[0],
+	                top : offset[1]
+	            })
+	        }
+
+	        //we are sure an intersection exists, because of the way the maxAreaIndex was computed
+	        intersection = sourceClone.getIntersection(constrainTo)
+
+	        sourceClone.setRegion(intersection)
+	        sourceClone.alignToRegion(targetRegion, pos)
+
+	        if (offset){
+	            sourceClone.shift({
+	                left: offset[0],
+	                top : offset[1]
+	            })
+	        }
+
+	        sourceRegion.set(sourceClone)
+
+	        return pos
+	    }
+
+	}
+
+	module.exports = ALIGN_TO_NORMALIZED
 
 /***/ }
 /******/ ])

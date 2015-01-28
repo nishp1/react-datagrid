@@ -2,7 +2,7 @@
 
 var React   = require('react')
 var Region  = require('region')
-var ReactMenu = React.createFactory(require('react-menus/src'))
+var ReactMenu = React.createFactory(require('react-menus'))
 var assign  = require('object-assign')
 var clone   = require('clone')
 var asArray = require('../utils/asArray')

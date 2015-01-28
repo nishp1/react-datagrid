@@ -7,6 +7,7 @@
     "test": "make",
     "lib": "./node_modules/.bin/gulp",
     "build-style": "webpack --progress --colors --config build-style.config.js",
+    "stats": "./node_modules/.bin/webpack --profile --progress --colors --config dist.config.js --json > stats.json",
     "dist": "./node_modules/.bin/webpack --progress --colors --config dist.config.js",
     "dist.min": "./node_modules/.bin/webpack --progress --colors --optimize-minimize --optimize-occurence-order --optimize-dedupe --config dist.min.config.js",
     "build": "npm run lib && npm run dist && npm run dist.min && npm run build-style",
@@ -39,16 +40,15 @@
     "jsx-loader": "^0.12.2",
     "style-loader": "^0.8.2",
     "stylus-loader": "^0.4.0",
-    "webpack": "^1.4.13",
-    "webpack-dev-server": "^1.6.6"
+    "webpack": "^1.5.1",
+    "webpack-dev-middleware": "^1.0.11",
+    "webpack-dev-server": "^1.7.0"
   },
   "dependencies": {
     "clone": "^0.1.18",
     "copy-utils": "^1.0.0",
     "css-utils": "^0.4.2",
     "drag-helper": "^1.2.0",
-    "gulp": "^3.8.10",
-    "gulp-react": "^2.0.0",
     "hasown": "^1.0.1",
     "normalize.css": "^3.0.2",
     "object-assign": "^2.0.0",
