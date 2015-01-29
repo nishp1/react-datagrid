@@ -21,8 +21,9 @@ module.exports = function(props, rows){
         return renderRow.call(this, props, data, index + props.startIndex)
     }, this)
 
+    // {renderMenu(props)}
+        
     return <div ref="table" className="z-table" style={tableStyle(props)}>
         {rows}
-        {renderMenu(props)}
     </div>
 }

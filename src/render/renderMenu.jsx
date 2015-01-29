@@ -7,6 +7,6 @@ module.exports = function renderMenu(props){
 
     return props.menu({
         className : 'z-header-menu-column',
-        gridColumns: props.allColumns
+        gridColumns: props.columns
     })
 }
