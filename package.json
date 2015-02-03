@@ -55,6 +55,7 @@
     "react-load-mask": "^0.1.0",
     "react-menus": "radubrehar/react-menus",
     "react-prefixr": "^0.1.0",
+    "react-style-normalizer": "^1.0.1",
     "region": "^2.1.1",
     "region-align": "^2.1.1",
     "ustring": "^1.4.1"
