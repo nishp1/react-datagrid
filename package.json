@@ -45,9 +45,11 @@
     "webpack-dev-server": "^1.7.0"
   },
   "dependencies": {
+    "buffer-function": "^1.0.0",
     "clone": "^0.1.18",
     "css-utils": "^0.4.2",
-    "drag-helper": "^1.2.2",
+    "drag-helper": "^1.2.3",
+    "has-touch": "^1.0.0",
     "hasown": "^1.0.1",
     "normalize.css": "^3.0.2",
     "object-assign": "^2.0.0",
