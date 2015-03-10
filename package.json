@@ -55,7 +55,7 @@
     "object-assign": "^2.0.0",
     "react": "^0.12.1",
     "react-event-names": "^1.0.0",
-    "react-load-mask": "^0.1.0",
+    "react-load-mask": "^1.0.1",
     "react-menus": "radubrehar/react-menus",
     "react-prefixr": "^0.1.0",
     "react-style-normalizer": "^1.0.1",
