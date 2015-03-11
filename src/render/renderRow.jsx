@@ -1,6 +1,7 @@
 'use strict';
 
 var assign = require('object-assign')
+var React  = require('react')
 
 var Row        = require('../Row')
 var RowFactory = React.createFactory(Row)
