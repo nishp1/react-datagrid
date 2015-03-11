@@ -189,7 +189,7 @@ var App = React.createClass({
 
             <DataGrid
             onFilter={filter}
-            liveFilter={true}
+                liveFilter={true}
                 defaultSelected={selected}
                 xonSelectionChange={onSelectionChange}
                 onColumnVisibilityChange={this.onColumnChange}
