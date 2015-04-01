@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/radubrehar/react-datagrid.git"
+    "url": "https://github.com/zippyui/react-datagrid.git"
   },
   "keywords": [
     "grid",
@@ -64,10 +64,11 @@
     "select-parent": "^1.0.1",
     "ustring": "^1.4.1"
   },
-  "author": "Radu Brehar",
+  "author": "ZippyUI <contact@zippyui.com>",
+  "contributors": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/radubrehar/react-datagrid/issues"
+    "url": "https://github.com/zippyui/react-datagrid/issues"
   },
-  "homepage": "https://github.com/radubrehar/react-datagrid"
+  "homepage": "https://github.com/zippyui/react-datagrid"
 }
