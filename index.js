@@ -57,7 +57,6 @@
 	            React.createElement("div", {className: "App", style: {padding: 10}}, 
 	                React.createElement("p", null, 
 	                    React.createElement("h2", null, "Coming soon")
-
 	                )
 	            )
 	        )

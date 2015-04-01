@@ -11,7 +11,6 @@ var App = React.createClass({
             <div className="App" style={{padding: 10}}>
                 <p>
                     <h2>Coming soon</h2>
-
                 </p>
             </div>
         )
