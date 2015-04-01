@@ -1,0 +1,41 @@
+{
+  "name": "react-datagrid-www",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A carefully crafted datagrid demo for React",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-css": "./node_modules/.bin/webpack --progress --colors --config build-css.config.js",
+    "build-script": "./node_modules/.bin/webpack --progress --colors --config build-script.config.js",
+    "build": "npm run build-script && npm run build-css",
+    "dev": "./node_modules/.bin/webpack-dev-server --progress --colors --port 8090",
+    "serve": "./node_modules/.bin/http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zippyui/react-datagrid.git"
+  },
+  "author": "ZippyUI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zippyui/react-datagrid/issues"
+  },
+  "homepage": "https://github.com/zippyui/react-datagrid",
+  "dependencies": {
+    "normalize.css": "^3.0.3",
+    "react": "^0.13.1",
+    "react-datagrid": "^0.1.1"
+  },
+  "devDependencies": {
+    "css-loader": "^0.9.1",
+    "extract-text-webpack-plugin": "^0.5.0",
+    "gulp": "^3.8.11",
+    "gulp-react": "^3.0.1",
+    "jsx-loader": "^0.12.2",
+    "style-loader": "^0.9.0",
+    "stylus-loader": "^1.0.0",
+    "webpack": "^1.7.3",
+    "webpack-dev-server": "^1.8.0"
+  }
+}
