@@ -321,9 +321,9 @@ module.exports = React.createClass({
     verticalScrollAt: function(scrollTop){
         this.onVerticalScroll(scrollTop)
 
-        setTimeout(function(){
+        // setTimeout(function(){
             this.syncVerticalScroller()
-        }.bind(this), 0)
+        // }.bind(this), 0)
     },
     handleHorizontalScroll: function(event){
         this.props.onScrollLeft(event.target.scrollLeft)
