@@ -254,7 +254,9 @@ module.exports = React.createClass({
             return
         }
 
-        return <div className="z-show-menu" onMouseUp={this.handleShowMenuMouseUp.bind(this, props, column, index)} />
+        return <div className="z-show-menu" onMouseUp={this.handleShowMenuMouseUp.bind(this, props, column, index)}>
+            ▼
+        </div>
     },
 
     handleShowMenuMouseUp: function(props, column, index, event){

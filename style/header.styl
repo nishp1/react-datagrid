@@ -35,6 +35,11 @@
                 height 100%
                 border-left $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
 
+
+            .z-show-menu
+                color $datagrid-column-sort-icon-color
+                padding-top 3px
+            .z-show-filter
                 &::after
                     content ' '
                     display block
@@ -65,7 +70,7 @@
                     left 50%
                     margin-top -$datagrid-column-menu-icon-width
                     display block
-                    border-left 2px solid $datagrid-column-sort-icon-color
+                    border-left 3px solid $datagrid-column-sort-icon-color
 
             &.z-filterable .z-show-filter.z-active
             &.z-filterable .z-show-filter:hover
