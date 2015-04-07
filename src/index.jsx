@@ -77,7 +77,7 @@ module.exports = React.createClass({
 
         //specify false if you don't want any column to be resizable
         resizableColumns : React.PropTypes.bool,
-        filterableColumns: React.PropTypes.bool,
+        filterable: React.PropTypes.bool,
 
         //specify false if you don't want column menus to be displayed
         withColumnMenu   : React.PropTypes.bool,
@@ -264,7 +264,7 @@ module.exports = React.createClass({
             scrollbarSize    : props.scrollbarSize,
             sortInfo         : props.sortInfo,
             resizableColumns : props.resizableColumns,
-            filterableColumns: props.filterableColumns,
+            filterable: props.filterable,
             withColumnMenu   : props.withColumnMenu,
             sortable         : props.sortable,
 

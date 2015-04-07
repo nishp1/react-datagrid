@@ -52,7 +52,7 @@ var Column = function(col, props){
     col.resizable = !!col.resizable
 
     //filterable
-    if (props && props.filterableColumns === false){
+    if (props && props.filterable === false){
         col.filterable = false
     }
     col.filterable = !!col.filterable
