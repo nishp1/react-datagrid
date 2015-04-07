@@ -76,6 +76,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var getTableProps    = __webpack_require__(7)
 	var getGroupedRows = __webpack_require__(8)
 	var renderMenu     = __webpack_require__(9)
+	var TEXT_ALIGN_2_JUSTIFY = {
+	    right: 'flex-end',
+	    center: 'center'
+	}
+
+	function signum(x){
+	    return x < 0? -1: 1
+	}
 
 	function emptyFn(){}
 
@@ -193,7 +201,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (this.props.virtualRendering){
-	            state.renderStartIndex = Math.ceil(scrollTop / this.props.rowHeight)
+
+	            var prevIndex = this.state.renderStartIndex || 0
+
+	            var renderStartIndex = Math.ceil(scrollTop / this.props.rowHeight)
+	            state.renderStartIndex = renderStartIndex
+
+	            // // console.log('scroll!');
+	            // var sign = signum(renderStartIndex - prevIndex)
+
+	            // state.topOffset = -sign * Math.ceil(scrollTop - state.renderStartIndex * this.props.rowHeight)
+
+	            // console.log(scrollTop, sign);
 	        } else {
 	            state.scrollTop = scrollTop
 	        }
@@ -410,6 +429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var wrapperProps = assign({
 	            scrollLeft      : state.scrollLeft,
 	            scrollTop       : scrollTop,
+	            topOffset       : state.topOffset,
 	            startIndex      : startIndex,
 	            totalLength     : data.length,
 	            renderCount     : renderCount,
@@ -529,7 +549,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    prepareColumnStyle: function(props, column){
-	        var style    = column.style = {}
+	        var style    = column.style = assign({}, column.style)
+
+	        if (style.textAlign){
+	            style.justifyContent = style.justifyContent || TEXT_ALIGN_2_JUSTIFY[style.textAlign]
+	        }
 	        var minWidth = column.minWidth || props.columnMinWidth
 
 	        style.minWidth = minWidth
@@ -639,7 +663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var humanize = __webpack_require__(27).humanize
+	var humanize = __webpack_require__(28).humanize
 	var assign   = __webpack_require__(15)
 
 	function getVisibleInfo(col){
@@ -808,7 +832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var hasown = __webpack_require__(28)
+	var hasown = __webpack_require__(27)
 
 	function copyIf(source, target){
 	    var hasOwn = hasown(target)
@@ -1322,7 +1346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/** @jsx React.DOM */'use strict';
 
 	var assign = __webpack_require__(15)
-	var ReactMenu = __webpack_require__(35)
+	var ReactMenu = __webpack_require__(36)
 
 	function stopPropagation(event){
 	    event.stopPropagation()
@@ -1547,10 +1571,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React  = __webpack_require__(1)
 	var assign = __webpack_require__(15)
-	var hasTouch = __webpack_require__(29)
-	var DragHelper = __webpack_require__(30)
+	var hasTouch = __webpack_require__(30)
+	var DragHelper = __webpack_require__(29)
 	var buffer = __webpack_require__(31)
-
+	var raf = __webpack_require__(32)
 	var tableStyle = __webpack_require__(20)
 
 	function signum(x){
@@ -1649,9 +1673,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    syncVerticalScroller: function(){
 
-	        var scrollTop = this.props.scrollTop
+	        var scrollTop = this.props.scrollTop + (this.props.topOffset || 0)
 
+	        this.lockVerticalScroll = true
 	        this.refs.verticalScrollbar.getDOMNode().scrollTop = scrollTop
+
+	        raf(function(){
+	            this.lockVerticalScroll = false
+	        }.bind(this))
 	    },
 
 	    render: function() {
@@ -1860,21 +1889,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        scrollTop = this.protectScrollTop(scrollTop)
 
-	        this.verticalScrollAt(scrollTop)
+	        this.verticalScrollAt(scrollTop, deltaY)
 	    },
-
 	    verticalScrollAt: function(scrollTop){
+
 	        this.onVerticalScroll(scrollTop)
 
-	        // setTimeout(function(){
+	        raf(function(){
 	            this.syncVerticalScroller()
-	        // }.bind(this), 0)
+	        }.bind(this))
 	    },
 	    handleHorizontalScroll: function(event){
 	        this.props.onScrollLeft(event.target.scrollLeft)
 	    },
 	    handleVerticalScroll: function(event){
-	        this.onVerticalScroll(event.target.scrollTop)
+	        !this.lockVerticalScroll && this.onVerticalScroll(event.target.scrollTop)
 	    },
 	    onVerticalScroll: function(pos){
 	        this.props.onScrollTop(pos)
@@ -1897,9 +1926,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React   = __webpack_require__(1)
 	var Region  = __webpack_require__(16)
-	var ReactMenu = React.createFactory(__webpack_require__(35))
+	var ReactMenu = React.createFactory(__webpack_require__(36))
 	var assign  = __webpack_require__(15)
-	var clone   = __webpack_require__(36)
+	var clone   = __webpack_require__(37)
 	var asArray = __webpack_require__(22)
 	var findIndexBy = __webpack_require__(18)
 	var findIndexByName = __webpack_require__(4)
@@ -1907,8 +1936,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var setupColumnDrag   = __webpack_require__(23)
 	var setupColumnResize = __webpack_require__(24)
 
-	var normalize = __webpack_require__(37)
-	var EVENT_NAMES = __webpack_require__(32)
+	var normalize = __webpack_require__(38)
+	var EVENT_NAMES = __webpack_require__(33)
 
 	function emptyFn(){}
 
@@ -2377,7 +2406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(33)
+	module.exports = __webpack_require__(34)
 
 /***/ },
 /* 17 */
@@ -2387,7 +2416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React  = __webpack_require__(1)
 	var assign = __webpack_require__(15)
-	var Loader = __webpack_require__(34)
+	var Loader = __webpack_require__(35)
 
 	module.exports = React.createClass({
 
@@ -2564,11 +2593,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var normalize = __webpack_require__(37)
+	var normalize = __webpack_require__(38)
 
 	module.exports = function(props){
 	    var scrollTop  = props.virtualRendering?
-	                        0:
+	                        -(props.topOffset || 0):
 	                        props.scrollTop
 
 	    return normalize({
@@ -2617,7 +2646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Region     = __webpack_require__(16)
-	var DragHelper = __webpack_require__(30)
+	var DragHelper = __webpack_require__(29)
 
 	function range(start, end){
 	    var res = []
@@ -2757,7 +2786,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Region     = __webpack_require__(16)
-	var DragHelper = __webpack_require__(30)
+	var DragHelper = __webpack_require__(29)
 
 	var findIndexByName = __webpack_require__(4)
 
@@ -2861,9 +2890,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var assign      = __webpack_require__(15)
 	var Cell        = __webpack_require__(26)
 	var CellFactory = React.createFactory(Cell)
-	var ReactMenu = __webpack_require__(35)
+	var ReactMenu = __webpack_require__(36)
 	var ReactMenuFactory = React.createFactory(ReactMenu)
-	var prefixer  = __webpack_require__(52)
+	var prefixer  = __webpack_require__(53)
 
 	module.exports = React.createClass({
 
@@ -3067,9 +3096,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React  = __webpack_require__(1)
 	var assign = __webpack_require__(15)
-	var normalize = __webpack_require__(37)
+	var normalize = __webpack_require__(38)
 
-	var EVENT_NAMES = __webpack_require__(32)
+	var EVENT_NAMES = __webpack_require__(33)
 
 	function copyProps(target, source, list){
 
@@ -3113,7 +3142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var textCellProps = {
 	            className: 'z-text',
-	            style    : {padding: props.textPadding}
+	            style    : {padding: props.textPadding, margin: 'auto 0'}
 	        }
 
 	        var textCell = props.renderCell?
@@ -3143,11 +3172,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            EVENT_NAMES.onMouseUp
 	        ]))
 
+	        // var c = <div className='z-inner' style={props.innerStyle}>
+	        //             {textCell}
+	        //         </div>
+
+	        var c = textCell
+
 	        return (
 	            React.createElement("div", React.__spread({},  cellProps), 
-	                React.createElement("div", {className: "z-inner", style: props.innerStyle}, 
-	                    textCell
-	                ), 
+	                c, 
 	                props.children
 	            )
 	        )
@@ -3156,24 +3189,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	    toLowerFirst     : __webpack_require__(42),
-	    toUpperFirst     : __webpack_require__(43),
-	    separate         : __webpack_require__(44),
-	    stripWhitespace  : __webpack_require__(45),
-	    compactWhitespace: __webpack_require__(46),
-	    camelize         : __webpack_require__(47),
-	    humanize         : __webpack_require__(48),
-	    hyphenate        : __webpack_require__(49),
-	    endsWith         : __webpack_require__(50),
-
-	    is: __webpack_require__(51)
-	}
-
-/***/ },
-/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -3216,22 +3231,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {module.exports = 'ontouchstart' in global || (global.DocumentTouch && document instanceof DocumentTouch)
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+	module.exports = {
+	    toLowerFirst     : __webpack_require__(43),
+	    toUpperFirst     : __webpack_require__(44),
+	    separate         : __webpack_require__(45),
+	    stripWhitespace  : __webpack_require__(46),
+	    compactWhitespace: __webpack_require__(47),
+	    camelize         : __webpack_require__(48),
+	    humanize         : __webpack_require__(49),
+	    hyphenate        : __webpack_require__(50),
+	    endsWith         : __webpack_require__(51),
+
+	    is: __webpack_require__(52)
+	}
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var assign = __webpack_require__(15)
-	var Region = __webpack_require__(53)
-	var hasTouch = __webpack_require__(29)
-	var once   = __webpack_require__(38)
+	var Region = __webpack_require__(54)
+	var hasTouch = __webpack_require__(30)
+	var once   = __webpack_require__(39)
 
 	var Helper = function(config){
 	    this.config = config
@@ -3424,6 +3450,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {module.exports = 'ontouchstart' in global || (global.DocumentTouch && document instanceof DocumentTouch)
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
 /* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -3470,9 +3503,95 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var now = __webpack_require__(68)
+	  , global = typeof window === 'undefined' ? {} : window
+	  , vendors = ['moz', 'webkit']
+	  , suffix = 'AnimationFrame'
+	  , raf = global['request' + suffix]
+	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
+	  , isNative = true
+
+	for(var i = 0; i < vendors.length && !raf; i++) {
+	  raf = global[vendors[i] + 'Request' + suffix]
+	  caf = global[vendors[i] + 'Cancel' + suffix]
+	      || global[vendors[i] + 'CancelRequest' + suffix]
+	}
+
+	// Some versions of FF have rAF but not cAF
+	if(!raf || !caf) {
+	  isNative = false
+
+	  var last = 0
+	    , id = 0
+	    , queue = []
+	    , frameDuration = 1000 / 60
+
+	  raf = function(callback) {
+	    if(queue.length === 0) {
+	      var _now = now()
+	        , next = Math.max(0, frameDuration - (_now - last))
+	      last = next + _now
+	      setTimeout(function() {
+	        var cp = queue.slice(0)
+	        // Clear queue here to prevent
+	        // callbacks from appending listeners
+	        // to the current frame's queue
+	        queue.length = 0
+	        for(var i = 0; i < cp.length; i++) {
+	          if(!cp[i].cancelled) {
+	            try{
+	              cp[i].callback(last)
+	            } catch(e) {
+	              setTimeout(function() { throw e }, 0)
+	            }
+	          }
+	        }
+	      }, Math.round(next))
+	    }
+	    queue.push({
+	      handle: ++id,
+	      callback: callback,
+	      cancelled: false
+	    })
+	    return id
+	  }
+
+	  caf = function(handle) {
+	    for(var i = 0; i < queue.length; i++) {
+	      if(queue[i].handle === handle) {
+	        queue[i].cancelled = true
+	      }
+	    }
+	  }
+	}
+
+	module.exports = function(fn) {
+	  // Wrap in a new function to prevent
+	  // `cancel` potentially being assigned
+	  // to the native rAF function
+	  if(!isNative) {
+	    return raf.call(global, fn)
+	  }
+	  return raf.call(global, function() {
+	    try{
+	      fn.apply(this, arguments)
+	    } catch(e) {
+	      setTimeout(function() { throw e }, 0)
+	    }
+	  })
+	}
+	module.exports.cancel = function() {
+	  caf.apply(global, arguments)
+	}
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
-	module.exports = __webpack_require__(64)?
+	module.exports = __webpack_require__(65)?
 		{
 			onMouseDown: 'onTouchStart',
 			onMouseUp  : 'onTouchEnd',
@@ -3485,19 +3604,19 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn    = __webpack_require__(28)
-	var newify    = __webpack_require__(58)
+	var hasOwn    = __webpack_require__(27)
+	var newify    = __webpack_require__(59)
 
 	var assign      = __webpack_require__(15);
-	var EventEmitter = __webpack_require__(59).EventEmitter
+	var EventEmitter = __webpack_require__(60).EventEmitter
 
-	var inherits = __webpack_require__(39)
-	var VALIDATE = __webpack_require__(40)
+	var inherits = __webpack_require__(40)
+	var VALIDATE = __webpack_require__(41)
 
 	var objectToString = Object.prototype.toString
 
@@ -4536,12 +4655,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	})
 
-	__webpack_require__(41)(REGION)
+	__webpack_require__(42)(REGION)
 
 	module.exports = REGION
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4607,16 +4726,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var MenuClass = __webpack_require__(60)
+	var MenuClass = __webpack_require__(61)
 
-	var MenuItem      = __webpack_require__(63)
-	var MenuItemCell  = __webpack_require__(61)
-	var MenuSeparator = __webpack_require__(62)
+	var MenuItem      = __webpack_require__(64)
+	var MenuItemCell  = __webpack_require__(62)
+	var MenuSeparator = __webpack_require__(63)
 
 	MenuClass.Item      = MenuItem
 	MenuClass.Item.Cell = MenuItemCell
@@ -4626,7 +4745,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MenuClass
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
@@ -4759,19 +4878,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return new c();
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(66).Buffer))
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn      = __webpack_require__(54)
-	var getPrefixed = __webpack_require__(55)
+	var hasOwn      = __webpack_require__(55)
+	var getPrefixed = __webpack_require__(56)
 
-	var map      = __webpack_require__(56)
-	var plugable = __webpack_require__(57)
+	var map      = __webpack_require__(57)
+	var plugable = __webpack_require__(58)
 
 	function plugins(key, value){
 
@@ -4832,7 +4951,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = plugable(RESULT)
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use once'
@@ -4854,7 +4973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4872,7 +4991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4904,13 +5023,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var hasOwn   = __webpack_require__(28)
-	var VALIDATE = __webpack_require__(40)
+	var hasOwn   = __webpack_require__(27)
+	var VALIDATE = __webpack_require__(41)
 
 	module.exports = function(REGION){
 
@@ -5123,7 +5242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(str){
@@ -5133,7 +5252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -5145,7 +5264,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -5167,7 +5286,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var RE = /\s/g
@@ -5181,7 +5300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var RE = /\s+/g
@@ -5195,7 +5314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -5204,7 +5323,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	       return letter ? letter.toUpperCase(): ''
 	   }
 
-	var hyphenRe = __webpack_require__(66)
+	var hyphenRe = __webpack_require__(67)
 
 	module.exports = function(str){
 	   return str?
@@ -5213,15 +5332,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var separate     = __webpack_require__(44)
-	var camelize     = __webpack_require__(47)
-	var toUpperFirst = __webpack_require__(43)
-	var hyphenRe     = __webpack_require__(66)
+	var separate     = __webpack_require__(45)
+	var camelize     = __webpack_require__(48)
+	var toUpperFirst = __webpack_require__(44)
+	var hyphenRe     = __webpack_require__(67)
 
 	function toLowerAndSpace(str, letter){
 	    return letter? ' ' + letter.toLowerCase(): ' '
@@ -5238,19 +5357,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var separate = __webpack_require__(44)
+	var separate = __webpack_require__(45)
 
 	module.exports = function(name){
 	   return separate(name).toLowerCase()
 	}
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -5275,19 +5394,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
-	    alphanum: __webpack_require__(67),
-	    match   : __webpack_require__(68),
-	    guid   : __webpack_require__(69),
+	    alphanum: __webpack_require__(69),
+	    match   : __webpack_require__(70),
+	    guid   : __webpack_require__(71),
 	    // email   : require('./email'),
-	    numeric   : __webpack_require__(70)
+	    numeric   : __webpack_require__(72)
 	}
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -5369,17 +5488,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Region = __webpack_require__(16)
 
-	__webpack_require__(71)
-	__webpack_require__(72)
+	__webpack_require__(73)
+	__webpack_require__(74)
 
-	var COMPUTE_ALIGN_REGION = __webpack_require__(73)
+	var COMPUTE_ALIGN_REGION = __webpack_require__(75)
 
 	/**
 	 * region-align module exposes methods for aligning {@link Element} and {@link Region} instances
@@ -5555,7 +5674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Region
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5566,13 +5685,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var getStylePrefixed = __webpack_require__(74)
-	var properties       = __webpack_require__(75)
+	var getStylePrefixed = __webpack_require__(76)
+	var properties       = __webpack_require__(77)
 
 	module.exports = function(key, value){
 
@@ -5584,7 +5703,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5605,12 +5724,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var getCssPrefixedValue = __webpack_require__(76)
+	var getCssPrefixedValue = __webpack_require__(78)
 
 	module.exports = function(target){
 		target.plugins = target.plugins || [
@@ -5641,17 +5760,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getInstantiatorFunction = __webpack_require__(86)
+	var getInstantiatorFunction = __webpack_require__(89)
 
 	module.exports = function(fn, args){
 		return getInstantiatorFunction(args.length)(fn, args)
 	}
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -5958,7 +6077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5967,23 +6086,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React      = __webpack_require__(1)
 	var assign     = __webpack_require__(15)
-	var Region     = __webpack_require__(53)
-	var inTriangle = __webpack_require__(88)
-	var hasTouch = __webpack_require__(89)
+	var Region     = __webpack_require__(54)
+	var inTriangle = __webpack_require__(90)
+	var hasTouch = __webpack_require__(91)
 
-	var normalize = __webpack_require__(37)
+	var normalize = __webpack_require__(38)
 
-	var getMenuOffset = __webpack_require__(77)
-	var getConstrainRegion = __webpack_require__(78)
-	var getItemStyleProps = __webpack_require__(79)
-	var renderSubMenu     = __webpack_require__(80)
-	var renderChildren    = __webpack_require__(81)
-	var prepareItem       = __webpack_require__(82)
+	var getMenuOffset = __webpack_require__(79)
+	var getConstrainRegion = __webpack_require__(80)
+	var getItemStyleProps = __webpack_require__(81)
+	var renderSubMenu     = __webpack_require__(82)
+	var renderChildren    = __webpack_require__(83)
+	var prepareItem       = __webpack_require__(84)
 
-	var propTypes = __webpack_require__(83)
-	var ScrollContainer = __webpack_require__(84)
+	var propTypes = __webpack_require__(85)
+	var ScrollContainer = __webpack_require__(86)
 
-	var MenuItem = __webpack_require__(63)
+	var MenuItem = __webpack_require__(64)
 
 	var MenuClass = React.createClass({
 
@@ -6524,12 +6643,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	})
 
-	MenuClass.themes = __webpack_require__(85)
+	MenuClass.themes = __webpack_require__(87)
 
 	module.exports = MenuClass
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6591,7 +6710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MenuItemCell
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6662,22 +6781,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MenuSeparator
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React         = __webpack_require__(1)
 	var assign        = __webpack_require__(15)
-	var normalize     = __webpack_require__(37)
-	var EVENT_NAMES   = __webpack_require__(32)
+	var normalize     = __webpack_require__(38)
+	var EVENT_NAMES   = __webpack_require__(33)
 
-	var getMenuOffset = __webpack_require__(77)
+	var getMenuOffset = __webpack_require__(79)
 
-	var prepareChildren = __webpack_require__(87)
+	var prepareChildren = __webpack_require__(88)
 
-	var Menu = __webpack_require__(60)
-	var MenuItemCell = __webpack_require__(61)
+	var Menu = __webpack_require__(61)
+	var MenuItemCell = __webpack_require__(62)
 
 	var emptyFn = function(){}
 
@@ -6981,14 +7100,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = MenuItem
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {module.exports = 'ontouchstart' in global || (global.DocumentTouch && document instanceof DocumentTouch)
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {/*!
@@ -6998,9 +7117,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @license  MIT
 	 */
 
-	var base64 = __webpack_require__(103)
-	var ieee754 = __webpack_require__(96)
-	var isArray = __webpack_require__(95)
+	var base64 = __webpack_require__(106)
+	var ieee754 = __webpack_require__(101)
+	var isArray = __webpack_require__(102)
 
 	exports.Buffer = Buffer
 	exports.SlowBuffer = Buffer
@@ -8044,36 +8163,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65).Buffer))
-
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = /[-\s]+(.)?/g
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(66).Buffer))
 
 /***/ },
 /* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict'
-
-	module.exports = __webpack_require__(68)(/^[a-zA-Z0-9]+$/)
+	module.exports = /[-\s]+(.)?/g
 
 /***/ },
 /* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.6.3
+	(function() {
+	  var getNanoSeconds, hrtime, loadTime;
+
+	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+	    module.exports = function() {
+	      return performance.now();
+	    };
+	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+	    module.exports = function() {
+	      return (getNanoSeconds() - loadTime) / 1e6;
+	    };
+	    hrtime = process.hrtime;
+	    getNanoSeconds = function() {
+	      var hr;
+	      hr = hrtime();
+	      return hr[0] * 1e9 + hr[1];
+	    };
+	    loadTime = getNanoSeconds();
+	  } else if (Date.now) {
+	    module.exports = function() {
+	      return Date.now() - loadTime;
+	    };
+	    loadTime = Date.now();
+	  } else {
+	    module.exports = function() {
+	      return new Date().getTime() - loadTime;
+	    };
+	    loadTime = new Date().getTime();
+	  }
+
+	}).call(this);
+
+	/*
+	//@ sourceMappingURL=performance-now.map
+	*/
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(105)))
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict'
 
-	var F = __webpack_require__(101)
+	module.exports = __webpack_require__(70)(/^[a-zA-Z0-9]+$/)
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	var F = __webpack_require__(103)
 
 	module.exports = F.curry(function(re, value){
 	    return !!re.test(value)
 	})
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -8088,15 +8250,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	module.exports = __webpack_require__(102).numeric
+	module.exports = __webpack_require__(104).numeric
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -8217,7 +8379,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 72 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8259,12 +8421,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 73 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var ALIGN_TO_NORMALIZED = __webpack_require__(93)
+	var ALIGN_TO_NORMALIZED = __webpack_require__(92)
 
 	var Region = __webpack_require__(16)
 
@@ -8340,14 +8502,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = COMPUTE_ALIGN_REGION
 
 /***/ },
-/* 74 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(90)
-	var getPrefix    = __webpack_require__(91)
-	var el           = __webpack_require__(92)
+	var toUpperFirst = __webpack_require__(93)
+	var getPrefix    = __webpack_require__(94)
+	var el           = __webpack_require__(95)
 
 	var MEMORY = {}
 	var STYLE
@@ -8386,7 +8548,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 75 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8426,14 +8588,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 76 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var getPrefix     = __webpack_require__(91)
-	var forcePrefixed = __webpack_require__(94)
-	var el            = __webpack_require__(92)
+	var getPrefix     = __webpack_require__(94)
+	var forcePrefixed = __webpack_require__(96)
+	var el            = __webpack_require__(95)
 
 	var MEMORY = {}
 	var STYLE
@@ -8480,13 +8642,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 77 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region       = __webpack_require__(53)
-	var selectParent = __webpack_require__(105)
+	var Region       = __webpack_require__(54)
+	var selectParent = __webpack_require__(107)
 
 	module.exports = function(domNode){
 
@@ -8505,13 +8667,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region = __webpack_require__(53)
-	var selectParent = __webpack_require__(105)
+	var Region = __webpack_require__(54)
+	var selectParent = __webpack_require__(107)
 
 	module.exports = function(constrainTo){
 	    var constrainRegion
@@ -8533,7 +8695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8560,14 +8722,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region           = __webpack_require__(53)
+	var Region           = __webpack_require__(54)
 	var assign           = __webpack_require__(15)
-	var cloneWithProps   = __webpack_require__(104)
+	var cloneWithProps   = __webpack_require__(108)
 	var getPositionStyle = __webpack_require__(97)
 
 	module.exports = function(props, state) {
@@ -8599,15 +8761,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1)
-	var MenuItemCell = __webpack_require__(61)
+	var MenuItemCell = __webpack_require__(62)
 
-	var cloneWithProps = __webpack_require__(104)
+	var cloneWithProps = __webpack_require__(108)
 	var assign         = __webpack_require__(15)
 
 	function emptyFn(){}
@@ -8696,7 +8858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8705,9 +8867,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var assign = __webpack_require__(15)
 
 	var renderCells     = __webpack_require__(98)
-	var MenuItem        = __webpack_require__(63)
+	var MenuItem        = __webpack_require__(64)
 	var MenuItemFactory = React.createFactory(MenuItem)
-	var MenuSeparator   = __webpack_require__(62)
+	var MenuSeparator   = __webpack_require__(63)
 
 	module.exports = function(props, state, item, index) {
 
@@ -8736,7 +8898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    itemProps.children = renderCells(itemProps)
 
 	    if (item.items){
-	        var Menu = __webpack_require__(60)
+	        var Menu = __webpack_require__(61)
 	        itemProps.children.push(React.createElement(Menu, {items: item.items}))
 	    }
 
@@ -8744,7 +8906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8768,7 +8930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9016,7 +9178,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9049,49 +9211,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 86 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(){
-
-	    'use strict';
-
-	    var fns = {}
-
-	    return function(len){
-
-	        if ( ! fns [len ] ) {
-
-	            var args = []
-	            var i    = 0
-
-	            for (; i < len; i++ ) {
-	                args.push( 'a[' + i + ']')
-	            }
-
-	            fns[len] = new Function(
-	                            'c',
-	                            'a',
-	                            'return new c(' + args.join(',') + ')'
-	                        )
-	        }
-
-	        return fns[len]
-	    }
-
-	}()
-
-/***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React        = __webpack_require__(1)
-	var Menu         = __webpack_require__(60)
-	var MenuItemCell = __webpack_require__(61)
+	var Menu         = __webpack_require__(61)
+	var MenuItemCell = __webpack_require__(62)
 	var renderCell   = __webpack_require__(100)
-	var cloneWithProps = __webpack_require__(104)
+	var cloneWithProps = __webpack_require__(108)
 
 	module.exports = function(props) {
 
@@ -9135,7 +9264,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 88 */
+/* 89 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(){
+
+	    'use strict';
+
+	    var fns = {}
+
+	    return function(len){
+
+	        if ( ! fns [len ] ) {
+
+	            var args = []
+	            var i    = 0
+
+	            for (; i < len; i++ ) {
+	                args.push( 'a[' + i + ']')
+	            }
+
+	            fns[len] = new Function(
+	                            'c',
+	                            'a',
+	                            'return new c(' + args.join(',') + ')'
+	                        )
+	        }
+
+	        return fns[len]
+	    }
+
+	}()
+
+/***/ },
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//http://www.blackpawn.com/texts/pointinpoly/
@@ -9161,87 +9323,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {module.exports = 'ontouchstart' in global || (global.DocumentTouch && document instanceof DocumentTouch)
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 90 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = function(str){
-		return str?
-				str.charAt(0).toUpperCase() + str.slice(1):
-				''
-	}
-
-/***/ },
-/* 91 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var toUpperFirst = __webpack_require__(90)
-	var prefixes     = ["ms", "Moz", "Webkit", "O"]
-
-	var el = __webpack_require__(92)
-
-	var ELEMENT
-	var PREFIX
-
-	module.exports = function(key){
-
-		if (PREFIX !== undefined){
-			return PREFIX
-		}
-
-		ELEMENT = ELEMENT || el()
-
-		var i = 0
-		var len = prefixes.length
-		var tmp
-		var prefix
-
-		for (; i < len; i++){
-			prefix = prefixes[i]
-			tmp = prefix + toUpperFirst(key)
-
-			if (typeof ELEMENT.style[tmp] != 'undefined'){
-				return PREFIX = prefix
-			}
-		}
-
-		return PREFIX
-	}
-
-/***/ },
 /* 92 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
-
-	var el
-
-	module.exports = function(){
-
-		if(!el && !!global.document){
-		  	el = global.document.createElement('div')
-		}
-
-		if (!el){
-			el = {style: {}}
-		}
-
-		return el
-	}
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -9423,14 +9512,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ALIGN_TO_NORMALIZED
 
 /***/ },
+/* 93 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = function(str){
+		return str?
+				str.charAt(0).toUpperCase() + str.slice(1):
+				''
+	}
+
+/***/ },
 /* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var toUpperFirst = __webpack_require__(90)
-	var getPrefix    = __webpack_require__(91)
-	var properties   = __webpack_require__(75)
+	var toUpperFirst = __webpack_require__(93)
+	var prefixes     = ["ms", "Moz", "Webkit", "O"]
+
+	var el = __webpack_require__(95)
+
+	var ELEMENT
+	var PREFIX
+
+	module.exports = function(key){
+
+		if (PREFIX !== undefined){
+			return PREFIX
+		}
+
+		ELEMENT = ELEMENT || el()
+
+		var i = 0
+		var len = prefixes.length
+		var tmp
+		var prefix
+
+		for (; i < len; i++){
+			prefix = prefixes[i]
+			tmp = prefix + toUpperFirst(key)
+
+			if (typeof ELEMENT.style[tmp] != 'undefined'){
+				return PREFIX = prefix
+			}
+		}
+
+		return PREFIX
+	}
+
+/***/ },
+/* 95 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var el
+
+	module.exports = function(){
+
+		if(!el && !!global.document){
+		  	el = global.document.createElement('div')
+		}
+
+		if (!el){
+			el = {style: {}}
+		}
+
+		return el
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 96 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var toUpperFirst = __webpack_require__(93)
+	var getPrefix    = __webpack_require__(94)
+	var properties   = __webpack_require__(77)
 
 	/**
 	 * Returns the given key prefixed, if the property is found in the prefixProps map.
@@ -9452,143 +9614,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 95 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	/**
-	 * isArray
-	 */
-
-	var isArray = Array.isArray;
-
-	/**
-	 * toString
-	 */
-
-	var str = Object.prototype.toString;
-
-	/**
-	 * Whether or not the given `val`
-	 * is an array.
-	 *
-	 * example:
-	 *
-	 *        isArray([]);
-	 *        // > true
-	 *        isArray(arguments);
-	 *        // > false
-	 *        isArray('');
-	 *        // > false
-	 *
-	 * @param {mixed} val
-	 * @return {bool}
-	 */
-
-	module.exports = isArray || function (val) {
-	  return !! val && '[object Array]' == str.call(val);
-	};
-
-
-/***/ },
-/* 96 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-	  var e, m,
-	      eLen = nBytes * 8 - mLen - 1,
-	      eMax = (1 << eLen) - 1,
-	      eBias = eMax >> 1,
-	      nBits = -7,
-	      i = isLE ? (nBytes - 1) : 0,
-	      d = isLE ? -1 : 1,
-	      s = buffer[offset + i];
-
-	  i += d;
-
-	  e = s & ((1 << (-nBits)) - 1);
-	  s >>= (-nBits);
-	  nBits += eLen;
-	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-	  m = e & ((1 << (-nBits)) - 1);
-	  e >>= (-nBits);
-	  nBits += mLen;
-	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-	  if (e === 0) {
-	    e = 1 - eBias;
-	  } else if (e === eMax) {
-	    return m ? NaN : ((s ? -1 : 1) * Infinity);
-	  } else {
-	    m = m + Math.pow(2, mLen);
-	    e = e - eBias;
-	  }
-	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-	};
-
-	exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-	  var e, m, c,
-	      eLen = nBytes * 8 - mLen - 1,
-	      eMax = (1 << eLen) - 1,
-	      eBias = eMax >> 1,
-	      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-	      i = isLE ? 0 : (nBytes - 1),
-	      d = isLE ? 1 : -1,
-	      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-	  value = Math.abs(value);
-
-	  if (isNaN(value) || value === Infinity) {
-	    m = isNaN(value) ? 1 : 0;
-	    e = eMax;
-	  } else {
-	    e = Math.floor(Math.log(value) / Math.LN2);
-	    if (value * (c = Math.pow(2, -e)) < 1) {
-	      e--;
-	      c *= 2;
-	    }
-	    if (e + eBias >= 1) {
-	      value += rt / c;
-	    } else {
-	      value += rt * Math.pow(2, 1 - eBias);
-	    }
-	    if (value * c >= 2) {
-	      e++;
-	      c /= 2;
-	    }
-
-	    if (e + eBias >= eMax) {
-	      m = 0;
-	      e = eMax;
-	    } else if (e + eBias >= 1) {
-	      m = (value * c - 1) * Math.pow(2, mLen);
-	      e = e + eBias;
-	    } else {
-	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-	      e = 0;
-	    }
-	  }
-
-	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-	  e = (e << mLen) | m;
-	  eLen += mLen;
-	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-	  buffer[offset + i - d] |= s * 128;
-	};
-
-
-/***/ },
 /* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Region = __webpack_require__(53)
+	var Region = __webpack_require__(54)
 	var assign = __webpack_require__(15)
-	var align  = __webpack_require__(106)
+	var align  = __webpack_require__(109)
 
 	module.exports = function getPositionStyle(props, state){
 	    if (!state.menu || !this.didMount){
@@ -9714,7 +9747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React         = __webpack_require__(1)
 	var assign        = __webpack_require__(15)
-	var getArrowStyle = __webpack_require__(120)
+	var getArrowStyle = __webpack_require__(123)
 
 	function emptyFn(){}
 
@@ -9919,7 +9952,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var React        = __webpack_require__(1)
 	var assign       = __webpack_require__(15)
-	var MenuItemCell = __webpack_require__(61)
+	var MenuItemCell = __webpack_require__(62)
 
 	module.exports = function(props, column) {
 	    var style = assign({}, props.defaultCellStyle, props.cellStyle)
@@ -9929,6 +9962,135 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 101 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports.read = function(buffer, offset, isLE, mLen, nBytes) {
+	  var e, m,
+	      eLen = nBytes * 8 - mLen - 1,
+	      eMax = (1 << eLen) - 1,
+	      eBias = eMax >> 1,
+	      nBits = -7,
+	      i = isLE ? (nBytes - 1) : 0,
+	      d = isLE ? -1 : 1,
+	      s = buffer[offset + i];
+
+	  i += d;
+
+	  e = s & ((1 << (-nBits)) - 1);
+	  s >>= (-nBits);
+	  nBits += eLen;
+	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+	  m = e & ((1 << (-nBits)) - 1);
+	  e >>= (-nBits);
+	  nBits += mLen;
+	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+	  if (e === 0) {
+	    e = 1 - eBias;
+	  } else if (e === eMax) {
+	    return m ? NaN : ((s ? -1 : 1) * Infinity);
+	  } else {
+	    m = m + Math.pow(2, mLen);
+	    e = e - eBias;
+	  }
+	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+	};
+
+	exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+	  var e, m, c,
+	      eLen = nBytes * 8 - mLen - 1,
+	      eMax = (1 << eLen) - 1,
+	      eBias = eMax >> 1,
+	      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+	      i = isLE ? 0 : (nBytes - 1),
+	      d = isLE ? 1 : -1,
+	      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+	  value = Math.abs(value);
+
+	  if (isNaN(value) || value === Infinity) {
+	    m = isNaN(value) ? 1 : 0;
+	    e = eMax;
+	  } else {
+	    e = Math.floor(Math.log(value) / Math.LN2);
+	    if (value * (c = Math.pow(2, -e)) < 1) {
+	      e--;
+	      c *= 2;
+	    }
+	    if (e + eBias >= 1) {
+	      value += rt / c;
+	    } else {
+	      value += rt * Math.pow(2, 1 - eBias);
+	    }
+	    if (value * c >= 2) {
+	      e++;
+	      c /= 2;
+	    }
+
+	    if (e + eBias >= eMax) {
+	      m = 0;
+	      e = eMax;
+	    } else if (e + eBias >= 1) {
+	      m = (value * c - 1) * Math.pow(2, mLen);
+	      e = e + eBias;
+	    } else {
+	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+	      e = 0;
+	    }
+	  }
+
+	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+
+	  e = (e << mLen) | m;
+	  eLen += mLen;
+	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+
+	  buffer[offset + i - d] |= s * 128;
+	};
+
+
+/***/ },
+/* 102 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/**
+	 * isArray
+	 */
+
+	var isArray = Array.isArray;
+
+	/**
+	 * toString
+	 */
+
+	var str = Object.prototype.toString;
+
+	/**
+	 * Whether or not the given `val`
+	 * is an array.
+	 *
+	 * example:
+	 *
+	 *        isArray([]);
+	 *        // > true
+	 *        isArray(arguments);
+	 *        // > false
+	 *        isArray('');
+	 *        // > false
+	 *
+	 * @param {mixed} val
+	 * @return {bool}
+	 */
+
+	module.exports = isArray || function (val) {
+	  return !! val && '[object Array]' == str.call(val);
+	};
+
+
+/***/ },
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	    var setImmediate = function(fn){
@@ -10008,7 +10170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var SLICE = Array.prototype.slice
 
-	    var curry = __webpack_require__(107),
+	    var curry = __webpack_require__(111),
 
 	        findFn = function(fn, target, onFound){
 	            // if (typeof target.find == 'function'){
@@ -10079,19 +10241,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *
 	         * @return the result of the first function in the enumeration
 	         */
-	        compose = __webpack_require__(108),
+	        compose = __webpack_require__(112),
 
-	        chain = __webpack_require__(109),
+	        chain = __webpack_require__(113),
 
-	        once = __webpack_require__(110),
+	        once = __webpack_require__(114),
 
-	        bindArgsArray = __webpack_require__(111),
+	        bindArgsArray = __webpack_require__(115),
 
-	        bindArgs = __webpack_require__(112),
+	        bindArgs = __webpack_require__(116),
 
-	        lockArgsArray = __webpack_require__(113),
+	        lockArgsArray = __webpack_require__(117),
 
-	        lockArgs = __webpack_require__(114),
+	        lockArgs = __webpack_require__(118),
 
 	        skipArgs = function(fn, count){
 	            return function(){
@@ -10449,11 +10611,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = {
 
-	    map: __webpack_require__(115),
+	    map: __webpack_require__(119),
 
-	    dot: __webpack_require__(116),
+	    dot: __webpack_require__(120),
 
-	    maxArgs: __webpack_require__(117),
+	    maxArgs: __webpack_require__(121),
 
 	    /**
 	     * @method compose
@@ -10572,17 +10734,109 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    findIndex: findIndex,
 
-	    newify: __webpack_require__(118)
+	    newify: __webpack_require__(122)
 	}
 
 /***/ },
-/* 102 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(119)
+	module.exports = __webpack_require__(110)
 
 /***/ },
-/* 103 */
+/* 105 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+
+	process.nextTick = (function () {
+	    var canSetImmediate = typeof window !== 'undefined'
+	    && window.setImmediate;
+	    var canMutationObserver = typeof window !== 'undefined'
+	    && window.MutationObserver;
+	    var canPost = typeof window !== 'undefined'
+	    && window.postMessage && window.addEventListener
+	    ;
+
+	    if (canSetImmediate) {
+	        return function (f) { return window.setImmediate(f) };
+	    }
+
+	    var queue = [];
+
+	    if (canMutationObserver) {
+	        var hiddenDiv = document.createElement("div");
+	        var observer = new MutationObserver(function () {
+	            var queueList = queue.slice();
+	            queue.length = 0;
+	            queueList.forEach(function (fn) {
+	                fn();
+	            });
+	        });
+
+	        observer.observe(hiddenDiv, { attributes: true });
+
+	        return function nextTick(fn) {
+	            if (!queue.length) {
+	                hiddenDiv.setAttribute('yes', 'no');
+	            }
+	            queue.push(fn);
+	        };
+	    }
+
+	    if (canPost) {
+	        window.addEventListener('message', function (ev) {
+	            var source = ev.source;
+	            if ((source === window || source === null) && ev.data === 'process-tick') {
+	                ev.stopPropagation();
+	                if (queue.length > 0) {
+	                    var fn = queue.shift();
+	                    fn();
+	                }
+	            }
+	        }, true);
+
+	        return function nextTick(fn) {
+	            queue.push(fn);
+	            window.postMessage('process-tick', '*');
+	        };
+	    }
+
+	    return function nextTick(fn) {
+	        setTimeout(fn, 0);
+	    };
+	})();
+
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	// TODO(shtylman)
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+
+
+/***/ },
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -10708,7 +10962,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 107 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var curry   = __webpack_require__(124)
+	var matches
+
+	module.exports = curry(function(selector, node){
+
+		matches = matches || __webpack_require__(125)
+
+	    while (node = node.parentElement){
+	        if (matches.call(node, selector)){
+	            return node
+	        }
+	    }
+	})
+
+/***/ },
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10784,33 +11058,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 105 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var curry   = __webpack_require__(121)
-	var matches
-
-	module.exports = curry(function(selector, node){
-
-		matches = matches || __webpack_require__(122)
-
-	    while (node = node.parentElement){
-	        if (matches.call(node, selector)){
-	            return node
-	        }
-	    }
-	})
-
-/***/ },
-/* 106 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Region = __webpack_require__(53)
-	var getConstrainRegion = __webpack_require__(78)
+	var Region = __webpack_require__(54)
+	var getConstrainRegion = __webpack_require__(80)
 
 	module.exports = function(props, subMenuRegion, targetAlignRegion, constrainTo){
 	    var constrainRegion = getConstrainRegion.call(this, constrainTo)
@@ -10842,7 +11096,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 107 */
+/* 110 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+
+	module.exports = {
+	    'numeric'  : __webpack_require__(126),
+	    'number'   : __webpack_require__(127),
+	    'int'      : __webpack_require__(128),
+	    'float'    : __webpack_require__(129),
+	    'string'   : __webpack_require__(130),
+	    'function' : __webpack_require__(131),
+	    'object'   : __webpack_require__(132),
+	    'arguments': __webpack_require__(133),
+	    'boolean'  : __webpack_require__(134),
+	    'date'     : __webpack_require__(135),
+	    'regexp'   : __webpack_require__(136),
+	    'array'    : __webpack_require__(137)
+	}
+
+/***/ },
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -10880,7 +11155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = curry
 
 /***/ },
-/* 108 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -10913,7 +11188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 109 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -10938,7 +11213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = chain
 
 /***/ },
-/* 110 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use once'
@@ -10962,7 +11237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = once
 
 /***/ },
-/* 111 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -10982,20 +11257,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 112 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	var SLICE = Array.prototype.slice
-	var bindArgsArray = __webpack_require__(111)
+	var bindArgsArray = __webpack_require__(115)
 
 	module.exports = function(fn){
 	    return bindArgsArray(fn, SLICE.call(arguments,1))
 	}
 
 /***/ },
-/* 113 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11014,25 +11289,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 114 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	var SLICE = Array.prototype.slice
-	var lockArgsArray = __webpack_require__(113)
+	var lockArgsArray = __webpack_require__(117)
 
 	module.exports = function(fn){
 	    return lockArgsArray(fn, SLICE.call(arguments, 1))
 	}
 
 /***/ },
-/* 115 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var curry = __webpack_require__(107)
+	var curry = __webpack_require__(111)
 
 	module.exports = curry(function(fn, value){
 	    return value != undefined && typeof value.map?
@@ -11041,25 +11316,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 116 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var curry = __webpack_require__(107)
+	var curry = __webpack_require__(111)
 
 	module.exports = curry(function(prop, value){
 	    return value != undefined? value[prop]: undefined
 	})
 
 /***/ },
-/* 117 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	var SLICE = Array.prototype.slice
-	var curry = __webpack_require__(107)
+	var curry = __webpack_require__(111)
 
 	module.exports = function(fn, count){
 	    return function(){
@@ -11068,39 +11343,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 118 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var newify = __webpack_require__(58)
-	var curry  = __webpack_require__(107)
+	var newify = __webpack_require__(59)
+	var curry  = __webpack_require__(111)
 
 	module.exports = curry(newify)
 
 /***/ },
-/* 119 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict'
-
-	module.exports = {
-	    'numeric'  : __webpack_require__(123),
-	    'number'   : __webpack_require__(124),
-	    'int'      : __webpack_require__(125),
-	    'float'    : __webpack_require__(126),
-	    'string'   : __webpack_require__(127),
-	    'function' : __webpack_require__(128),
-	    'object'   : __webpack_require__(129),
-	    'arguments': __webpack_require__(130),
-	    'boolean'  : __webpack_require__(131),
-	    'date'     : __webpack_require__(132),
-	    'regexp'   : __webpack_require__(133),
-	    'array'    : __webpack_require__(134)
-	}
-
-/***/ },
-/* 120 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11151,7 +11405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 121 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11189,7 +11443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = curry
 
 /***/ },
-/* 122 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11206,7 +11460,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11216,7 +11470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 124 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11226,31 +11480,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 125 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(124)
+	var number = __webpack_require__(127)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 126 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
-	var number = __webpack_require__(124)
+	var number = __webpack_require__(127)
 
 	module.exports = function(value){
 	    return number(value) && (value === parseFloat(value, 10)) && !(value === parseInt(value, 10))
 	}
 
 /***/ },
-/* 127 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11260,7 +11514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 128 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11272,7 +11526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 129 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11284,7 +11538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 130 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11296,7 +11550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 131 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11306,7 +11560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 132 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11318,7 +11572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 133 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -11330,7 +11584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 134 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'

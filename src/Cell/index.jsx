@@ -48,7 +48,7 @@ module.exports = React.createClass({
 
         var textCellProps = {
             className: 'z-text',
-            style    : {padding: props.textPadding}
+            style    : {padding: props.textPadding, margin: 'auto 0'}
         }
 
         var textCell = props.renderCell?
@@ -78,11 +78,15 @@ module.exports = React.createClass({
             EVENT_NAMES.onMouseUp
         ]))
 
+        // var c = <div className='z-inner' style={props.innerStyle}>
+        //             {textCell}
+        //         </div>
+
+        var c = textCell
+
         return (
             <div {...cellProps}>
-                <div className='z-inner' style={props.innerStyle}>
-                    {textCell}
-                </div>
+                {c}
                 {props.children}
             </div>
         )
