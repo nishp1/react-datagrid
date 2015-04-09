@@ -102,6 +102,7 @@
 
     .z-column-header
         position relative
+        font-weight $datagrid-column-header-font-weight
 
         .z-inner
 
@@ -113,11 +114,10 @@
 
             height 100%
 
-            cursor $datagrid-header-cursor
-            font-weight $datagrid-column-header-font-weight
 
-            .z-text
-                @extend .u-ellipsis
+        .z-text
+            cursor $datagrid-header-cursor
+            @extend .u-ellipsis
 
         &.z-sortable
             .z-inner
