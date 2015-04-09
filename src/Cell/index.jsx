@@ -78,11 +78,10 @@ module.exports = React.createClass({
             EVENT_NAMES.onMouseUp
         ]))
 
-        // var c = <div className='z-inner' style={props.innerStyle}>
-        //             {textCell}
-        //         </div>
-
-        var c = textCell
+        var c = <div className='z-inner' style={props.innerStyle}>
+                    {textCell}
+                </div>
+        // var c = textCell
 
         return (
             <div {...cellProps}>
