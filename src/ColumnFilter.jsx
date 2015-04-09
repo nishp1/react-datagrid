@@ -122,7 +122,8 @@ module.exports = {
     filterMenuFactory: function(props){
 
         var overStyle = {
-            background: 'white'
+            background: 'white',
+            color: 'auto'
         }
 
         var column  = props.column
