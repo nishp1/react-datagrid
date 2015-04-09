@@ -36,41 +36,43 @@
                 border-left $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
 
 
-            .z-show-menu
-                color $datagrid-column-sort-icon-color
-                padding-top 3px
+            // .z-show-menu
+            //     // color $datagrid-column-sort-icon-color
+            //     // padding-top 3px
+            //     align-items center
+            //     padding-bottom 6px
             .z-show-filter
-                &::after
-                    content ' '
-                    display block
-                    position absolute
-                    // margin auto
-                    top 50%
-                    margin-top - $datagrid-column-sort-icon-width
-                    margin-left - $datagrid-column-sort-icon-width
-                    left 50%
-                    // right 0px
-                    // bottom 0px
-                    width 0px
-                    height 0px
-                    border-left $datagrid-column-sort-icon-width solid transparent
-                    border-right $datagrid-column-sort-icon-width solid transparent
-                    border-top $datagrid-column-sort-icon-height solid $datagrid-column-sort-icon-color
+                // &::after
+                //     content ' '
+                //     display block
+                //     position absolute
+                //     // margin auto
+                //     top 50%
+                //     margin-top - $datagrid-column-sort-icon-width
+                //     margin-left - $datagrid-column-sort-icon-width
+                //     left 50%
+                //     // right 0px
+                //     // bottom 0px
+                //     // width 0px
+                //     // height 0px
+                //     // border-left $datagrid-column-sort-icon-width solid transparent
+                //     // border-right $datagrid-column-sort-icon-width solid transparent
+                //     // border-top $datagrid-column-sort-icon-height solid $datagrid-column-sort-icon-color
 
             .z-show-filter
                 right $datagrid-column-menu-icon-width
                 background $datagrid-column-menu-icon-hover-background
 
-                &::before
-                    content ' '
-                    height 8px
-                    position absolute
-                    top 50%
-                    margin-left -1px
-                    left 50%
-                    margin-top -$datagrid-column-menu-icon-width
-                    display block
-                    border-left 3px solid $datagrid-column-sort-icon-color
+                // &::before
+                //     content ' '
+                //     height 8px
+                //     position absolute
+                //     top 50%
+                //     margin-left -1px
+                //     left 50%
+                //     margin-top -$datagrid-column-menu-icon-width
+                //     display block
+                //     border-left 3px solid $datagrid-column-sort-icon-color
 
             &.z-filterable .z-show-filter.z-active
             &.z-filterable .z-show-filter:hover
@@ -82,6 +84,7 @@
             &.z-active.z-filterable .z-show-filter
 
             &.z-over .z-show-menu
+                display block
             &.z-over.z-filterable .z-show-filter
                 display block
             &.z-filtered

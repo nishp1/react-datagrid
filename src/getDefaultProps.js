@@ -5,6 +5,9 @@ module.exports = function(){
         loading: false,
         columnMinWidth: 50,
         cellPadding: 5,
+        headerPadding: '10px 5px',
+        filterIconColor  : '#6EB8F1',
+        menuIconColor    : '#6EB8F1',
         scrollbarSize: 20,
 
         scrollBy: undefined,
@@ -19,6 +22,7 @@ module.exports = function(){
         sortable: true,
         filterable: true,
         resizableColumns: true,
+        reorderColumns: true,
 
         showCellBordersCls: 'z-cell-borders',
         showCellBorders: false,

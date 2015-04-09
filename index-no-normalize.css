@@ -523,38 +523,9 @@ html.u-app body * {
   height: 100%;
   border-left: 1px solid #a8a8a8;
 }
-.react-datagrid.z-with-column-menu .z-column-header .z-show-menu {
-  color: #6eb8f1;
-  padding-top: 3px;
-}
-.react-datagrid.z-with-column-menu .z-column-header .z-show-filter::after {
-  content: ' ';
-  display: block;
-  position: absolute;
-  top: 50%;
-  margin-top: -5px;
-  margin-left: -5px;
-  left: 50%;
-  width: 0px;
-  height: 0px;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 8px solid #6eb8f1;
-}
 .react-datagrid.z-with-column-menu .z-column-header .z-show-filter {
   right: 15px;
   background: #fff;
-}
-.react-datagrid.z-with-column-menu .z-column-header .z-show-filter::before {
-  content: ' ';
-  height: 8px;
-  position: absolute;
-  top: 50%;
-  margin-left: -1px;
-  left: 50%;
-  margin-top: -$datagrid-column-menu-icon-width;
-  display: block;
-  border-left: 3px solid #6eb8f1;
 }
 .react-datagrid.z-with-column-menu .z-column-header.z-filterable .z-show-filter.z-active,
 .react-datagrid.z-with-column-menu .z-column-header.z-filterable .z-show-filter:hover,
@@ -564,7 +535,9 @@ html.u-app body * {
 }
 .react-datagrid.z-with-column-menu .z-column-header.z-active .z-show-menu,
 .react-datagrid.z-with-column-menu .z-column-header.z-active.z-filterable .z-show-filter,
-.react-datagrid.z-with-column-menu .z-column-header.z-over .z-show-menu,
+.react-datagrid.z-with-column-menu .z-column-header.z-over .z-show-menu {
+  display: block;
+}
 .react-datagrid.z-with-column-menu .z-column-header.z-over.z-filterable .z-show-filter {
   display: block;
 }

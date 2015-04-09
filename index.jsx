@@ -187,6 +187,10 @@ var App = React.createClass({
             <input value={ROW_HEIGHT} onChange={this.handleChange} />
             <input value={LEN} onChange={this.handleDataLenChange} />
 
+            <svg style={{marginTop: 300}} height="210" width="500" viewBox="0 0 4 6">
+              <polygon points="0,0 2,2 2,4 4,4 4,2, 6,0 " style={{fill:'lime',stroke:'purple',strokeWidth:1}} />
+            </svg>
+
             <DataGrid
             onFilter={filter}
                 liveFilter={true}
@@ -205,9 +209,14 @@ var App = React.createClass({
                 idProperty='id'
                 style={{border: '1px solid gray', height: 700}}
                 showCellBorders={true}
+                xreorderColumns={false}
                 rowHeight={ROW_HEIGHT}
                 virtualRendering={true}
                 data={data} columns={columns}/>
+
+                <svg style={{marginTop: 300}} height="210" width="500" viewBox="0 0 4 6">
+                  <polygon points="0,0 2,2 2,4 4,4 4,2, 6,0 " style={{fill:'lime',stroke:'purple',strokeWidth:1}} />
+                </svg>
         </div>
 
     }

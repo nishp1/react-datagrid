@@ -261,8 +261,6 @@ module.exports = React.createClass({
     },
 
     handleWheel: function(event){
-        event.stopPropagation()
-        event.preventDefault()
 
         var delta = event.deltaY
 
@@ -270,7 +268,11 @@ module.exports = React.createClass({
             delta = signum(delta) * 40
         }
 
+        var vertical = true
+
         if (event.shiftKey){
+
+            vertical = false
 
             if (!delta){
                 delta = event.deltaX
@@ -282,6 +284,21 @@ module.exports = React.createClass({
         }
 
         this.addMouseWheelDelta(delta)
+
+        if (this.props.virtualRendering && vertical){
+            if (delta < 0 && this.props.scrollTop == 0){
+                //if scrolling to upwards and already there
+                return
+            }
+
+            if (delta > 0 && this.props.endIndex >= this.props.data.length - 1){
+                //if scrolling downwards and already there
+                return
+            }
+
+            event.stopPropagation()
+            event.preventDefault()
+        }
     },
 
     getTableScrollHeight: function(){
