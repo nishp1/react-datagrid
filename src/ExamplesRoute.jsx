@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react'
+import normalize from 'react-style-normalizer'
 import menu from './examplesMenu'
 import { map as examples} from './examples'
 import { RouteHandler } from 'react-router'
@@ -18,9 +19,9 @@ const Examples = class extends React.Component {
 			content = <Cmp />
 		}
 
-		return <div style={{display: 'flex', marginBottom: 10, marginRight: 10}}>
+		return <div className="flexbox" style={normalize({display: 'flex', marginBottom: 10, marginRight: 10})}>
 			<div style={{paddingTop: 20, paddingLeft: 20}}>{menu()}</div>
-			<div style={{flex: 1}}>
+			<div style={normalize({flex: 1})}>
 				{content}
 			</div>
 

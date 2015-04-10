@@ -1697,6 +1697,14 @@ img {
   padding: 10px 20px;
   color: #fff;
 }
+.flexbox {
+  display: -webkit-flex;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
 .centered {
   display: -webkit-box;
   display: -moz-box;
