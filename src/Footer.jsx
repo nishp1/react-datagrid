@@ -6,13 +6,15 @@ import Centered from './centered'
 
 const logoURL = require('../resources/images/logo-simplu-w.png')
 
-export default class extends React.Component {
+const Footer = class extends React.Component {
 
 	render(){
 
+		var center = !this.context.router.isActive('examples')
 		let props = this.prepareProps(this.props)
+
 		return <div {...props}>
-			<Centered style>
+			<Centered style={{width: center? null: 'auto'}}>
 				<div>
 					<img src={logoURL} style={{width: 30, marginRight: 8}} />
 					<p><a style={{textDecoration: 'none', color: 'white'}} href="https://github.com/zippyui" target="_blank">© Zippy Technologies</a></p>
@@ -38,3 +40,9 @@ export default class extends React.Component {
 		return className
 	}
 }
+
+Footer.contextTypes = {
+	router: React.PropTypes.func
+}
+
+export default Footer

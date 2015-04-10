@@ -13,9 +13,12 @@ const Header = class extends React.Component {
 	displayName : 'Header'
 
 	render() {
+
+		var center = !this.context.router.isActive('examples')
+
 		return <div {...this.prepareProps(this.props)}>
 			<Centered style={{
-				xwidth: 'auto', display: 'flex', flexFlow: 'row', alignItems: 'center'
+				width: center? null: 'auto', display: 'flex', flexFlow: 'row', alignItems: 'center'
 			}}>
 				<div>
 					<Link to="/" style={{textDecoration: 'none', color: 'white'}}>
@@ -69,5 +72,8 @@ Header.defaultProps = {
 			boxShadow: '0 0 5px rgba(0, 0, 0, 0.5)'
 		}
 	}
+Header.contextTypes = {
+	router: React.PropTypes.func
+}
 
 export default Header
