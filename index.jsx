@@ -48,7 +48,7 @@ var columns = [
     },
     {
         name: 'id',
-        minWidth: 400,
+        minWidth: 200,
         filterable: false,
         type: 'number'
     },
@@ -109,10 +109,11 @@ var App = React.createClass({
     },
 
     onColumnResize: function(firstCol, firstSize, secondCol, secondSize){
-        firstCol.width = firstSize
+        debugger
+        firstCol.width = firstCol.minWidth = firstSize
 
         if (secondCol){
-            secondCol.width = secondSize
+            secondCol.width = secondCol.minWidth = secondSize
         }
 
         this.setState({})
@@ -205,14 +206,14 @@ var App = React.createClass({
                 onColumnOrderChange={this.onColumnOrderChange}
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
-                groupBy={groupBy}
+                xgroupBy={groupBy}
                 rowStyle={rowStyle}
                 rowClassName={blue}
                 xrowFactory={f}
                 onSortChange={this.handleSortChange}
                 xscrollBy={5}
                 idProperty='id'
-                style={{border: '1px solid gray', height: 900, marginLeft: 500, marginRight: 500, minWidth: 1000}}
+                style={{border: '1px solid gray', height: 900}}
                 showCellBorders={true}
                 xreorderColumns={false}
                 rowHeight={ROW_HEIGHT}
