@@ -451,6 +451,7 @@ module.exports = React.createClass({
         props.empty = !props.data.length
         props.rowHeight = this.prepareRowHeight(props)
         props.virtualRendering = this.isVirtualRendering(props)
+        props.filterable = this.prepareFilterable(props)
 
         this.prepareClassName(props)
         props.style = this.prepareStyle(props)
@@ -459,6 +460,14 @@ module.exports = React.createClass({
         // this.groupData(props)
 
         return props
+    },
+
+    prepareFilterable: function(props) {
+        if (props.filterable === false){
+            return false
+        }
+
+        return props.filterable || !!props.onFilter
     },
 
     isVirtualRendering: function(props){

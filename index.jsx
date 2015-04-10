@@ -109,7 +109,6 @@ var App = React.createClass({
     },
 
     onColumnResize: function(firstCol, firstSize, secondCol, secondSize){
-        debugger
         firstCol.width = firstCol.minWidth = firstSize
 
         if (secondCol){
@@ -198,7 +197,7 @@ var App = React.createClass({
             <input value={LEN} onChange={this.handleDataLenChange} />
 
             <DataGrid
-            onFilter={filter}
+            xonFilter={filter}
                 liveFilter={true}
                 defaultSelected={selected}
                 xonSelectionChange={onSelectionChange}
@@ -218,7 +217,7 @@ var App = React.createClass({
                 xreorderColumns={false}
                 rowHeight={ROW_HEIGHT}
                 virtualRendering={true}
-                filterable={false}
+                xfilterable={false}
                 reorderColumns={false}
                 sortable={false}
                 emptyText='testing'
