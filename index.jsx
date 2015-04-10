@@ -42,7 +42,8 @@ var columns = [
     {
         name: 'country',
         style: {
-            color: 'red'
+            color: 'red',
+            textAlign: 'right'
         }
     },
     {
@@ -131,7 +132,7 @@ var App = React.createClass({
         function rowStyle(data, props){
             var style = {}
             if (props.index % 4 == 0){
-                style.color = 'red'
+                style.color = 'blue'
                 // props.selected = true
             }
             return style
@@ -205,7 +206,7 @@ var App = React.createClass({
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
                 xgroupBy={groupBy}
-                xrowStyle={rowStyle}
+                rowStyle={rowStyle}
                 rowClassName={blue}
                 xrowFactory={f}
                 onSortChange={this.handleSortChange}
