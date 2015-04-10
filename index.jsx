@@ -40,7 +40,10 @@ var gen = (function(){
 
 var columns = [
     {
-        name: 'country'
+        name: 'country',
+        style: {
+            color: 'red'
+        }
     },
     {
         name: 'id',
@@ -202,7 +205,7 @@ var App = React.createClass({
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
                 xgroupBy={groupBy}
-                rowStyle={rowStyle}
+                xrowStyle={rowStyle}
                 rowClassName={blue}
                 xrowFactory={f}
                 onSortChange={this.handleSortChange}
@@ -217,9 +220,7 @@ var App = React.createClass({
                 reorderColumns={false}
                 sortable={false}
                 emptyText='testing'
-                loading={true}
-
-                xdata={data} columns={columns}/>
+                data={data} columns={columns}/>
 
         </div>
 

@@ -69,7 +69,7 @@ module.exports = React.createClass({
 
         var cellProps = {
             className: className,
-            style    : normalize(assign({}, props.style, props.header && column? column.style: null))
+            style    : normalize(assign({}, props.style, column.sizeStyle))
         }
 
         copyProps(cellProps, props, [
