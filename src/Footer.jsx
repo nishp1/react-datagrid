@@ -4,6 +4,8 @@ import React from 'react'
 import assign from 'object-assign'
 import Centered from './centered'
 
+const logoURL = require('../resources/images/logo-simplu-w.png')
+
 export default class extends React.Component {
 
 	render(){
@@ -12,7 +14,7 @@ export default class extends React.Component {
 		return <div {...props}>
 			<Centered style>
 				<div>
-					<img src="../resources/svg/logo-simplu-w.svg" style={{width: 30, marginRight: 8}} />
+					<img src={logoURL} style={{width: 30, marginRight: 8}} />
 					<p><a style={{textDecoration: 'none', color: 'white'}} href="https://github.com/zippyui" target="_blank">© Zippy Technologies</a></p>
 				</div>
 			</Centered>
