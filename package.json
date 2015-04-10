@@ -9,7 +9,7 @@
     "build-css": "./node_modules/.bin/webpack --progress --colors --config build-css.config.js",
     "build-script": "./node_modules/.bin/webpack --progress --colors --config build-script.config.js",
     "build-script-min": "./node_modules/.bin/webpack --progress --colors  --optimize-minimize --optimize-occurence-order --optimize-dedupe --config build-script-min.config.js",
-    "build": "npm run build-script && npm run build-script-min && npm run build-css",
+    "build": "npm run build-script && npm run build-css",
     "dev": "./node_modules/.bin/webpack-dev-server --progress --colors --port 8090",
     "lib": "./node_modules/.bin/gulp",
     "serve": "./node_modules/.bin/http-server"
