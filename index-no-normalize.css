@@ -158,7 +158,8 @@
 }
 .u-flex-flow-column,
 .u-flex-column,
-.react-datagrid {
+.react-datagrid,
+.react-datagrid.z-empty .z-table-wrapper {
   flex-direction: column;
   -webkit-flex-flow: column;
   -moz-flex-flow: column;
@@ -177,7 +178,8 @@
   display: flex;
 }
 .u-flex-column,
-.react-datagrid {
+.react-datagrid,
+.react-datagrid.z-empty .z-table-wrapper {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -500,6 +502,18 @@ html.u-app body * {
 }
 .react-datagrid.z-loading .z-mask-wrapper {
   display: block;
+}
+.react-datagrid.z-empty .z-table-wrapper {
+  justify-content: center;
+  -webkit-justify-content: center;
+  flex-pack: center;
+  -ms-flex-pack: center;
+  align-items: center;
+}
+.react-datagrid.z-empty .z-table-wrapper .z-empty-text {
+  display: inline-block;
+  font-style: italic;
+  color: #808080;
 }
 .react-datagrid .z-header-menu-column {
   background: #fff;
