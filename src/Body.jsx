@@ -2,6 +2,7 @@
 
 import React from 'react'
 import assign from 'object-assign'
+import normalize from 'react-style-normalizer'
 import { Link, RouteHandler } from 'react-router'
 
 const Body = class extends React.Component {
@@ -11,7 +12,7 @@ const Body = class extends React.Component {
 		let props = this.prepareProps(this.props)
 
 		return <div {...props} >
-			<div style={{flex: 1}}>
+			<div style={normalize({flex: '1 1 auto'})}>
 				<RouteHandler />
 			</div>
 		</div>
@@ -41,11 +42,11 @@ const Body = class extends React.Component {
 }
 
 Body.defaultProps = {
-	defaultStyle: {
+	defaultStyle: normalize({
 		flex: 1,
 		display: 'flex',
 		flexFlow: 'row'
-	}
+	})
 }
 
 export default Body

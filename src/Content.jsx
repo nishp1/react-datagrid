@@ -2,6 +2,7 @@
 
 import React from 'react'
 import assign from 'object-assign'
+import normalize from 'react-style-normalizer'
 import Centered from './centered'
 import ReactButton from 'react-button'
 import SvgIcon from './utils/SvgIcon'
@@ -15,7 +16,7 @@ function toStyle(...args){
 		assign(target, a)
 	})
 
-	return target
+	return normalize(target)
 }
 
 let gridLogo  = require('../resources/svg/grid-logo.svg')
@@ -35,13 +36,13 @@ let theme = {
 	}
 }
 
-let box = {
+let box = normalize({
 	flex: 1,
 	border: '2px solid ' + TURQUOISE,
 	marginLeft: 20,
 	padding: 20,
 	color: GRAY
-}
+})
 
 class Button extends React.Component {
 	render(){
@@ -80,7 +81,7 @@ const Content = class extends React.Component {
 
 		return <div className="content">
 
-				<div style={{padding: STRIP_PADDING, display: 'flex', flexFlow: 'column', justifyContent: 'center', color: 'white', background: 'url("' + backgroundURL + '")'}}>
+				<div style={normalize({padding: STRIP_PADDING, display: 'flex', flexFlow: 'column', justifyContent: 'center', color: 'white', background: 'url("' + backgroundURL + '")'})}>
 					<Centered style={{display: 'block'}}>
 						<div>
 							<h2 style={{marginTop: 0}}>{'A carefully crafted DataGrid for React'}</h2>
