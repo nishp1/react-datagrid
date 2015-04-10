@@ -67,7 +67,6 @@
     "react-style-normalizer": "^1.2.0",
     "region": "^2.1.2",
     "region-align": "^2.1.2",
-    "select-parent": "^1.0.1",
     "ustring": "^1.4.1"
   },
   "author": "ZippyUI <contact@zippyui.com>",
