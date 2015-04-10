@@ -50,6 +50,7 @@ module.exports = React.createClass({
         var index     = props.index
         var column    = columns? columns[index]: null
         var className = props.className || ''
+        var textAlign = column && column.textAlign
         var text      = props.renderText?
                             props.renderText(props.text, column, props.rowIndex):
                             props.text
@@ -70,6 +71,10 @@ module.exports = React.createClass({
             className += ' z-last'
         }
 
+        if (textAlign){
+            className += ' z-align-' + textAlign
+        }
+
         className += ' ' + props.defaultClassName
 
         var cellProps = {
@@ -88,13 +93,14 @@ module.exports = React.createClass({
 
         var innerStyle = props.innerStyle
 
-        if (column && column.textAlign){
+        if (textAlign){
             innerStyle = assign({}, innerStyle, {justifyContent: column.style.justifyContent || TEXT_ALIGN_2_JUSTIFY[column.textAlign]})
         }
 
         var c = <div className='z-inner' style={innerStyle}>
                     {textCell}
                 </div>
+
         // var c = textCell
 
         return (

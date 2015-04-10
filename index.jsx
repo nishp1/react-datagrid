@@ -48,22 +48,22 @@ var columns = [
     },
     {
         name: 'id',
-        width: 200,
+        minWidth: 400,
         filterable: false,
         type: 'number'
     },
     {
         name: 'grade',
         title: <span>a grade</span>,
-        width: 200
+        minWidth: 400
     },
     {
         name: 'email',
-        width: 200
+        minWidth: 400
     },
     {
         name: 'lastName',
-        width: 200
+        minWidth: 400
     }
 ]
 
@@ -212,7 +212,7 @@ var App = React.createClass({
                 onSortChange={this.handleSortChange}
                 xscrollBy={5}
                 idProperty='id'
-                style={{border: '1px solid gray', height: 900}}
+                style={{border: '1px solid gray', height: 900, marginLeft: 500, marginRight: 500, minWidth: 1000}}
                 showCellBorders={true}
                 xreorderColumns={false}
                 rowHeight={ROW_HEIGHT}
@@ -221,6 +221,7 @@ var App = React.createClass({
                 reorderColumns={false}
                 sortable={false}
                 emptyText='testing'
+                cellPadding={'0px 5px'}
                 data={data} columns={columns}/>
 
         </div>
