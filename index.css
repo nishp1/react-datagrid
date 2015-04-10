@@ -1697,6 +1697,28 @@ img {
   padding: 10px 20px;
   color: #fff;
 }
+.flex-column {
+  -webkit-flex-flow: column;
+  flex-direction: column;
+  -webkit-flex-flow: column;
+  -moz-flex-flow: column;
+  -ms-flex-flow: column;
+  -o-flex-flow: column;
+  flex-flow: column;
+  flex-flow: column;
+  box-orient: vertical;
+}
+.flex-row {
+  -webkit-flex-flow: row;
+  flex-direction: row;
+  -webkit-flex-flow: row;
+  -moz-flex-flow: row;
+  -ms-flex-flow: row;
+  -o-flex-flow: row;
+  flex-flow: row;
+  flex-flow: row;
+  box-orient: horizontal;
+}
 .flexbox {
   display: -webkit-flex;
   display: -webkit-box;

@@ -20,7 +20,7 @@ export default React.createClass({
 	displayName: 'DemoIndex',
 
 	render(){
-		return <div style={{display: 'flex', flexFlow: 'column', minHeight: '100%'}}>
+		return <div className="flexbox flex-column" style={{display: 'flex', flexFlow: 'column', minHeight: '100%'}}>
 			<Header />
 			<Body />
 			<Footer />

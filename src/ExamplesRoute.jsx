@@ -19,7 +19,7 @@ const Examples = class extends React.Component {
 			content = <Cmp />
 		}
 
-		return <div className="flexbox" style={normalize({display: 'flex', marginBottom: 10, marginRight: 10})}>
+		return <div className="flexbox flex-row" style={normalize({display: 'flex', marginBottom: 10, marginRight: 10})}>
 			<div style={{paddingTop: 20, paddingLeft: 20}}>{menu()}</div>
 			<div style={normalize({flex: 1})}>
 				{content}
