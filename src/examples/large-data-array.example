@@ -1,0 +1,41 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+
+var data    = []
+var columns = [
+	{ name: 'index', title: '#', width: 150 },
+	{ name: 'firstName'},
+	{ name: 'lastName' },
+	{ name: 'city', width: 200 },
+	{ name: 'country', width: 200 },
+	{ name: 'email'}
+]
+
+var loading = true
+
+module.exports = React.createClass({
+
+	componentDidMount: function(){
+		fetch('./huge.json') //100.000 records
+			.then(function(response){
+				return response.json()
+			})
+			.then(function(array){
+				data = array
+				loading = false
+				this.setState({})
+			}.bind(this))
+	},
+
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			style={{height: 700}}
+			loading={loading}
+		/>
+	}
+})

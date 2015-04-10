@@ -1,0 +1,33 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data  = require('../data/1500')
+
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName' },
+	{ name: 'lastName'  },
+	{ name: 'email' }
+]
+
+var App = React.createClass({
+	handleColumnOrderChange: function (index, dropIndex){
+		var col = columns[index]
+		columns.splice(index, 1) //delete from index, 1 item
+		columns.splice(dropIndex, 0, col)
+		this.setState({})
+	},
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			onColumnOrderChange={this.handleColumnOrderChange}
+			columns={columns}
+			style={{height: 500}}
+			//reorderColumns is true by default
+		/>
+	}
+})
+
+module.exports = App

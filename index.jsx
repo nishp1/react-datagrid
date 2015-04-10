@@ -2,18 +2,13 @@
 
 require('./index.styl')
 
-var React  = require('react')
-var DataGrid = require('react-datagrid')
+var React  = window.React = require('react')
+var Router = require('react-router')
+var routes = require('./src/routes')
 
-var App = React.createClass({
-    render: function() {
-        return (
-            <div className="App" style={{padding: 10}}>
-                <p>
-                    <h2>Coming soon</h2>
-                </p>
-            </div>
-        )
-    }
-})
-React.render(<App />, document.getElementById('content'))
+
+// Router.run(routes, Router.HistoryLocation, function(Handler){
+Router.run(routes, function(Handler){
+	React.render(<Handler />, document.getElementById('content'))
+});
+

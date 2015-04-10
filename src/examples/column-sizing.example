@@ -1,0 +1,34 @@
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/200')
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName', flex: 2, minWidth: 300 },
+	{ name: 'lastName', flex: 2, minWidth: 300  },
+	{ name: 'email', title: 'Email (minWidth: 200)', flex: 1, minWidth: 200},
+	{ name: 'city', title: 'City (minWidth: 200)', flex: 1, minWidth: 200},
+	{ name: 'street', minWidth: 100},
+	{ name: 'country', minWidth: 100},
+	{ name: 'catchPhrase', minWidth: 400}
+]
+
+var App = React.createClass({
+	onColumnResize: function(firstCol, firstSize, secondCol, secondSize){
+	    firstCol.width = firstCol.minWidth = firstSize
+	    if (secondCol){
+	        secondCol.width = secondCol.minWidth = secondSize
+	    }
+	    this.setState({})
+	},
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			style={{height: 400}}
+			onColumnResize={this.onColumnResize}
+		/>
+	}
+})
+
+module.exports = App

@@ -1,0 +1,24 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/200')
+
+var columns = [
+	{ name: 'index', title: '#', width: 150 },
+	{ name: 'firstName' },
+	{ name: 'country'   },
+	{ name: 'grade'     }
+]
+
+module.exports = React.createClass({
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			groupBy={['country','grade']}
+			style={{height: 400}}
+		/>
+	}
+})

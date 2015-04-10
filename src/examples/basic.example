@@ -1,0 +1,32 @@
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/200') //a data array
+/**
+ * data is an array with 200 items, like:
+ * [
+ * 		{ id: 0, index: 1, firstName: 'John', city: 'London', 'email: jon@gmail.com'},
+ * 		{ id: 1, .... }
+ * ]
+ */
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName' },
+	{ name: 'lastName'  },
+	{ name: 'city' },
+	{ name: 'email' }
+]
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			style={{height: 400}}
+			//if you don't want to show a column menu to show/hide columns, use
+			//withColumnMenu={false}
+		/>
+	}
+})
+
+module.exports = App

@@ -1,0 +1,52 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data1000  = require('../data/1000')
+var data      = [].concat(data1000)
+
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName', flex: 1 },
+	{ name: 'lastName'  },
+	{ name: 'city', flex: 1 },
+	{ name: 'country', flex: 1 },
+	{ name: 'email', width: 200 }
+]
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+				idProperty='id'
+				data={data}
+				columns={columns}
+				style={{height: 400}}
+
+				onFilter={this.handleFilter}
+				liveFilter={true} //to apply the filter while typing
+			/>
+	},
+	handleFilter: function(column, value, allFilterValues){
+		//reset data to original data-array
+	    data = data1000
+
+	    //go over all filters and apply them
+    	Object.keys(allFilterValues).forEach(function(name){
+    		var columnFilter = (allFilterValues[name] + '').toUpperCase()
+
+    		if (columnFilter == ''){
+    			return
+    		}
+
+    		data = data.filter(function(item){
+    		    if ((item[name] + '').toUpperCase().indexOf(columnFilter) === 0){
+    		        return true
+    		    }
+    		})
+    	})
+
+	    this.setState({})
+	}
+})
+
+module.exports = App

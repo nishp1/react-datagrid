@@ -1,8 +1,104 @@
 @import '~normalize.css/normalize.css'
 
+@import '~react-datagrid/style/index.styl'
+@import "~codemirror/lib/codemirror.css"
+@import "~codemirror/theme/solarized.css"
+
+GRAY = #494E4F
+TURQUOISE = #8CC9DD
+
 body
 html
 #content
 	position relative
 	height 100%
 	width 100%
+	margin 0
+	padding 0
+
+body
+	font-family 'Open Sans', Helvetica, Arial, 'lucida grande', tahoma, verdana, arial, sans-serif;
+	*
+		box-sizing border-box
+
+img
+	vertical-align middle
+
+.header
+.footer
+	background GRAY
+	padding 10px 30px
+	color white
+
+.centered
+	display flex
+	flex-flow row
+	align-items center
+	justify-content flex-start
+
+.header
+
+	img
+	p
+		display inline-block
+
+.snippet
+	// .CodeMirror
+	// 	height 600px
+
+	margin-top 20px
+	.react-code-mirror
+		border 1px solid rgb(176, 176, 176)
+
+.body
+	align-items flex-start
+	.example-menu
+		list-style none
+		margin 0px
+		padding 0px
+		padding-right 40px
+
+		a
+			color rgb(65, 131, 196)
+			padding 5px
+			display inline-block
+			text-decoration none
+
+			&:hover
+				text-decoration underline
+
+
+	.react-datagrid
+		width 100%
+		border 1px solid rgb(176, 176, 176)
+
+.logo-fill-white
+	fill GRAY
+.logo-fill-none
+	fill transparent
+.demo-button
+	transition background 0.1s
+	transform translate3d(0px, 0px, 0px)
+.feature-box
+	transition background 0.2s, color 0.2s
+	&:hover
+		background TURQUOISE
+		color white !important
+		box-shadow 0 0 5px rgba(0, 0, 0, 0.5)
+.editor-error
+	margin-top 20px
+	padding 30px
+	border 1px solid rgb(255, 89, 89)
+	background rgb(247, 226, 226);
+
+.repo-link
+	display block
+	.github-logo
+		background white
+		padding 10px
+		border-radius 25px
+		transition all 0.2s
+		margin-right 10px
+	&:hover
+		.github-logo
+			border-radius 10px

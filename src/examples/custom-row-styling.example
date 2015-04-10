@@ -1,0 +1,38 @@
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/200')
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName' },
+	{ name: 'lastName'  },
+	{ name: 'country' }
+]
+
+function rowStyle(data, props){
+	var style = {}
+	if (props.index % 4 == 0){
+		style.color = 'blue'
+	}
+
+	if (data.country == 'USA'){
+		style.background = '#FFD3D3'
+		style.fontWeight = 'bold'
+	}
+
+	return style
+}
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			// rowStyle={{color: 'blue'}} //can be an obj or a function
+			rowStyle={rowStyle}
+			style={{height: 400}}
+		/>
+	}
+})
+
+module.exports = App

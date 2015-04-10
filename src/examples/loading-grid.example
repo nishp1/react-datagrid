@@ -1,0 +1,24 @@
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = []
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName' },
+	{ name: 'email' }
+]
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			style={{height: 200}}
+			loading={true}
+			//if you dont want loadMask over header, specify
+			//loadMaskOverHeader={false}
+		/>
+	}
+})
+
+module.exports = App

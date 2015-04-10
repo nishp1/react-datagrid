@@ -1,0 +1,23 @@
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/200')
+var columns = [
+	{ name: 'index', title: '#', width: 50 },
+	{ name: 'firstName', textAlign: 'center' },
+	{ name: 'city', textAlign: 'right' },
+	{ name: 'email', textAlign: 'right' }
+]
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+			idProperty='id'
+			data={data}
+			columns={columns}
+			style={{height: 400}}
+			rowHeight={50}
+		/>
+	}
+})
+
+module.exports = App

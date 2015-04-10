@@ -1,0 +1,56 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var sorty    = require('sorty')
+
+var data1000  = require('../data/100')
+var data      = [].concat(data1000)
+var SORT_INFO = [ { name: 'country', dir: 'asc'}]
+
+var columns = [
+	{ name: 'index', title: '#', width: 50, type: 'number' },
+	{ name: 'country', flex: 1 },
+	{ name: 'city', flex: 1 },
+	{ name: 'firstName', flex: 2 },
+	{ name: 'lastName', flex: 2  },
+	{ name: 'email', width: 200 }
+]
+
+function sort(arr){
+	return sorty(SORT_INFO, arr)
+}
+//sort data array with the initial sort order
+data = sort(data)
+
+var App = React.createClass({
+	render: function(){
+		return <DataGrid
+				idProperty='id'
+				data={data}
+				columns={columns}
+				style={{height: 400}}
+
+				sortInfo={SORT_INFO}
+				onSortChange={this.handleSortChange}
+
+				onColumnOrderChange={this.handleColumnOrderChange}
+			/>
+	},
+	handleSortChange: function(sortInfo){
+		SORT_INFO = sortInfo
+
+		data = [].concat(data1000)
+		data = sort(data)
+
+		this.setState({})
+	},
+	handleColumnOrderChange: function (index, dropIndex){
+		var col = columns[index]
+		columns.splice(index, 1) //delete from index, 1 item
+		columns.splice(dropIndex, 0, col)
+		this.setState({})
+	}
+})
+
+module.exports = App

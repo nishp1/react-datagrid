@@ -10,6 +10,7 @@
     "build-script": "./node_modules/.bin/webpack --progress --colors --config build-script.config.js",
     "build": "npm run build-script && npm run build-css",
     "dev": "./node_modules/.bin/webpack-dev-server --progress --colors --port 8090",
+    "lib": "./node_modules/.bin/gulp",
     "serve": "./node_modules/.bin/http-server"
   },
   "repository": {
@@ -24,17 +25,33 @@
   "homepage": "https://github.com/zippyui/react-datagrid",
   "dependencies": {
     "normalize.css": "^3.0.3",
+    "object-assign": "^2.0.0",
+    "object-keys": "^1.0.3",
     "react": "^0.13.1",
-    "react-datagrid": "^0.1.1"
+    "react-code-mirror": "^3.0.4",
+    "react-datagrid": "^1.0.0",
+    "react-router": "^0.13.2",
+    "react-style-normalizer": "^1.2.0",
+    "sorty": "^1.2.0",
+    "ustring": "^1.4.1",
+    "whatwg-fetch": "^0.7.0"
   },
   "devDependencies": {
+    "babel-core": "^4.7.16",
+    "babel-loader": "^4.3.0",
     "css-loader": "^0.9.1",
     "extract-text-webpack-plugin": "^0.5.0",
+    "faker": "^2.1.2",
+    "file-loader": "^0.8.1",
     "gulp": "^3.8.11",
+    "gulp-babel": "^5.0.0",
     "gulp-react": "^3.0.1",
     "jsx-loader": "^0.12.2",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.9.0",
     "stylus-loader": "^1.0.0",
+    "svg-loader": "0.0.1",
+    "url-loader": "^0.5.5",
     "webpack": "^1.7.3",
     "webpack-dev-server": "^1.8.0"
   }
