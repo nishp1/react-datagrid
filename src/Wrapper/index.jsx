@@ -73,7 +73,10 @@ module.exports = React.createClass({
         scrollTop       : React.PropTypes.number,
         scrollbarSize   : React.PropTypes.number,
         totalColumnWidth: React.PropTypes.number,
-        cellPadding     : React.PropTypes.number,
+        cellPadding     : React.PropTypes.oneOfType([
+                            React.PropTypes.number,
+                            React.PropTypes.string
+                        ]),
         rowHeight       : React.PropTypes.any,
 
         data            : React.PropTypes.array,
