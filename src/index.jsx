@@ -349,6 +349,12 @@ module.exports = React.createClass({
             menu   : this.state.menu
         }
 
+        var loadMask
+
+        if (props.loadMaskOverHeader){
+            loadMask = <LoadMask visible={props.loading} />
+        }
+
         return (
             <div {...renderProps}>
                 <div className="z-inner">
@@ -357,7 +363,7 @@ module.exports = React.createClass({
                     {footer}
                 </div>
 
-                <LoadMask visible={props.loading} />
+                {loadMask}
                 {resizeProxy}
                 {renderMenu(menuProps)}
             </div>
@@ -414,10 +420,10 @@ module.exports = React.createClass({
             menuColumn      : state.menuColumn,
             showMenu        : this.showMenu,
 
-            cellFactory     : props.cellFactory,
-            rowStyle        : props.rowStyle,
-            rowClassName    : props.rowClassName,
-            rowContextMenu  : props.rowContextMenu,
+            // cellFactory     : props.cellFactory,
+            // rowStyle        : props.rowStyle,
+            // rowClassName    : props.rowClassName,
+            // rowContextMenu  : props.rowContextMenu,
 
             onRowClick: this.handleRowClick,
             selected        : props.selected == null?
@@ -425,8 +431,8 @@ module.exports = React.createClass({
                                     props.selected
         }, props)
 
-        wrapperProps.columns = getVisibleColumns(props, state)
-    wrapperProps.tableProps   = this.getTableProps(wrapperProps, state)
+        wrapperProps.columns    = getVisibleColumns(props, state)
+        wrapperProps.tableProps = this.getTableProps(wrapperProps, state)
 
         return (props.WrapperFactory || WrapperFactory)(wrapperProps)
 
@@ -443,6 +449,10 @@ module.exports = React.createClass({
     prepareProps: function(thisProps, state){
         var props = assign({}, thisProps)
 
+        if (!Array.isArray(props.data)){
+            props.data = []
+        }
+        props.empty = !props.data.length
         props.rowHeight = this.prepareRowHeight(props)
         props.virtualRendering = this.isVirtualRendering(props)
 
@@ -516,6 +526,10 @@ module.exports = React.createClass({
 
         if (props.withColumnMenu){
             props.className += ' ' + props.withColumnMenuCls
+        }
+
+        if (props.empty){
+            props.className += ' ' + props.emptyCls
         }
     },
 

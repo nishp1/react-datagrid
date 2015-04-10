@@ -213,7 +213,13 @@ var App = React.createClass({
                 xreorderColumns={false}
                 rowHeight={ROW_HEIGHT}
                 virtualRendering={true}
-                data={data} columns={columns}/>
+                filterable={false}
+                reorderColumns={false}
+                sortable={false}
+                emptyText='testing'
+                loading={true}
+
+                xdata={data} columns={columns}/>
 
         </div>
 

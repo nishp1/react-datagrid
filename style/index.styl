@@ -121,6 +121,17 @@ datagrid-cell()
         .z-mask-wrapper
             display block
 
+.react-datagrid.z-empty
+    .z-table-wrapper
+        @extend .u-flex-column
+        justify-content center
+        align-items center
+
+        .z-empty-text
+            display inline-block
+            font-style italic
+            color gray
+
 @import './header.styl'
 @import './contents.styl'
 @import './borders.styl'

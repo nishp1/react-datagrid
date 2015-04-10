@@ -2,6 +2,7 @@
 
 var React  = require('react')
 var assign = require('object-assign')
+var LoadMask = require('react-load-mask')
 var hasTouch = require('has-touch')
 var DragHelper = require('drag-helper')
 var buffer = require('buffer-function')
@@ -145,9 +146,31 @@ module.exports = React.createClass({
             events.onTouchStart = this.handleTouchStart
         }
 
+        var wrapperStyle = {
+            paddingRight: props.empty? 0: props.scrollbarSize
+        }
+
+        if (props.empty){
+            assign(wrapperStyle, props.emptyWrapperStyle)
+        }
+
+        var emptyText
+
+        if (props.empty){
+            emptyText = <div className="z-empty-text" style={props.emptyTextStyle}>{props.emptyText}</div>
+        }
+
+        var loadMask
+
+        if (!props.loadMaskOverHeader){
+            loadMask = <LoadMask visible={props.loading} />
+        }
+
         return (
             <div className="z-wrapper" style={{height: rowsCount * props.rowHeight}}>
-                <div ref="tableWrapper" className="z-table-wrapper" style={{paddingRight: props.scrollbarSize}} {...events}>
+                {loadMask}
+                <div ref="tableWrapper" className="z-table-wrapper" style={wrapperStyle} {...events}>
+                    {emptyText}
                     <div {...tableProps} ref="table"/>
                     <div ref="verticalScrollbar"  className="z-vertical-scrollbar" style={{width: props.scrollbarSize}} onScroll={this.handleVerticalScroll}>
                         <div className="z-vertical-scroller" style={{height: verticalScrollerSize}} />
