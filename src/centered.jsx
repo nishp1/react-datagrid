@@ -2,6 +2,7 @@
 
 import React from 'react'
 import assign from 'object-assign'
+import normalize from 'react-style-normalizer'
 
 function clone(el, props){
 	return React.cloneElement(el, props)
@@ -26,7 +27,7 @@ function center(el){
 	}
 
 	return clone(el,
-			assign({}, props, {style: style})
+			assign({}, props, {style: normalize(style)})
 		)
 }
 
