@@ -451,7 +451,10 @@ module.exports = React.createClass({
         props.empty = !props.data.length
         props.rowHeight = this.prepareRowHeight(props)
         props.virtualRendering = this.isVirtualRendering(props)
+
         props.filterable = this.prepareFilterable(props)
+        props.resizableColumns = this.prepareResizableColumns(props)
+        props.reorderColumns = this.prepareReorderColumns(props)
 
         this.prepareClassName(props)
         props.style = this.prepareStyle(props)
@@ -468,6 +471,22 @@ module.exports = React.createClass({
         }
 
         return props.filterable || !!props.onFilter
+    },
+
+    prepareResizableColumns: function(props) {
+        if (props.resizableColumns === false){
+            return false
+        }
+
+        return props.resizableColumns || !!props.onColumnResize
+    },
+
+    prepareReorderColumns: function(props) {
+        if (props.reorderColumns === false){
+            return false
+        }
+
+        return props.reorderColumns || !!props.onColumnOrderChange
     },
 
     isVirtualRendering: function(props){
