@@ -43,8 +43,8 @@ const Body = class extends React.Component {
 
 Body.defaultProps = {
 	defaultStyle: normalize({
-		flex: 1,
-		display: 'flex',
+		flex    : '1 1 auto',
+		display : 'flex',
 		flexFlow: 'row'
 	})
 }

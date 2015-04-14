@@ -1,0 +1,104 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/1000')
+
+function sort(arr){
+	return sorty(GRID_INFO.sortInfo, arr)
+}
+
+var GRID_INFO  = {
+	columns: [
+		{ name: 'index', title: '#', width: 50, type: 'number', visible: true },
+		{ name: 'firstName', width: 200, visible: true },
+		{ name: 'lastName', width: 200, visible: true  },
+		{ name: 'email', width: 200, visible: true }
+	],
+	sortInfo: [ { name: 'firstName', dir: 'asc'}]
+}
+
+var App = React.createClass({
+	getInitialState: function(){
+		return {}
+	},
+	onColumnOrderChange: function (index, dropIndex){
+		var columns = GRID_INFO.columns
+		var col     = columns[index]
+		columns.splice(index, 1) //delete from index, 1 item
+		columns.splice(dropIndex, 0, col)
+
+		this.setState({})
+	},
+	onColumnResize: function(col, size) {
+		col.width = size
+
+		this.setState({})
+	},
+	onSortChange: function(sortInfo) {
+		GRID_INFO.sortInfo = sortInfo
+
+		this.setState({})
+	},
+	onColumnVisibilityChange: function(col, visible) {
+		col.visible = visible
+
+		this.setState({})
+	},
+	persist: function() {
+		localStorage.setItem('gridinfo', JSON.stringify(GRID_INFO))
+
+		this.setState({
+			message: 'State persisted.'
+		})
+	},
+	restore: function() {
+		var info = localStorage.getItem('gridinfo')
+
+		try {
+			GRID_INFO = JSON.parse(info)
+			this.setState({
+				message: 'State restored.'
+			})
+
+		} catch (ex){}
+	},
+	render: function(){
+		data = sort(data)
+
+		if (this.state.message){
+			this.hideMessage()
+		}
+
+		return <div>
+			<div style={{marginBottom: 10 }}>
+				<button onClick={this.persist} style={{marginRight: 10}}>Persist</button>
+				<button onClick={this.restore}>Restore</button>
+
+				<span style={{color: '#D82A58', padding: 20}}>
+					{this.state.message}
+				</span>
+			</div>
+			<DataGrid
+				idProperty='id'
+				data={data}
+				columns={GRID_INFO.columns}
+				sortInfo={GRID_INFO.sortInfo}
+				style={{height: 300}}
+				onColumnVisibilityChange={this.onColumnVisibilityChange}
+				onSortChange={this.onSortChange	}
+				onColumnOrderChange={this.onColumnOrderChange	}
+				onColumnResize={this.onColumnResize}
+			/>
+		</div>
+	},
+	hideMessage: function() {
+		setTimeout(function(){
+			this.setState({
+				message: ''
+			})
+		}.bind(this), 1000)
+	}
+})
+
+module.exports = App

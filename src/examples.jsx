@@ -21,6 +21,18 @@ const all = [
 		</div>
 	}),
 	example('reorder-columns', {height: 450}),
+	example('column-resizing', {
+		height: 350,
+			description: <div>
+				<p>
+				Columns are flexible via flexbox. Specify a <b><code>flex</code></b> property for this. Unless a column specifies a <b><code>flex</code></b> or a <b><code>width</code></b> property, it is assumed to have <b><code>flex: 1</code></b>. You can also specify a <b><code>minWidth</code></b> property.
+				</p>
+				<p>
+					And of course, horizontal scrollbars show when needed.
+				</p>
+
+			</div>
+		}),
 	example('large-data-array', {
 							height: 550,
 							description: <div>
@@ -46,23 +58,12 @@ const all = [
 	example('filtering', {height: 450 }),
 	example('empty-text-for-no-records', {height: 350 }),
 	example('loading-grid', {height: 350 }),
-	example('column-sizing', {
-		height: 350,
-			description: <div>
-				<p>
-				Columns are flexible via flexbox. Specify a <b><code>flex</code></b> property for this. Unless a column specifies a <b><code>flex</code></b> or a <b><code>width</code></b> property, it is assumed to have <b><code>flex: 1</code></b>. You can also specify a <b><code>minWidth</code></b> property.
-				</p>
-				<p>
-					And of course, horizontal scrollbars show when needed.
-				</p>
-
-			</div>
-		}),
 	example('custom-column-styling', {height: 350 }),
 	example('custom-column-rendering', {height: 350 }),
 	example('custom-row-styling', {height: 350 }),
 	example('custom-cell-borders', {height: 350 }),
-	example('text-align-and-custom-row-height', {height: 350 })
+	example('text-align-and-custom-row-height', {height: 350 }),
+	example('restore-grid-state', {height: 750 })
 ]
 
 const allMap = {}
