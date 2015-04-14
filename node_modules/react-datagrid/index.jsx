@@ -80,7 +80,7 @@ var App = React.createClass({
     handleSortChange: function(sortInfo){
         SORT_INFO = sortInfo
         // debugger
-        console.log('SORT', sortInfo)
+        console.log('sorting', sortInfo)
         this.setState({})
     },
 
@@ -171,11 +171,11 @@ var App = React.createClass({
                 liveFilter={true}
                 defaultSelected={selected}
                 xonSelectionChange={onSelectionChange}
-                onColumnVisibilityChange={this.onColumnChange}
+                xonColumnVisibilityChange={this.onColumnChange}
                 onColumnOrderChange={this.onColumnOrderChange}
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
-                xgroupBy={groupBy}
+                groupBy={groupBy}
                 rowStyle={rowStyle}
                 rowClassName={blue}
                 xrowFactory={f}

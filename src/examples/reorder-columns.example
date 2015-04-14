@@ -2,9 +2,8 @@
 
 var React    = require('react')
 var DataGrid = require('react-datagrid')
-var data  = require('../data/1500')
-
-var columns = [
+var data     = require('../data/1500')
+var columns  = [
 	{ name: 'index', title: '#', width: 50 },
 	{ name: 'firstName' },
 	{ name: 'lastName'  },
@@ -22,10 +21,9 @@ var App = React.createClass({
 		return <DataGrid
 			idProperty='id'
 			data={data}
-			onColumnOrderChange={this.handleColumnOrderChange}
 			columns={columns}
 			style={{height: 500}}
-			//reorderColumns is true by default
+			onColumnOrderChange={this.handleColumnOrderChange}
 		/>
 	}
 })

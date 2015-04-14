@@ -35,7 +35,7 @@ function getVisibleCount(props, state){
 
 function getVisibleColumns(props, state){
 
-    var visibility = state.visibility
+    var visibility     = state.visibility
     var visibleColumns = props.columns.filter(function(c){
         var name = c.name
         var visible = c.visible
@@ -243,6 +243,10 @@ module.exports = React.createClass({
             var visibility = this.state.visibility
 
             visibility[column.name] = !visible
+            if (props.groupBy){
+                //so grouped rows are re-rendered
+                delete this.groupedRows
+            }
             this.setState({})
         }
     },
