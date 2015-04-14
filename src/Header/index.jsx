@@ -12,7 +12,7 @@ var Cell    = require('../Cell')
 var setupColumnDrag   = require('./setupColumnDrag')
 var setupColumnResize = require('./setupColumnResize')
 
-var normalize = require('react-style-normalizer')
+var normalize   = require('react-style-normalizer')
 var EVENT_NAMES = require('react-event-names')
 
 function emptyFn(){}
@@ -290,7 +290,7 @@ module.exports = React.createClass({
 
             return {
                 cls     : visible?'z-selected': '',
-                selected: visible? '✓': '',
+                selected: visible? <span style={{fontSize: '0.95em'}}>✓</span>: '',
                 label   : column.title,
                 fn      : this.toggleColumn.bind(this, column)
             }

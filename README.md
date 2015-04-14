@@ -5,12 +5,12 @@ react-datagrid
 
 See demo at [zippyui.github.io/react-datagrid](http://zippyui.github.io/react-datagrid)
 
-<img src="./react-datagrid.png" height="400" width="739" />
+<a href="http://zippyui.github.io/react-datagrid/#/examples/basic"><img src="./react-datagrid.png" height="400" width="739" /></a>
 
 ## Install
 
 ```sh
-$ npm install react-datagrid
+$ npm install react-datagrid --save
 ```
 
 ## Changelog
