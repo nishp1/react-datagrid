@@ -64,7 +64,7 @@ var App = React.createClass({
 		} catch (ex){}
 	},
 	render: function(){
-		data = sort(data)
+		data = sort([].concat(data))
 
 		if (this.state.message){
 			this.hideMessage()
