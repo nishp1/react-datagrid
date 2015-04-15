@@ -9,6 +9,13 @@ var buffer     = require('buffer-function')
 
 var tableStyle     = require('../render/tableStyle')
 var preventDefault = require('../utils/preventDefault')
+var horizontalScrollbarStyle = {}
+
+if (global && global.navigator.appVersion.indexOf("Mac") != -1){
+    //on a MAC
+    horizontalScrollbarStyle.position = 'absolute'
+    horizontalScrollbarStyle.height = 20
+}
 
 function signum(x){
     return x < 0? -1: 1
@@ -146,7 +153,6 @@ module.exports = React.createClass({
 
         this.groupsCount = groupsCount
 
-        var horizontalScrollerSize = props.totalColumnWidth + props.scrollbarSize
         var verticalScrollerSize   = (props.totalLength + groupsCount) * props.rowHeight
 
         var events = {}
@@ -157,7 +163,9 @@ module.exports = React.createClass({
             events.onTouchStart = this.handleTouchStart
         }
 
-        var wrapperStyle = {}
+        var wrapperStyle = {
+            // paddingRight: props.empty? 0: props.scrollbarSize
+        }
 
         if (props.empty){
             assign(wrapperStyle, props.emptyWrapperStyle)
@@ -188,13 +196,13 @@ module.exports = React.createClass({
 
                     React.createElement("div", {ref: "verticalScrollbar", className: "z-vertical-scrollbar", style: {width: props.scrollbarSize}, 
                         onScroll: this.handleVerticalScroll}, 
-                        React.createElement("div", {className: "z-vertical-scroller", style: {height: verticalScrollerSize}})
+                            React.createElement("div", {className: "z-vertical-scroller", style: {height: verticalScrollerSize}})
                     )
 
                 ), 
 
-                React.createElement("div", {ref: "horizontalScrollbar", className: "z-horizontal-scrollbar", onScroll: this.handleHorizontalScroll}, 
-                    React.createElement("div", {className: "z-horizontal-scroller", style: {width: horizontalScrollerSize}})
+                React.createElement("div", {style: horizontalScrollbarStyle, ref: "horizontalScrollbar", className: "z-horizontal-scrollbar", onScroll: this.handleHorizontalScroll}, 
+                    React.createElement("div", {className: "z-horizontal-scroller", style: {width: props.minRowWidth}})
                 )
             )
         )

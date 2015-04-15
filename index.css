@@ -1380,25 +1380,31 @@ html.u-app body * {
   overflow-y: auto;
   right: 0px;
   top: 0px;
-}
-.react-datagrid .z-horizontal-scrollbar {
-  position: relative;
-  width: 100%;
-  left: 0px;
-  bottom: 0px;
-  overflow: auto;
-}
-.react-datagrid .z-vertical-scrollbar {
-  z-index: 1;
-  overflow: auto;
+  width: 1px;
+  visibility: hidden;
 }
 .react-datagrid .z-horizontal-scroller {
   height: 1px;
   visibility: hidden;
 }
-.react-datagrid .z-vertical-scroller {
-  width: 1px;
-  visibility: hidden;
+.react-datagrid .z-vertical-scrollbar {
+  overflow: auto;
+  transform: translate3d(0px, 0px, 0px);
+}
+.react-datagrid .z-horizontal-scrollbar {
+  transform: translate3d(0px, 0px, 0px);
+  -webkit-box-flex: 0 0 auto;
+  -moz-box-flex: 0 0 auto;
+  -ms-box-flex: 0 0 auto;
+  -ms-flex: 0 0 auto;
+  -webkit-flex: 0 0 auto;
+  flex: 0 0 auto;
+  height: auto;
+  width: 100%;
+  position: relative;
+  left: 0px;
+  bottom: 0px;
+  overflow: auto;
 }
 .react-datagrid .z-table-wrapper {
   -webkit-box-flex: 1;
@@ -1436,6 +1442,9 @@ html.u-app body * {
   -ms-flex: 1;
   -webkit-flex: 1;
   flex: 1;
+/** 2 RULES FOR SAFARI VERTICAL SCROLLBAR */
+  position: relative;
+  z-index: -1;
 }
 .react-datagrid .z-header,
 .react-datagrid .z-summary,

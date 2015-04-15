@@ -53,6 +53,7 @@ module.exports = function renderRow(props, data, index, fn){
         renderText : props.renderText,
         cellPadding: props.cellPadding,
         rowHeight  : props.rowHeight,
+        minWidth   : props.minRowWidth,
         columns    : props.columns,
 
         rowContextMenu: props.rowContextMenu,

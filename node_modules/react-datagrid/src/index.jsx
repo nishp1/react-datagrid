@@ -475,7 +475,8 @@ module.exports = React.createClass({
         props.style = this.prepareStyle(props)
 
         this.prepareColumns(props, state)
-        // this.groupData(props)
+
+        props.minRowWidth = props.totalColumnWidth + props.scrollbarSize
 
         return props
     },
