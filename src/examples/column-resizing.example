@@ -1,6 +1,6 @@
 var React    = require('react')
 var DataGrid = require('react-datagrid')
-var data     = require('../data/200')
+var data     = require('../data/1000')
 var columns = [
 	{ name: 'index', title: '#', width: 50 },
 	{ name: 'firstName', width: 350 },
