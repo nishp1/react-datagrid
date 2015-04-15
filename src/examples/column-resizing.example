@@ -3,11 +3,11 @@ var DataGrid = require('react-datagrid')
 var data     = require('../data/200')
 var columns = [
 	{ name: 'index', title: '#', width: 50 },
-	{ name: 'firstName', width: 150 },
-	{ name: 'lastName', width: 150  },
-	{ name: 'email', title: 'Email', width: 100},
+	{ name: 'firstName', width: 350 },
+	{ name: 'lastName', width: 350  },
+	{ name: 'email', title: 'Email', width: 300},
 	{ name: 'country', width: 200},
-	{ name: 'catchPhrase', width: 200}
+	{ name: 'catchPhrase', width: 500}
 ]
 
 var App = React.createClass({
