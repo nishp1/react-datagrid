@@ -24,6 +24,7 @@ datagrid-cell()
         size 100%
         position absolute
         margin auto 0
+        overflow hidden
 
     .z-text
         white-space nowrap
@@ -55,33 +56,35 @@ datagrid-cell()
             // position absolute
             // size 100%
             // flex 1 1 auto
-            position relative
-            display block
+            // position relative
+            display flex
+            flex-flow column
             flex 1 1 auto
             overflow hidden
 
             // overflow-y hidden
 
     .z-vertical-scroller
-        position absolute
-        height 100%
+        // position absolute
+        // height 100%
         overflow hidden
         overflow-y auto
         right 0px
         top 0px
 
     .z-horizontal-scrollbar
-        position absolute
+        position relative
         width 100%
         left 0px
         bottom 0px
         overflow auto
 
     .z-vertical-scrollbar
-        position absolute
-        height 100%
-        top 0px
-        right 0px
+        // position absolute
+        // height 100%
+        // top 0px
+        // right 0px
+        z-index 1
         overflow auto
 
     .z-horizontal-scroller
@@ -93,10 +96,14 @@ datagrid-cell()
         visibility hidden
 
     .z-table-wrapper
-        position absolute
-        size 100%
-        overflow auto
-        overflow-y hidden
+        flex 1
+        display flex
+        flex-flow row
+        position relative
+        width 100%
+        overflow hidden
+        // overflow auto
+        // overflow-y hidden
 
     .z-header-wrapper
     .z-footer-wrapper
@@ -104,6 +111,7 @@ datagrid-cell()
 
     .z-table
         display block
+        flex 1
 
     .z-header
     .z-summary

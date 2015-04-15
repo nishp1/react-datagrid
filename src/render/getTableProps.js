@@ -22,7 +22,7 @@ module.exports = function(props, rows){
     }, this)
 
     return {
-        className: "z-table",
+        className: 'z-table',
         style: tableStyle(props),
         children: rows
     }

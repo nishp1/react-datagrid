@@ -3,7 +3,6 @@
 var webpack = require('webpack')
 
 module.exports = {
-    devtool: 'eval',
     entry: [
         // 'webpack-dev-server/client?http://localhost:9090/assets',
         // 'webpack/hot/only-dev-server',
@@ -24,5 +23,16 @@ module.exports = {
     plugins: [
         // new webpack.HotModuleReplacementPlugin(),
         // new webpack.NoErrorsPlugin()
-    ]
+    ],
+
+    devServer: {
+        contentBase: 'http://localhost:9091',
+        info: true,
+        quiet: false,
+
+        stats: {
+            colors: true,
+            progress: true
+        }
+    }
 }

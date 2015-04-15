@@ -848,8 +848,19 @@ html.u-app body * {
   box-orient: vertical;
 }
 .react-datagrid > .z-inner .z-wrapper {
-  position: relative;
-  display: block;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-flow: column;
+  -moz-flex-flow: column;
+  -ms-flex-flow: column;
+  -o-flex-flow: column;
+  flex-flow: column;
+  flex-flow: column;
+  box-orient: vertical;
   -webkit-box-flex: 1 1 auto;
   -moz-box-flex: 1 1 auto;
   -ms-box-flex: 1 1 auto;
@@ -859,25 +870,20 @@ html.u-app body * {
   overflow: hidden;
 }
 .react-datagrid .z-vertical-scroller {
-  position: absolute;
-  height: 100%;
   overflow: hidden;
   overflow-y: auto;
   right: 0px;
   top: 0px;
 }
 .react-datagrid .z-horizontal-scrollbar {
-  position: absolute;
+  position: relative;
   width: 100%;
   left: 0px;
   bottom: 0px;
   overflow: auto;
 }
 .react-datagrid .z-vertical-scrollbar {
-  position: absolute;
-  height: 100%;
-  top: 0px;
-  right: 0px;
+  z-index: 1;
   overflow: auto;
 }
 .react-datagrid .z-horizontal-scroller {
@@ -889,11 +895,28 @@ html.u-app body * {
   visibility: hidden;
 }
 .react-datagrid .z-table-wrapper {
-  position: absolute;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -ms-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+  -webkit-flex-flow: row;
+  -moz-flex-flow: row;
+  -ms-flex-flow: row;
+  -o-flex-flow: row;
+  flex-flow: row;
+  flex-flow: row;
+  box-orient: horizontal;
+  position: relative;
   width: 100%;
-  height: 100%;
-  overflow: auto;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 .react-datagrid .z-header-wrapper,
 .react-datagrid .z-footer-wrapper {
@@ -901,6 +924,12 @@ html.u-app body * {
 }
 .react-datagrid .z-table {
   display: block;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -ms-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
 }
 .react-datagrid .z-header,
 .react-datagrid .z-summary,
@@ -1100,6 +1129,7 @@ html.u-app body * {
   height: 100%;
   position: absolute;
   margin: auto 0;
+  overflow: hidden;
 }
 .react-datagrid .z-row .z-cell .z-text {
   white-space: nowrap;
