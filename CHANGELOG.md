@@ -1,7 +1,7 @@
 react-datagrid
 =================
 
-### v1.0.2
+### v1.0.4
  * fix scrolling issues on Mac (Chrome&Safari)
  * improve scrolling performance on all platforms
 
