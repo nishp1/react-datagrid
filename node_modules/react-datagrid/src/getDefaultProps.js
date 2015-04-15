@@ -1,5 +1,7 @@
 'use strict';
 
+var scrollbarSize = require('scrollbar-size')
+
 module.exports = function(){
     return {
         loading: false,

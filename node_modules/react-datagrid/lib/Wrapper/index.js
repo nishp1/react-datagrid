@@ -1,13 +1,14 @@
 'use strict';
 
-var React  = require('react')
-var assign = require('object-assign')
-var LoadMask = require('react-load-mask')
-var hasTouch = require('has-touch')
+var React      = require('react')
+var assign     = require('object-assign')
+var LoadMask   = require('react-load-mask')
+var hasTouch   = require('has-touch')
 var DragHelper = require('drag-helper')
-var buffer = require('buffer-function')
-var raf = require('raf')
-var tableStyle = require('../render/tableStyle')
+var buffer     = require('buffer-function')
+
+var tableStyle     = require('../render/tableStyle')
+var preventDefault = require('../utils/preventDefault')
 
 function signum(x){
     return x < 0? -1: 1
@@ -106,16 +107,23 @@ module.exports = React.createClass({
         }
     },
 
-    syncVerticalScroller: function(){
+    syncVerticalScroller: function(scrollTop, event){
 
-        var scrollTop = this.props.scrollTop + (this.props.topOffset || 0)
+        if (scrollTop === undefined){
+            scrollTop = this.props.scrollTop + (this.props.topOffset || 0)
+        }
 
         this.lockVerticalScroll = true
-        this.refs.verticalScrollbar.getDOMNode().scrollTop = scrollTop
 
-        raf(function(){
-            this.lockVerticalScroll = false
-        }.bind(this))
+        var domNode = this.refs.verticalScrollbar.getDOMNode()
+
+        domNode.scrollTop = scrollTop
+
+        if (domNode.scrollTop != scrollTop){
+            //overflowing either to top, or to bottom
+        } else {
+            preventDefault(event)
+        }
     },
 
     render: function() {
@@ -149,9 +157,7 @@ module.exports = React.createClass({
             events.onTouchStart = this.handleTouchStart
         }
 
-        var wrapperStyle = {
-            paddingRight: props.empty? 0: props.scrollbarSize
-        }
+        var wrapperStyle = {}
 
         if (props.empty){
             assign(wrapperStyle, props.emptyWrapperStyle)
@@ -169,17 +175,24 @@ module.exports = React.createClass({
             loadMask = React.createElement(LoadMask, {visible: props.loading})
         }
 
+        var content = props.empty?
+                        emptyText:
+                        React.createElement("div", React.__spread({},  tableProps, {ref: "table"}))
         return (
-            React.createElement("div", {className: "z-wrapper", style: {height: rowsCount * props.rowHeight}}, 
+            React.createElement("div", {className: "z-wrapper", style: {height: rowsCount * props.rowHeight, overflow: 'auto', position: 'relative'}}, 
+
                 loadMask, 
+
                 React.createElement("div", React.__spread({ref: "tableWrapper", className: "z-table-wrapper", style: wrapperStyle},  events), 
-                    emptyText, 
-                    React.createElement("div", React.__spread({},  tableProps, {ref: "table"})), 
-                    React.createElement("div", {ref: "verticalScrollbar", className: "z-vertical-scrollbar", style: {width: props.scrollbarSize}, onScroll: this.handleVerticalScroll}, 
+                    content, 
+
+                    React.createElement("div", {ref: "verticalScrollbar", className: "z-vertical-scrollbar", style: {width: props.scrollbarSize}, 
+                        onScroll: this.handleVerticalScroll}, 
                         React.createElement("div", {className: "z-vertical-scroller", style: {height: verticalScrollerSize}})
-                    ), 
-                    React.createElement("div", {className: "z-horizontal-scroller", style: {width: horizontalScrollerSize}})
+                    )
+
                 ), 
+
                 React.createElement("div", {ref: "horizontalScrollbar", className: "z-horizontal-scrollbar", onScroll: this.handleHorizontalScroll}, 
                     React.createElement("div", {className: "z-horizontal-scroller", style: {width: horizontalScrollerSize}})
                 )
@@ -231,7 +244,7 @@ module.exports = React.createClass({
                 }
 
                 if (props.virtualRendering && side == 'top'){
-                    this.verticalScrollAt(newScrollPos)
+                    this.verticalScrollAt(newScrollPos, event)
                     return
                 }
 
@@ -260,7 +273,7 @@ module.exports = React.createClass({
                 })
 
             }, -1),
-            onDrop: function(){
+            onDrop: function(event){
 
                 if (!side){
                     return
@@ -273,7 +286,7 @@ module.exports = React.createClass({
                 if (!props.virtualRendering){
                     props.onScrollTop(newScrollPos)
                 } else {
-                    this.verticalScrollAt(newScrollPos)
+                    this.verticalScrollAt(newScrollPos, event)
                 }
             }
         })
@@ -305,8 +318,8 @@ module.exports = React.createClass({
             var pos                 = domNode.scrollLeft
 
             if (delta < 0 && pos == 0){
-                //no need to stop propagation
-                //we allow the event to propagate so the browser
+                //no need to prevent default
+                //we allow the event to continue so the browser
                 //scrolls parent dom elements if needed
                 return
             }
@@ -319,28 +332,12 @@ module.exports = React.createClass({
             //     return
             // }
 
-            event.stopPropagation()
-            event.preventDefault()
+            preventDefault(event)
 
             return
         }
 
-        this.addMouseWheelDelta(delta)
-
-        if (this.props.virtualRendering){
-            if (delta < 0 && this.props.scrollTop == 0){
-                //if scrolling to upwards and already there
-                return
-            }
-
-            if (delta > 0 && this.props.endIndex >= this.props.data.length - 1){
-                //if scrolling downwards and already there
-                return
-            }
-
-            event.stopPropagation()
-            event.preventDefault()
-        }
+        this.addMouseWheelDelta(delta, event)
     },
 
 
@@ -353,16 +350,10 @@ module.exports = React.createClass({
         return result
     },
 
-    addMouseWheelDelta: function(deltaY){
+    addMouseWheelDelta: function(deltaY, event){
 
-        var props   = this.props
-        var virtual = props.virtualRendering
-
-        var tableHeight         = this.getTableScrollHeight()
-        var tableWrapper        = this.refs.tableWrapper.getDOMNode()
-        var horizontalScrollbar = this.refs.horizontalScrollbar.getDOMNode()
-        var wrapperHeight       = tableWrapper.offsetHeight - horizontalScrollbar.offsetHeight
-
+        var props     = this.props
+        var virtual   = props.virtualRendering
         var scrollTop = props.scrollTop
 
         if (virtual && deltaY < 0 && -deltaY < props.rowHeight){
@@ -376,25 +367,18 @@ module.exports = React.createClass({
             deltaY = signum(deltaY) * props.scrollBy * props.rowHeight
         }
 
+
         scrollTop += deltaY
-
-        scrollTop = this.protectScrollTop(scrollTop)
-
-        this.verticalScrollAt(scrollTop, deltaY)
+        this.verticalScrollAt(scrollTop, event)
     },
-    verticalScrollAt: function(scrollTop){
-
-        this.onVerticalScroll(scrollTop)
-
-        raf(function(){
-            this.syncVerticalScroller()
-        }.bind(this))
+    verticalScrollAt: function(scrollTop, event){
+        this.syncVerticalScroller(scrollTop, event)
     },
     handleHorizontalScroll: function(event){
         this.props.onScrollLeft(event.target.scrollLeft)
     },
     handleVerticalScroll: function(event){
-        !this.lockVerticalScroll && this.onVerticalScroll(event.target.scrollTop)
+        this.onVerticalScroll(event.target.scrollTop)
     },
     onVerticalScroll: function(pos){
         this.props.onScrollTop(pos)
