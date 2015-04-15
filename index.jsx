@@ -179,11 +179,6 @@ var App = React.createClass({
         }.bind(this)
         return <div >
 
-            <button onClick={refresh}>refresh</button>
-
-            <div style={{position: 'relative'}}>
-
-            </div>
             <DataGrid
                 onFilter={filter}
                 liveFilter={true}
@@ -200,19 +195,13 @@ var App = React.createClass({
                 onSortChange={this.handleSortChange}
                 xscrollBy={5}
                 idProperty='id'
-                style={{border: '1px solid gray', height: 500, marginLeft: 10, marginRight: 50, marginTop: 400, marginBottom: 400}}
+                style={{border: '1px solid gray', height: 500, margin: 10}}
                 showCellBorders={true}
                 rowHeight={ROW_HEIGHT}
                 virtualRendering={true}
                 emptyText='testing'
                 cellPadding={'0px 5px'}
                 data={data} columns={columns}/>
-
-            <div style={{marginBottom: 300, border: '1px solid red', height: 200, overflow: 'auto'}}>
-                <div style={{border: '1px solid blue', height: 400}}>
-                test
-                </div>
-            </div>
 
         </div>
 
