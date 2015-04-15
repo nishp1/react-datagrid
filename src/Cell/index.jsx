@@ -102,6 +102,7 @@ module.exports = React.createClass({
                     {textCell}
                 </div>
 
+        // var c = {textCell}
         return (
             <div {...cellProps}>
                 {c}

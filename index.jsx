@@ -54,13 +54,13 @@ var columns = [
         name: 'id',
         filterable: false,
         type: 'number',
-        width: 150
+        width: 350
     },
     {
         name: 'grade',
         type: 'number',
         title: <span>a grade</span>,
-        width: 150
+        width: 350
     },
     {
         name: 'email',
@@ -70,7 +70,7 @@ var columns = [
     {
         name: 'lastName',
         minWidth: 100,
-        width: 150
+        width: 350
     }
 ]
 
@@ -193,14 +193,14 @@ var App = React.createClass({
                 onColumnOrderChange={this.onColumnOrderChange}
                 onColumnResize={this.onColumnResize}
                 sortInfo={SORT_INFO}
-                groupBy={groupBy}
+                xgroupBy={groupBy}
                 rowStyle={rowStyle}
                 rowClassName={blue}
                 xrowFactory={f}
                 onSortChange={this.handleSortChange}
                 xscrollBy={5}
                 idProperty='id'
-                style={{border: '1px solid gray', height: 500, marginRight: 50, marginTop: 400, marginBottom: 400}}
+                style={{border: '1px solid gray', height: 500, marginLeft: 10, marginRight: 50, marginTop: 400, marginBottom: 400}}
                 showCellBorders={true}
                 rowHeight={ROW_HEIGHT}
                 virtualRendering={true}
