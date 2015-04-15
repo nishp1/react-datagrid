@@ -28,7 +28,7 @@ const all = [
 				Columns are flexible via flexbox. Specify a <b><code>flex</code></b> property for this. Unless a column specifies a <b><code>flex</code></b> or a <b><code>width</code></b> property, it is assumed to have <b><code>flex: 1</code></b>. You can also specify a <b><code>minWidth</code></b> property.
 				</p>
 				<p>
-					And of course, horizontal scrollbars show when needed.
+					And of course, horizontal scrollbars show when needed. (<b>shift + scroll</b> for horizontal scrolling)
 				</p>
 
 			</div>
