@@ -1419,6 +1419,36 @@ html.u-app body * {
   overflow: auto;
   z-index: 100;
 }
+.react-datagrid .z-horizontal-scrollbar.mac-fix {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+  -webkit-flex-flow: row;
+  -moz-flex-flow: row;
+  -ms-flex-flow: row;
+  -o-flex-flow: row;
+  flex-flow: row;
+  flex-flow: row;
+  box-orient: horizontal;
+  align-items: stretch;
+  align-content: flex-start;
+  justify-content: stretch;
+  -webkit-justify-content: stretch;
+  flex-pack: justify;
+  -ms-flex-pack: justify;
+}
+.react-datagrid .z-horizontal-scrollbar-fix {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -ms-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  overflow: auto;
+}
 .react-datagrid .z-table-wrapper {
   -webkit-box-flex: 1 1 auto;
   -moz-box-flex: 1 1 auto;
