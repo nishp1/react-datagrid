@@ -81,10 +81,17 @@ datagrid-cell()
 
     .z-vertical-scrollbar
         overflow auto
-        transform translate3d(0px, 0px, 0px)
+        transform translate3d(0px, 0px, 2px)
+        position relative
+        display block
+
+        .z-inner
+            overflow auto
+            size 100%
+            position absolute
 
     .z-horizontal-scrollbar
-        transform translate3d(0px, 0px, 0px)
+        transform translate3d(0px, 0px, 1px)
         flex 0 0 auto
         height auto
         width 100%
@@ -94,12 +101,15 @@ datagrid-cell()
         overflow auto
 
     .z-table-wrapper
-        flex 1
+        flex 1 1 auto
         display flex
+        align-items stretch
+        align-content flex-start
+        justify-content flex-start
         flex-flow row
         position relative
-        width 100%
         overflow hidden
+        z-index 10
 
     .z-header-wrapper
     .z-footer-wrapper
@@ -109,14 +119,16 @@ datagrid-cell()
         display block
         flex 1
         /** 2 RULES FOR SAFARI VERTICAL SCROLLBAR */
+        transform translate3d(0px, 0px, 0px)
         position relative
-        z-index -1
+        z-index 10
 
     .z-header
     .z-summary
     .z-table .z-row
         display flex
         flex-flow row
+        z-index 1
 
     .z-mask-wrapper
         bottom 0px
