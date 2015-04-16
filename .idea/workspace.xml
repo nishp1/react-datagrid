@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1dfa9bd4-28f4-4b38-bf8e-556213027fa8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Row/index.jsx" afterPath="$PROJECT_DIR$/src/Row/index.jsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Wrapper/index.jsx" afterPath="$PROJECT_DIR$/src/Wrapper/index.jsx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webpack.config.js" afterPath="$PROJECT_DIR$/webpack.config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/style/index.styl" afterPath="$PROJECT_DIR$/style/index.styl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="react-datagrid.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,21 +25,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.styl" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.styl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/style/index.styl">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2990556">
-              <caret line="46" column="16" selection-start-line="46" selection-start-column="16" selection-end-line="46" selection-end-column="16" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="51" column="14" selection-start-line="51" selection-start-column="14" selection-end-line="51" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.jsx" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.jsx" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Wrapper/index.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.48793283">
+              <caret line="103" column="52" selection-start-line="103" selection-start-column="52" selection-end-line="103" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -228,7 +227,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="24" width="1920" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -243,11 +242,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -274,18 +273,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Wrapper/index.jsx">
+    <entry file="file://$PROJECT_DIR$/style/index.styl">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+          <caret line="51" column="14" selection-start-line="51" selection-start-column="14" selection-end-line="51" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/style/index.styl">
+    <entry file="file://$PROJECT_DIR$/src/Wrapper/index.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2990556">
-          <caret line="46" column="16" selection-start-line="46" selection-start-column="16" selection-end-line="46" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.48793283">
+          <caret line="103" column="52" selection-start-line="103" selection-start-column="52" selection-end-line="103" selection-end-column="52" />
           <folding />
         </state>
       </provider>
