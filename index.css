@@ -1319,6 +1319,7 @@ html.u-app body * {
   top: 0px;
   display: none;
   width: 3px;
+  z-index: 1000;
   border-left: 1px solid #868686;
 }
 .react-datagrid.z-columns-resizable .z-resize-proxy {
