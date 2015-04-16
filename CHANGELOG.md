@@ -1,6 +1,9 @@
 react-datagrid
 =================
 
+### 1.0.13
+ * add support for Mac meta key on row deselect
+
 ### v1.0.5
  * fix selection and row interaction bug introduced by v1.0.4
 
