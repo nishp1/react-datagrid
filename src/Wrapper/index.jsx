@@ -209,7 +209,7 @@ module.exports = React.createClass({
 
                 </div>
 
-                <div style={horizontalScrollbarStyle} ref="horizontalScrollbar" className="z-horizontal-scrollbar" onScroll={this.handleHorizontalScroll}>
+                <div onScroll={this.handleHorizontalScroll} style={horizontalScrollbarStyle} ref="horizontalScrollbar" className="z-horizontal-scrollbar">
                     <div className="z-horizontal-scroller" style={{width: props.minRowWidth}} />
                 </div>
             </div>
