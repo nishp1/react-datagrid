@@ -30,7 +30,7 @@
     "object-keys": "^1.0.3",
     "react": "^0.13.1",
     "react-code-mirror": "^3.0.4",
-    "react-datagrid": "^1.0.12",
+    "react-datagrid": "^1.0.13",
     "react-router": "^0.13.2",
     "react-style-normalizer": "^1.2.0",
     "sorty": "^1.2.0",
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "babel-core": "^4.7.16",
-    "babel-loader": "^4.3.0",
+    "babel-loader": "^5.0.0",
     "css-loader": "^0.9.1",
     "extract-text-webpack-plugin": "^0.5.0",
     "faker": "^2.1.2",

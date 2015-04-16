@@ -14,10 +14,12 @@ var columns = [
 ]
 
 var SELECTED_ID = data[5].id
+var name = data[5].firstName
 
 var App = React.createClass({
 	render: function(){
-		return <DataGrid
+		return <div>
+			<DataGrid
 				idProperty='id'
 				data={data}
 				columns={columns}
@@ -26,9 +28,13 @@ var App = React.createClass({
 				selected={SELECTED_ID}
 				onSelectionChange={this.onSelectionChange}
 			/>
+			<p>Selected: <b>{name}</b></p>
+		</div>
 	},
-	onSelectionChange: function(newSelectedId){
+	onSelectionChange: function(newSelectedId, data){
 		SELECTED_ID = newSelectedId
+
+		name = SELECTED_ID != null? data.firstName: 'none'
 		this.setState({})
 	}
 })

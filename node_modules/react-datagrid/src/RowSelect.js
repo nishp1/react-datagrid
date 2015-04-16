@@ -67,7 +67,8 @@ module.exports = {
         var rowSelected = this.isRowSelected(data)
         var newSelected = !rowSelected
 
-        if (rowSelected && event && !event.ctrlKey){
+        var ctrlKey = event.metaKey || event.ctrlKey
+        if (rowSelected && event && !ctrlKey){
             //if already selected and not ctrl, keep selected
             newSelected = true
         }
@@ -162,7 +163,7 @@ module.exports = {
         var end
         var data
 
-        if (event.ctrlKey){
+        if (event.metaKey || event.ctrlKey){
             this.selIndex = index
             this.shiftKeyIndex = null
 

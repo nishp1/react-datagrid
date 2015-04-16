@@ -36,6 +36,9 @@ const all = [
 	example('single-selection', {
 		height: 350
 	}),
+	example('multiple-selection', {
+		height: 350
+	}),
 	example('large-data-array', {
 							height: 550,
 							description: <div>

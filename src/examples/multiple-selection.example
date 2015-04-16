@@ -1,0 +1,47 @@
+'use strict';
+
+var React    = require('react')
+var DataGrid = require('react-datagrid')
+var data     = require('../data/1000')
+
+var columns = [
+	{ name: 'index', title: '#', width: 50},
+	{ name: 'country', width: 200},
+	{ name: 'city', width: 150 },
+	{ name: 'firstName' },
+	{ name: 'lastName'  },
+	{ name: 'email', width: 200 }
+]
+
+var SELECTED_ID = {}
+var names = 'none'
+
+var App = React.createClass({
+	render: function(){
+		return <div>
+			<DataGrid
+				idProperty='id'
+				data={data}
+				columns={columns}
+				style={{height: 400}}
+
+				selected={SELECTED_ID}
+				onSelectionChange={this.onSelectionChange}
+			/>
+			<p>Selected: <b>{names}</b></p>
+		</div>
+	},
+	onSelectionChange: function(newSelection){
+		SELECTED_ID = newSelection
+
+		var selected = []
+		Object.keys(newSelection).forEach(function(id){
+			selected.push(newSelection[id].firstName)
+		})
+
+		names = selected.length? selected.join(', '): 'none'
+		this.setState({})
+	}
+})
+
+module.exports = App
