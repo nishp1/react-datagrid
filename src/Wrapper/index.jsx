@@ -188,7 +188,10 @@ module.exports = React.createClass({
         var content = props.empty?
                         emptyText:
                         //extra div needed for SAFARI V SCROLL
-                        <div className="z-table-wrapper-fix">
+                        //maxWidth needed for FF - see
+                        //http://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
+                        //http://stackoverflow.com/questions/27472595/firefox-34-ignoring-max-width-for-flexbox
+                        <div className="z-table-wrapper-fix" style={{maxWidth: 'calc(100% - ' + props.scrollbarSize + 'px)'}}>
                             <div {...tableProps} ref="table"/>
                         </div>
 
