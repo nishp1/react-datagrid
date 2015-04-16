@@ -822,6 +822,9 @@ html.u-app body * {
 .react-datagrid {
   align-items: stretch;
 }
+.react-datagrid .z-header-menu-column {
+  z-index: 100;
+}
 .react-datagrid table {
   border-collapse: separate;
 }
