@@ -188,7 +188,7 @@ module.exports = React.createClass({
         var content = props.empty?
                         emptyText:
                         //extra div needed for SAFARI V SCROLL
-                        <div style={{zIndex: -1}}>
+                        <div className="z-table-wrapper-fix">
                             <div {...tableProps} ref="table"/>
                         </div>
 

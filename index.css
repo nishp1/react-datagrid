@@ -938,6 +938,15 @@ html.u-app body * {
   overflow: hidden;
   z-index: 10;
 }
+.react-datagrid .z-table-wrapper-fix {
+  z-index: -1;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -ms-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
 .react-datagrid .z-header-wrapper,
 .react-datagrid .z-footer-wrapper {
   width: 100%;
