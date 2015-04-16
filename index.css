@@ -1413,6 +1413,7 @@ html.u-app body * {
   left: 0px;
   bottom: 0px;
   overflow: auto;
+  z-index: 100;
 }
 .react-datagrid .z-table-wrapper {
   -webkit-box-flex: 1 1 auto;
